@@ -9,12 +9,17 @@ import NotFound404 from "@pages/NotFound404";
 import ServerError500 from "@pages/ServerError500";
 import Forbidden403 from "@pages/Forbidden403";
 import MainLayout from "@components/layout/MainLayout";
+import AccountPage from "@pages/Account";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router-dom";
 import { JSX } from "react";
 
-const ErrorFallback = () => <ServerError500 />;
+const ErrorFallback = () => {
+  {
+    return <ServerError500 />;
+  }
+};
 
 type ProtectedRouteProps = {
   children: JSX.Element;
@@ -82,8 +87,8 @@ const router = createBrowserRouter(
           element: <HomePage />,
         },
         {
-          path: PATH.COURSES,
-          element: <HomePage />,
+          path: PATH.ACCOUNTS,
+          element: <AccountPage />,
         },
         {
           path: PATH.QUIZ,

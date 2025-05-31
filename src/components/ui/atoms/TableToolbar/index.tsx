@@ -1,0 +1,188 @@
+import {
+  Box,
+  IconButton,
+  Toolbar,
+  Tooltip,
+  Typography,
+  InputBase,
+  Button,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { alpha } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
+import { Search as SearchIcon } from "@mui/icons-material";
+import AddIcon from "@mui/icons-material/Add";
+import UserFilterButton from "../UserFilterBtton";
+import { useState } from "react";
+
+interface TableToolbarProps {
+  numSelected: number;
+  onCreate: () => void;
+  createLabel: string;
+}
+
+interface UserFilterValues {
+  roles: string[];
+  statuses: string[];
+}
+
+const SearchWrapper = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: theme.palette.common.white,
+  border: "1px solid rgba(0, 0, 0, 0.05)",
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.common.black, 0.08),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: theme.spacing(2),
+    width: "auto",
+  },
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: alpha(theme.palette.common.black, 0.4),
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "inherit",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("md")]: {
+      width: "30ch",
+    },
+  },
+}));
+
+const roles = [
+  { id: "admin", name: "Quản trị viên" },
+  { id: "teacher", name: "Giảng viên" },
+  { id: "student", name: "Học viên" },
+  { id: "staff", name: "Nhân viên" },
+];
+
+function TableToolbar(props: TableToolbarProps) {
+  const { numSelected, onCreate, createLabel } = props;
+
+  const statuses = [
+    { id: "active", name: "Đang hoạt động" },
+    { id: "inactive", name: "Không hoạt động" },
+    { id: "pending", name: "Chờ xác nhận" },
+    { id: "blocked", name: "Đã khóa" },
+  ];
+
+  const [filters, setFilters] = useState<UserFilterValues>({
+    roles: [],
+    statuses: [],
+  });
+
+  const handleFilterChange = (newFilters: UserFilterValues) => {
+    setFilters(newFilters);
+    console.log("Filters applied:", newFilters);
+    // Thực hiện logic lọc dữ liệu ở đây
+  };
+
+  return (
+    <>
+      <Toolbar
+        sx={[
+          {
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+          },
+          numSelected > 0 && {
+            bgcolor: (theme) =>
+              alpha(
+                theme.palette.primary.main,
+                theme.palette.action.activatedOpacity
+              ),
+          },
+        ]}
+      >
+        {numSelected > 0 ? (
+          <Typography
+            sx={{ flex: "1 1 100%" }}
+            color="inherit"
+            variant="subtitle1"
+            component="div"
+          >
+            {numSelected} đã chọn
+          </Typography>
+        ) : (
+          <Box
+            component={"div"}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flex: "1 1 100%",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                sx={{ flex: "100%" }}
+                fontSize={"16px"}
+                id="tableTitle"
+                component="div"
+              >
+                Bộ lọc:
+              </Typography>
+              <Tooltip title="Lọc danh sách">
+                {/* <IconButton>
+                <FilterListIcon />
+              </IconButton> */}
+                <UserFilterButton
+                  roles={roles}
+                  statuses={statuses}
+                  onFilterChange={handleFilterChange}
+                  initialFilters={filters}
+                />
+              </Tooltip>
+              <SearchWrapper>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Tìm kiếm..."
+                  inputProps={{ "aria-label": "search" }}
+                />
+              </SearchWrapper>
+            </Box>
+            <Button variant="contained" onClick={onCreate}>
+              <AddIcon /> {createLabel}
+            </Button>
+          </Box>
+        )}
+        {numSelected > 0 && (
+          <>
+            <Tooltip title="Xóa">
+              <IconButton>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </>
+        )}
+      </Toolbar>
+    </>
+  );
+}
+
+export default TableToolbar;

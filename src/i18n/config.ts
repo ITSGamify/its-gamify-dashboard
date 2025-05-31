@@ -6,6 +6,7 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import enLogin from "./locales/en/login.json";
 
 import viLogin from "./locales/vi/login.json";
+import viSidebar from "./locales/vi/sideBar.json";
 
 export type TRANSLATION_NAME_SPACES_TYPE = keyof typeof resources.vi;
 
@@ -14,6 +15,7 @@ export const TRANSLATION_NAME_SPACES: Record<
   TRANSLATION_NAME_SPACES_TYPE
 > = {
   LOGIN: "login",
+  SIDEBAR: "sideBar",
 };
 
 // Define resources
@@ -23,6 +25,7 @@ const resources = {
   },
   vi: {
     login: viLogin,
+    sideBar: viSidebar,
   },
 };
 

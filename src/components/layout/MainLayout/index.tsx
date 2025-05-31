@@ -9,7 +9,7 @@ import {
   useTheme,
 } from "@mui/material";
 import Header from "../../ui/atoms/Header";
-import { Outlet } from "react-router-dom"; // Thêm import này
+import { Outlet } from "react-router-dom";
 import Sidebar from "@components/ui/atoms/Sidebar";
 
 interface MainLayoutProps {
@@ -17,6 +17,7 @@ interface MainLayoutProps {
 }
 
 const drawerWidth = 240;
+const miniDrawerWidth = 64;
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const theme = useTheme();
@@ -27,41 +28,54 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
+  const actualDrawerWidth = isMobile
+    ? 0
+    : isDrawerOpen
+    ? drawerWidth
+    : miniDrawerWidth;
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <Header onToggleDrawer={handleToggleDrawer} isDrawerOpen={isDrawerOpen} />
 
-      {isMobile && (
-        <Drawer
-          variant={isMobile ? "temporary" : "persistent"}
-          open={isDrawerOpen}
-          onClose={handleToggleDrawer}
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              width: drawerWidth,
-              boxSizing: "border-box",
-              backgroundColor: "#FFFFFF",
-              borderRight: "1px solid rgba(0, 0, 0, 0.05)",
-            },
-          }}
-        >
-          <Sidebar onClose={handleToggleDrawer} />
-        </Drawer>
-      )}
-
+      <Drawer
+        variant={isMobile ? "temporary" : "permanent"}
+        open={isMobile ? isDrawerOpen : true}
+        onClose={isMobile ? handleToggleDrawer : undefined}
+        sx={{
+          width: actualDrawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: isMobile
+              ? drawerWidth
+              : isDrawerOpen
+              ? drawerWidth
+              : miniDrawerWidth,
+            boxSizing: "border-box",
+            backgroundColor: "#FFFFFF",
+            borderRight: "1px solid rgba(0, 0, 0, 0.05)",
+            top: isMobile ? "56px" : "64px",
+            height: "calc(100% - 56px)",
+            overflowX: "hidden",
+            transition: theme.transitions.create("width", {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+          },
+        }}
+      >
+        <Sidebar onClose={handleToggleDrawer} isOpen={isDrawerOpen} />
+      </Drawer>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: 3,
-          // width: { sm: `calc(100% - ${isDrawerOpen ? drawerWidth : 0}px)` },
-          // ml: { sm: isDrawerOpen ? `${drawerWidth}px` : 0 },
+          width: { sm: `calc(100% - ${actualDrawerWidth}px)` },
+          // marginLeft: { sm: `${actualDrawerWidth}px` },
           transition: theme.transitions.create(["margin", "width"], {
             easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
+            duration: theme.transitions.duration.enteringScreen,
           }),
         }}
       >

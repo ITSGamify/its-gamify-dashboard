@@ -9,9 +9,6 @@ import {
   Avatar,
   Menu,
   MenuItem,
-  Drawer,
-  List,
-  ListItem,
   ListItemIcon,
   ListItemText,
   Divider,
@@ -35,10 +32,8 @@ import {
   ChevronLeft as ChevronLeftIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Logo from "../Logo";
-import NavLink from "../NavLink";
-import { PATH } from "@constants/path";
 // Styled components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
@@ -87,14 +82,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-  justifyContent: "flex-end",
-}));
-
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     backgroundColor: theme.palette.primary.main,
@@ -102,27 +89,20 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-// Navigation links data
-const navigationLinks = [
-  { path: PATH.HOME, label: "Tổng quan" },
-  { path: PATH.COURSES, label: "Khóa học" },
-  { path: PATH.QUIZ, label: "Quiz" },
-  { path: PATH.TOURNAMENT, label: "Giải đấu" },
-];
-
 interface HeaderProps {
   onToggleDrawer: () => void;
   isDrawerOpen: boolean;
 }
 
+const drawerWidth = 216;
+const miniDrawerWidth = 40;
+
 const Header: React.FC<HeaderProps> = ({ onToggleDrawer, isDrawerOpen }) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [notificationAnchorEl, setNotificationAnchorEl] =
     useState<null | HTMLElement>(null);
 
@@ -290,59 +270,60 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer, isDrawerOpen }) => {
     <>
       <StyledAppBar position="fixed">
         <Toolbar>
-          {isMobile && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              width: isMobile
+                ? miniDrawerWidth
+                : isDrawerOpen
+                ? drawerWidth
+                : miniDrawerWidth,
+              borderRight: isDrawerOpen
+                ? "1px solid rgba(0, 0, 0, 0.05)"
+                : "none",
+            }}
+          >
             <IconButton
               edge="start"
               color="inherit"
               aria-label="open drawer"
               onClick={onToggleDrawer}
+              sx={{ mr: 1 }}
             >
               <MenuIcon />
             </IconButton>
-          )}
 
-          <Logo />
-          {!isMobile && (
-            <Box sx={{ display: "flex", ml: 3, height: "100%" }}>
-              {navigationLinks.map((link) => (
-                <NavLink key={link.path} path={link.path} label={link.label} />
-              ))}
-            </Box>
-          )}
-          <Box sx={{ flexGrow: 1 }} />
+            {!isDrawerOpen || (!isMobile && <Logo />)}
+          </Box>
 
-          <Box
+          {/* {!isMobile && (
+            <SearchWrapper>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Tìm kiếm..."
+                inputProps={{ "aria-label": "search" }}
+              />
+            </SearchWrapper>
+          )} */}
+          <Typography
+            variant="h3"
+            noWrap
+            component="div"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
+              fontWeight: 600,
+              // color: theme.palette.primary.main,
+              ml: isMobile ? 0 : 3,
             }}
           >
-            {!isMobile && (
-              <Tooltip title="Tìm kiếm">
-                <Box sx={{ position: "relative" }}>
-                  {!isSearchOpen ? (
-                    <IconButton
-                      color="inherit"
-                      onClick={() => setIsSearchOpen(true)}
-                    >
-                      <SearchIcon />
-                    </IconButton>
-                  ) : (
-                    <SearchWrapper onBlur={() => setIsSearchOpen(false)}>
-                      <SearchIconWrapper>
-                        <SearchIcon />
-                      </SearchIconWrapper>
-                      <StyledInputBase
-                        placeholder="Tìm kiếm..."
-                        inputProps={{ "aria-label": "search" }}
-                        autoFocus
-                      />
-                    </SearchWrapper>
-                  )}
-                </Box>
-              </Tooltip>
-            )}
+            Quản lý tài khoản
+          </Typography>
+
+          <Box sx={{ flexGrow: 1 }} />
+
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Tooltip title="Thông báo">
               <IconButton
                 size="large"

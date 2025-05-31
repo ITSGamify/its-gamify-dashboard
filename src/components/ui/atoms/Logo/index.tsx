@@ -21,12 +21,12 @@ const Logo: React.FC = () => {
       <SchoolIcon
         sx={{
           color: theme.palette.primary.main,
-          fontSize: 32,
+          fontSize: 40,
           mr: 1,
         }}
       />
       <Typography
-        variant="h6"
+        variant="h4"
         noWrap
         component="div"
         sx={{
