@@ -19,6 +19,7 @@ import {
   Button,
   styled,
   useTheme,
+  Autocomplete,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
@@ -34,7 +35,7 @@ interface Role {
 
 interface Department {
   id: string;
-  name: string;
+  label: string;
 }
 
 interface CreateUserModalProps {
@@ -76,11 +77,11 @@ const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  padding: theme.spacing(2, 3),
+  padding: theme.spacing(1, 3),
 }));
 
 const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
-  padding: theme.spacing(3),
+  padding: theme.spacing(2),
 }));
 
 const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
@@ -432,8 +433,14 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
 
           <Grid container size={{ md: 12 }}>
             <FormControl fullWidth error={!!errors.departmentId} required>
-              <InputLabel id="department-select-label">Phòng ban</InputLabel>
-              <Select
+              <Autocomplete
+                disablePortal
+                options={departments}
+                renderInput={(params) => (
+                  <TextField {...params} label="Phòng ban" />
+                )}
+              />
+              {/* <Autocomplete
                 labelId="department-select-label"
                 id="department-select"
                 name="departmentId"
@@ -446,7 +453,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     {department.name}
                   </MenuItem>
                 ))}
-              </Select>
+              </Autocomplete> */}
               {errors.departmentId && (
                 <FormHelperText>{errors.departmentId}</FormHelperText>
               )}

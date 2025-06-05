@@ -117,6 +117,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose, isOpen }) => {
       icon: <PeopleIcon />,
       path: PATH.ACCOUNTS,
     },
+    {
+      text: t("course"),
+      icon: <SchoolIcon />,
+      path: PATH.COURSES,
+    },
     // {
     //   text: "Giảng viên",
     //   icon: <SchoolIcon />,

@@ -1,6 +1,6 @@
 export type DefaultQueryKey<T> = [string, string, string, T];
 
-export type OrderDirection = "ASC" | "DESC";
+export type OrderDirection = "asc" | "desc";
 
 export type PaginationParams = {
   page?: number;

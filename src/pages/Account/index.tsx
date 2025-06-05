@@ -15,11 +15,16 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import TableActionButton from "@components/ui/atoms/TableActionButton";
 import CreateUserModal from "@components/ui/molecules/CreateUserModal";
 import TableToolbar from "@components/ui/atoms/TableToolbar";
+import FilterButton from "@components/ui/molecules/FilterButton";
+import { OrderDirection } from "@interfaces/dom/query";
+import { FilterGroup } from "@interfaces/dom/filter";
 interface Data {
-  id: number;
+  id: string;
   name: string;
   email: string;
+  avatar?: string;
   status: string;
+  department: string;
   role: string;
 }
 
@@ -34,96 +39,119 @@ type StatusType =
 
 const json = [
   {
-    id: 1,
+    id: "0",
     name: "Alice Nguyen",
     email: "alice.nguyen@example.com",
     status: "active",
+    department: "Công nghệ thông tin",
     role: "admin",
   },
   {
-    id: 2,
+    id: "1",
+    name: "Alice Nguyen",
+    email: "alice.nguyen@example.com",
+    status: "active",
+    department: "Công nghệ thông tin",
+    role: "admin",
+  },
+  {
+    id: "2",
     name: "Bob Tran",
     email: "bob.tran@example.com",
     status: "inactive",
+    department: "Công nghệ thông tin",
     role: "user",
   },
   {
-    id: 3,
+    id: "3",
     name: "Charlie Pham",
     email: "charlie.pham@example.com",
     status: "active",
+    department: "Công nghệ thông tin",
     role: "moderator",
   },
   {
-    id: 4,
+    id: "4",
     name: "David Le",
     email: "david.le@example.com",
     status: "active",
+    department: "Công nghệ thông tin",
     role: "user",
   },
   {
-    id: 5,
+    id: "5",
     name: "Eva Hoang",
     email: "eva.hoang@example.com",
     status: "pending",
+    department: "Công nghệ thông tin",
     role: "user",
   },
   {
-    id: 6,
+    id: "6",
     name: "Frank Vu",
     email: "frank.vu@example.com",
     status: "inactive",
+    department: "Công nghệ thông tin",
     role: "admin",
   },
   {
-    id: 7,
+    id: "7",
     name: "Grace Do",
     email: "grace.do@example.com",
     status: "active",
+    department: "Công nghệ thông tin",
     role: "user",
   },
   {
-    id: 8,
+    id: "8",
     name: "Hannah Bui",
     email: "hannah.bui@example.com",
     status: "pending",
+    department: "Công nghệ thông tin",
     role: "moderator",
   },
   {
-    id: 9,
+    id: "9",
     name: "Ian Ngo",
     email: "ian.ngo@example.com",
     status: "active",
+    department: "Công nghệ thông tin",
     role: "user",
   },
   {
-    id: 10,
+    id: "10",
     name: "Jenny Tran",
     email: "jenny.tran@example.com",
     status: "inactive",
+    department: "Công nghệ thông tin",
     role: "admin",
   },
 ];
 
 const roles = [
   { id: "admin", name: "Quản trị viên" },
-  { id: "teacher", name: "Giảng viên" },
-  { id: "student", name: "Học viên" },
-  { id: "staff", name: "Nhân viên" },
+  { id: "employee", name: "Nhân viên" },
+  { id: "leader", name: "Trưởng nhóm" },
+  { id: "trainer", name: "Nhà đào tạo" },
 ];
 
 const departments = [
-  { id: "it", name: "Công nghệ thông tin" },
-  { id: "marketing", name: "Marketing" },
-  { id: "hr", name: "Nhân sự" },
-  { id: "finance", name: "Tài chính" },
-  { id: "operations", name: "Vận hành" },
+  { id: "it", label: "Công nghệ thông tin" },
+  { id: "marketing", label: "Marketing" },
+  { id: "hr", label: "Nhân sự" },
+  { id: "finance", label: "Tài chính" },
+  { id: "operations", label: "Vận hành" },
 ];
 
-type Order = "asc" | "desc";
+const statuses = [
+  { id: "active", name: "Đang hoạt động" },
+  { id: "inactive", name: "Không hoạt động" },
+  { id: "pending", name: "Chờ xác nhận" },
+  { id: "blocked", name: "Đã khóa" },
+];
 
 const AccountPage: React.FC = () => {
-  const [selected, setSelected] = React.useState<number[]>([]);
+  const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [openCreateModal, setOpenCreateModal] = useState(false);
@@ -137,12 +165,12 @@ const AccountPage: React.FC = () => {
   };
 
   const handleCreateUser = () => {
-    console.log("Tạo người dùng mới:");
     setOpenCreateModal(false);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
+    setSelected([]);
   };
 
   const handleChangeRowsPerPage = (
@@ -150,11 +178,12 @@ const AccountPage: React.FC = () => {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+    setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly number[] = [];
+    let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
@@ -173,16 +202,15 @@ const AccountPage: React.FC = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = Array.from(
-        { length: json.length },
-        (_, index) => index
-      );
+      // Lấy tất cả ID của các mục trong trang hiện tại
+      const newSelected = json
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+        .map((n) => n.id);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
-
   //#region Thu gọn
   const [dense, setDense] = React.useState(false);
 
@@ -206,6 +234,13 @@ const AccountPage: React.FC = () => {
       align: "left",
       disablePadding: true,
       label: "Địa chỉ email",
+    },
+    {
+      id: "department",
+      numeric: false,
+      align: "left",
+      disablePadding: true,
+      label: "Phòng ban",
     },
     {
       id: "role",
@@ -248,7 +283,8 @@ const AccountPage: React.FC = () => {
       sx: { color: "red" },
     },
   ];
-  const [order, setOrder] = React.useState<Order>("asc");
+
+  const [order, setOrder] = React.useState<OrderDirection>("asc");
   const [orderBy, setOrderBy] = React.useState<string>(headCells[0]?.id || "");
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -263,6 +299,7 @@ const AccountPage: React.FC = () => {
     () => json.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [json, page, rowsPerPage]
   );
+
   const dataTable = visibleRows.map((row: Data) => {
     return [
       <TableCell key="name" component="th" scope="row" padding="none">
@@ -270,6 +307,9 @@ const AccountPage: React.FC = () => {
       </TableCell>,
       <TableCell key="email" align="left">
         {row.email}
+      </TableCell>,
+      <TableCell key="department" align="left">
+        {row.department}
       </TableCell>,
       <TableCell key="role" align="left">
         {row.role}
@@ -283,6 +323,21 @@ const AccountPage: React.FC = () => {
     ];
   });
   //#endregion
+
+  // Tạo filterGroups từ roles và statuses
+  const filterGroups: FilterGroup[] = [
+    {
+      id: "role",
+      title: "Vai trò",
+      options: roles,
+    },
+    {
+      id: "status",
+      title: "Trạng thái",
+      options: statuses,
+    },
+  ];
+
   return (
     <>
       <Box sx={{ width: "100%" }}>
@@ -291,16 +346,19 @@ const AccountPage: React.FC = () => {
             numSelected={selected.length}
             onCreate={handleOpenCreateModal}
             createLabel="Tạo tài khoản"
+            filterButton={<FilterButton filterGroups={filterGroups} />}
           />
           <DataTable
             headCells={headCells}
             data={dataTable}
             dense={dense}
+            page={page}
+            rowsPerPage={rowsPerPage}
             selected={selected}
-            handleSelectAllClick={handleSelectAllClick}
-            handleRequestSort={handleRequestSort}
             order={order}
             orderBy={orderBy}
+            handleSelectAllClick={handleSelectAllClick}
+            handleRequestSort={handleRequestSort}
             handleClick={handleClick}
           />
 
@@ -330,4 +388,5 @@ const AccountPage: React.FC = () => {
     </>
   );
 };
+
 export default AccountPage;

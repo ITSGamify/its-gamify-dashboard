@@ -5,14 +5,11 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { visuallyHidden } from "@mui/utils";
-import TableToolbar from "@components/ui/atoms/TableToolbar";
-
-type Order = "asc" | "desc";
+import { OrderDirection } from "@interfaces/dom/query";
 
 // Định nghĩa interface cho HeadCell để linh hoạt hơn
 export interface HeadCell {
@@ -26,7 +23,7 @@ interface EnhancedTableProps {
   numSelected: number;
   onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
+  order: OrderDirection;
   orderBy: string;
   rowCount: number;
   headCells: HeadCell[];
@@ -42,6 +39,7 @@ function CustomTableHead(props: EnhancedTableProps) {
     onRequestSort,
     headCells,
   } = props;
+
   const createSortHandler =
     (property: string) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
@@ -91,21 +89,25 @@ export interface DataTableProps {
   headCells: HeadCell[];
   data: React.ReactNode[][];
   dense: boolean;
-  order: Order;
+  page: number;
+  rowsPerPage: number;
+  order: OrderDirection;
   orderBy: string;
-  selected: number[];
+  selected: string[];
   handleSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleRequestSort: (
     event: React.MouseEvent<unknown>,
     property: string
   ) => void;
-  handleClick: (event: React.MouseEvent<unknown>, id: number) => void;
+  handleClick: (event: React.MouseEvent<unknown>, id: string) => void;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
   dense = false,
   headCells,
   data,
+  page,
+  rowsPerPage = 5,
   selected = [],
   order = "asc",
   orderBy = headCells[0]?.id || "",
@@ -113,10 +115,7 @@ const DataTable: React.FC<DataTableProps> = ({
   handleRequestSort,
   handleClick,
 }) => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const isSelected = (id: number) => selected.indexOf(id) !== -1;
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   return (
     <>
@@ -137,14 +136,14 @@ const DataTable: React.FC<DataTableProps> = ({
           />
           <TableBody>
             {data.map((row, index) => {
-              const actualIndex = page * rowsPerPage + index;
+              const actualIndex = page * rowsPerPage + index + "";
               const isItemSelected = isSelected(actualIndex);
               const labelId = `enhanced-table-checkbox-${actualIndex}`;
 
               return (
                 <TableRow
                   hover
-                  onClick={(event) => handleClick(event, actualIndex)}
+                  onClick={(event) => handleClick(event, "actualIndex")}
                   role="checkbox"
                   aria-checked={isItemSelected}
                   tabIndex={-1}
