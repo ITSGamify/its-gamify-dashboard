@@ -152,7 +152,7 @@ interface CourseFilterValues {
 }
 
 const CoursePage: React.FC = () => {
-  const [selected, setSelected] = useState<number[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
@@ -174,9 +174,9 @@ const CoursePage: React.FC = () => {
     setPage(0);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const selectedIndex = selected.indexOf(id);
-    let newSelected: number[] = [];
+    let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
@@ -195,11 +195,11 @@ const CoursePage: React.FC = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = Array.from(
-        { length: courseData.length },
-        (_, index) => index
-      );
-      setSelected(newSelected);
+      // const newSelected = Array.from(
+      //   { length: courseData.length },
+      //   (_, index) => index
+      // );
+      // setSelected(newSelected);
       return;
     }
     setSelected([]);
