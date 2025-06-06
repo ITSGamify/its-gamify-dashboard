@@ -297,7 +297,7 @@ const AccountPage: React.FC = () => {
 
   const visibleRows = React.useMemo(
     () => json.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [json, page, rowsPerPage]
+    [page, rowsPerPage]
   );
 
   const dataTable = visibleRows.map((row: Data) => {
