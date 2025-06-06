@@ -154,7 +154,7 @@ const AccountPage: React.FC = () => {
 
   const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
     const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly number[] = [];
+    let newSelected:  number[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
@@ -261,7 +261,7 @@ const AccountPage: React.FC = () => {
 
   const visibleRows = React.useMemo(
     () => json.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [json, page, rowsPerPage]
+    [page, rowsPerPage]
   );
   const dataTable = visibleRows.map((row: Data) => {
     return [
