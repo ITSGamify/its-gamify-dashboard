@@ -14,34 +14,28 @@ import {
   Chip,
   styled,
 } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
+import { Badge, ButtonProps, IconButton } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 // Định nghĩa các kiểu dữ liệu
-interface UserRole {
+interface Department {
   id: string;
-  name: string;
+  label: string;
 }
 
-interface UserStatus {
-  id: string;
-  name: string;
-}
-
-interface UserFilterPopperProps {
+interface CourseFilterPopperProps {
   anchorEl: HTMLElement | null;
   open: boolean;
   onClose: () => void;
-  roles: UserRole[];
-  statuses: UserStatus[];
-  onApplyFilter: (filters: UserFilterValues) => void;
-  initialFilters?: UserFilterValues;
+  departments: Department[];
+  onApplyFilter: (filters: CourseFilterValues) => void;
+  initialFilters?: CourseFilterValues;
 }
 
-interface UserFilterValues {
-  roles: string[];
-  statuses: string[];
+interface CourseFilterValues {
+  departments: string[];
 }
 
 // Styled components
@@ -83,47 +77,35 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 }));
 
 // Component chính
-const UserFilterPopper: React.FC<UserFilterPopperProps> = ({
+export const CourseFilterPopper: React.FC<CourseFilterPopperProps> = ({
   anchorEl,
   open,
   onClose,
-  roles,
-  statuses,
+  departments,
   onApplyFilter,
   initialFilters,
 }) => {
   // State cho các giá trị filter
-  const [filters, setFilters] = useState<UserFilterValues>(
+  const [filters, setFilters] = useState<CourseFilterValues>(
     initialFilters || {
-      roles: [],
-      statuses: [],
+      departments: [],
     }
   );
 
   // Xử lý thay đổi các giá trị filter
-  const handleRoleChange = (roleId: string) => {
+  const handleDepartmentChange = (id: string) => {
     setFilters((prev) => {
-      const newRoles = prev.roles.includes(roleId)
-        ? prev.roles.filter((id) => id !== roleId)
-        : [...prev.roles, roleId];
-      return { ...prev, roles: newRoles };
-    });
-  };
-
-  const handleStatusChange = (statusId: string) => {
-    setFilters((prev) => {
-      const newStatuses = prev.statuses.includes(statusId)
-        ? prev.statuses.filter((id) => id !== statusId)
-        : [...prev.statuses, statusId];
-      return { ...prev, statuses: newStatuses };
+      const newDepartments = prev.departments.includes(id)
+        ? prev.departments.filter((id) => id !== id)
+        : [...prev.departments, id];
+      return { ...prev, departments: newDepartments };
     });
   };
 
   // Xử lý reset filter
   const handleResetFilters = () => {
     setFilters({
-      roles: [],
-      statuses: [],
+      departments: [],
     });
   };
 
@@ -136,8 +118,7 @@ const UserFilterPopper: React.FC<UserFilterPopperProps> = ({
   // Đếm số lượng filter đang áp dụng
   const getActiveFilterCount = () => {
     let count = 0;
-    if (filters.roles.length > 0) count += 1;
-    if (filters.statuses.length > 0) count += 1;
+    if (filters.departments.length > 0) count += 1;
     return count;
   };
 
@@ -152,9 +133,8 @@ const UserFilterPopper: React.FC<UserFilterPopperProps> = ({
         <FilterContainer>
           <FilterHeader>
             <Box display="flex" alignItems="center">
-              <FilterListIcon color="primary" sx={{ mr: 1 }} />
               <Typography variant="subtitle1" fontWeight={600}>
-                Lọc người dùng
+                Lọc khóa học
               </Typography>
               {getActiveFilterCount() > 0 && (
                 <Chip
@@ -178,83 +158,31 @@ const UserFilterPopper: React.FC<UserFilterPopperProps> = ({
 
           <FilterSection>
             <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-              Vai trò
+              Phòng ban
             </Typography>
             <FormControl component="fieldset" fullWidth>
               <FormGroup>
-                {roles.map((role) => (
+                {departments.map((department) => (
                   <FormControlLabel
-                    key={role.id}
+                    key={department.id}
                     control={
                       <Checkbox
-                        checked={filters.roles.includes(role.id)}
-                        onChange={() => handleRoleChange(role.id)}
-                        color="primary"
-                        size="small"
-                      />
-                    }
-                    label={<Typography variant="body2">{role.name}</Typography>}
-                  />
-                ))}
-              </FormGroup>
-            </FormControl>
-          </FilterSection>
-
-          <FilterSection>
-            <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-              Trạng thái
-            </Typography>
-            <FormControl component="fieldset" fullWidth>
-              <FormGroup>
-                {statuses.map((status) => (
-                  <FormControlLabel
-                    key={status.id}
-                    control={
-                      <Checkbox
-                        checked={filters.statuses.includes(status.id)}
-                        onChange={() => handleStatusChange(status.id)}
+                        checked={filters.departments.includes(department.id)}
+                        onChange={() => handleDepartmentChange(department.id)}
                         color="primary"
                         size="small"
                       />
                     }
                     label={
-                      <Typography variant="body2">{status.name}</Typography>
+                      <Typography variant="body2">
+                        {department.label}
+                      </Typography>
                     }
                   />
                 ))}
               </FormGroup>
             </FormControl>
           </FilterSection>
-
-          {/* <FilterSection>
-            <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-              Ngày đăng ký
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid container>
-                <TextField
-                  fullWidth
-                  label="Từ ngày"
-                  type="date"
-                  size="small"
-                  value={filters.dateRange?.from || ""}
-                  onChange={(e) => handleDateChange("from", e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid container>
-                <TextField
-                  fullWidth
-                  label="Đến ngày"
-                  type="date"
-                  size="small"
-                  value={filters.dateRange?.to || ""}
-                  onChange={(e) => handleDateChange("to", e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-            </Grid>
-          </FilterSection> */}
 
           {getActiveFilterCount() > 0 && (
             <FilterSection>
@@ -262,19 +190,10 @@ const UserFilterPopper: React.FC<UserFilterPopperProps> = ({
                 Bộ lọc đang áp dụng
               </Typography>
               <Box display="flex" flexWrap="wrap">
-                {filters.roles.length > 0 && (
+                {filters.departments.length > 0 && (
                   <StyledChip
-                    label={`Vai trò: ${filters.roles.length}`}
-                    onDelete={() => setFilters({ ...filters, roles: [] })}
-                    color="primary"
-                    variant="outlined"
-                    size="small"
-                  />
-                )}
-                {filters.statuses.length > 0 && (
-                  <StyledChip
-                    label={`Trạng thái: ${filters.statuses.length}`}
-                    onDelete={() => setFilters({ ...filters, statuses: [] })}
+                    label={`Vai trò: ${filters.departments.length}`}
+                    onDelete={() => setFilters({ ...filters, departments: [] })}
                     color="primary"
                     variant="outlined"
                     size="small"
@@ -310,4 +229,69 @@ const UserFilterPopper: React.FC<UserFilterPopperProps> = ({
   );
 };
 
-export default UserFilterPopper;
+interface CourseFilterButtonProps extends Omit<ButtonProps, "onClick"> {
+  onFilterChange: (filters: CourseFilterValues) => void;
+  initialFilters?: CourseFilterValues;
+  departments: Array<Department>;
+}
+
+const CourseFilterButton: React.FC<CourseFilterButtonProps> = ({
+  onFilterChange,
+  initialFilters,
+  departments,
+  ...buttonProps
+}) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [filters, setFilters] = useState<CourseFilterValues>(
+    initialFilters || {
+      departments: [],
+    }
+  );
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleApplyFilter = (newFilters: CourseFilterValues) => {
+    setFilters(newFilters);
+    onFilterChange(newFilters);
+  };
+
+  // Đếm số lượng filter đang áp dụng
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (filters.departments.length > 0) count += 1;
+    return count;
+  };
+
+  const open = Boolean(anchorEl);
+
+  return (
+    <>
+      <Badge
+        badgeContent={getActiveFilterCount()}
+        color="primary"
+        invisible={getActiveFilterCount() === 0}
+      >
+        <IconButton onClick={handleClick}>
+          <FilterListIcon />
+        </IconButton>
+      </Badge>
+
+      <CourseFilterPopper
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        departments={departments}
+        onApplyFilter={handleApplyFilter}
+        initialFilters={filters}
+      />
+    </>
+  );
+};
+
+export default CourseFilterButton;

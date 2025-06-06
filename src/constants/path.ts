@@ -1,8 +1,11 @@
+const COURSE_PATH = "/courses";
+
 export const PATH = {
   LOGIN: "/login",
   HOME: "/",
   ACCOUNTS: "/accounts",
-  COURSES: "/courses",
+  COURSES: COURSE_PATH,
+  COURSES_CREATE: COURSE_PATH + "/create",
   QUIZ: "/quiz",
   TOURNAMENT: "/tournament",
   FORBIDDEN: "/403",

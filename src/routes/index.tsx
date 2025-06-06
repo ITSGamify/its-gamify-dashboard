@@ -3,6 +3,7 @@ import { USER_ROLES } from "@constants/user-role";
 import { RoleEnum } from "@interfaces/shared/user";
 import userSession from "@utils/user-session";
 
+import CoursePage from "@pages/Course";
 import LoginPage from "@pages/Login";
 import HomePage from "@pages/Home";
 import NotFound404 from "@pages/NotFound404";
@@ -96,6 +97,14 @@ const router = createBrowserRouter(
         },
         {
           path: PATH.TOURNAMENT,
+          element: <HomePage />,
+        },
+        {
+          path: PATH.COURSES,
+          element: <CoursePage />,
+        },
+        {
+          path: PATH.COURSES_CREATE,
           element: <HomePage />,
         },
       ],

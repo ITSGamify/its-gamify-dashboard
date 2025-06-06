@@ -12,18 +12,13 @@ import { alpha } from "@mui/material/styles";
 import { styled } from "@mui/material/styles";
 import { Search as SearchIcon } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
-import UserFilterButton from "../UserFilterBtton";
-import { useState } from "react";
+import { ReactElement } from "react";
 
 interface TableToolbarProps {
   numSelected: number;
   onCreate: () => void;
   createLabel: string;
-}
-
-interface UserFilterValues {
-  roles: string[];
-  statuses: string[];
+  filterButton: ReactElement;
 }
 
 const SearchWrapper = styled("div")(({ theme }) => ({
@@ -67,33 +62,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const roles = [
-  { id: "admin", name: "Quản trị viên" },
-  { id: "teacher", name: "Giảng viên" },
-  { id: "student", name: "Học viên" },
-  { id: "staff", name: "Nhân viên" },
-];
-
 function TableToolbar(props: TableToolbarProps) {
-  const { numSelected, onCreate, createLabel } = props;
-
-  const statuses = [
-    { id: "active", name: "Đang hoạt động" },
-    { id: "inactive", name: "Không hoạt động" },
-    { id: "pending", name: "Chờ xác nhận" },
-    { id: "blocked", name: "Đã khóa" },
-  ];
-
-  const [filters, setFilters] = useState<UserFilterValues>({
-    roles: [],
-    statuses: [],
-  });
-
-  const handleFilterChange = (newFilters: UserFilterValues) => {
-    setFilters(newFilters);
-    console.log("Filters applied:", newFilters);
-    // Thực hiện logic lọc dữ liệu ở đây
-  };
+  const { numSelected, onCreate, createLabel, filterButton } = props;
 
   return (
     <>
@@ -145,17 +115,8 @@ function TableToolbar(props: TableToolbarProps) {
               >
                 Bộ lọc:
               </Typography>
-              <Tooltip title="Lọc danh sách">
-                {/* <IconButton>
-                <FilterListIcon />
-              </IconButton> */}
-                <UserFilterButton
-                  roles={roles}
-                  statuses={statuses}
-                  onFilterChange={handleFilterChange}
-                  initialFilters={filters}
-                />
-              </Tooltip>
+              <Tooltip title="Lọc danh sách">{filterButton}</Tooltip>
+
               <SearchWrapper>
                 <SearchIconWrapper>
                   <SearchIcon />
