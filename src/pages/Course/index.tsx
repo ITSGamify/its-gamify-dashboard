@@ -247,7 +247,7 @@ const CoursePage: React.FC = () => {
   const visibleRows = useMemo(
     () =>
       courseData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [courseData, page, rowsPerPage]
+    [ page, rowsPerPage]
   );
 
   const dataTable = visibleRows.map((row: Course) => {
