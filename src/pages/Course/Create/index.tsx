@@ -19,7 +19,6 @@ import LearningMaterialsForm from "@components/ui/molecules/LearningMaterialsFor
 import PreviewPublishForm from "@components/ui/molecules/PreviewPublishForm";
 import { useCourseForm } from "@hooks/data/useCourseForm";
 
-// Steps for the stepper
 const steps = [
   "Thông tin cơ bản",
   "Nội dung khóa học",
