@@ -84,7 +84,7 @@ its-gamify-ui/
 │   ├── interfaces/           # Chứa TypeScript types
 │   │   ├── user.ts           # Định nghĩa kiểu dữ liệu User
 │   │   └── auth.ts           # Định nghĩa kiểu dữ liệu Auth
-│   ├── i18n/ #
+│   ├── i18n/ #               # Config language
 │   │   ├── locales/
 │   │   │   ├── en/
 │   │   │   ├──common.json
