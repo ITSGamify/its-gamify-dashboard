@@ -10,7 +10,7 @@ export const baseApiURL = API_URL + `/api`;
 
 export const axiosInstance = axios.create();
 
-axiosInstance.defaults.withCredentials = true;
+axiosInstance.defaults.withCredentials = false;
 
 axiosInstance.interceptors.request.use(async function (config) {
   config.baseURL = baseApiURL;
@@ -21,9 +21,8 @@ axiosInstance.interceptors.request.use(async function (config) {
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // const i18ErrNamespace = "errors";
     let errData = error.response?.data;
-    const status = error.response?.status;
+    const status = error.response?.status || error.code;
     const shouldNotShowError = error?.config?.shouldNotShowError;
 
     if (error.response && error.response.data instanceof Blob) {
@@ -39,19 +38,26 @@ axiosInstance.interceptors.response.use(
     } else {
       console.log(error, "error on blob");
     }
-
     switch (status) {
       case 401:
         userSession.clearUserProfile();
         window.location.href = PATH.LOGIN;
         break;
+      case "ERR_NETWORK":
+        toast.error(ToastContent, {
+          data: {
+            message: error.message,
+          },
+        });
+        break;
       default:
         if (!shouldNotShowError) {
+          console.log("show error", errData);
           toast.error(ToastContent, {
             data: {
               // message: i18next.t(`${i18ErrNamespace}:${errData.message}`),
               message: "Lỗi không xác định!",
-              errorCode: errData.error_code,
+              // errorCode: errData.error_code,
             },
           });
         }

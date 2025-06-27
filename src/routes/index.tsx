@@ -3,6 +3,7 @@ import { PATH } from "@constants/path";
 // import { RoleEnum } from "@interfaces/shared/user";
 import userSession from "@utils/user-session";
 
+import DepartmentPage from "@pages/Department";
 import CoursePage from "@pages/Course";
 import CourseCreatePage from "@pages/Course/Create";
 import LoginPage from "@pages/Login";
@@ -107,6 +108,10 @@ const router = createBrowserRouter(
         {
           path: PATH.COURSES_CREATE,
           element: <CourseCreatePage />,
+        },
+        {
+          path: PATH.DEPARTMENTS,
+          element: <DepartmentPage />,
         },
       ],
     },

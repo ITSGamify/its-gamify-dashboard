@@ -1,28 +1,31 @@
-/**
- * Interface định nghĩa cấu trúc của một bài học trong khóa học
- */
+export interface QuizQuestion {
+  index: number;
+  question: string;
+  answer_A: string;
+  answer_B: string;
+  answer_C: string;
+  answer_D: string;
+  correct_answer: string;
+  description: string;
+}
+
 export interface Lesson {
   id: string;
   title: string;
-  type: 'video' | 'article' | 'quiz';
+  type: "video" | "article" | "quiz";
   duration: number;
-  content: string;
-  videoUrl?: string;
+  content?: string;
+  video_url?: string;
+  quiz?: QuizQuestion[];
 }
 
-/**
- * Interface định nghĩa cấu trúc của một module trong khóa học
- */
 export interface Module {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   lessons: Lesson[];
 }
 
-/**
- * Interface định nghĩa kết quả từ thao tác kéo thả (drag and drop)
- */
 export interface DragEndResult {
   draggableId: string;
   type: string;
@@ -35,7 +38,6 @@ export interface DragEndResult {
     droppableId: string;
   };
 }
-
 
 export interface CourseDataProps {
   title: string;

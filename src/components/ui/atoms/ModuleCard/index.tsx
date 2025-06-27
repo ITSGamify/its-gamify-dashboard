@@ -13,6 +13,14 @@ import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { Droppable } from "react-beautiful-dnd";
 import LessonCard from "../LessonCard";
 import { Module } from "@interfaces/dom/course";
+import {
+  Control,
+  Controller,
+  useFieldArray,
+  UseFormGetValues,
+  UseFormWatch,
+} from "react-hook-form";
+import { CourseContentForm } from "@hooks/data/useCourseContentForm";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(3),
@@ -22,52 +30,88 @@ const StyledCard = styled(Card)(({ theme }) => ({
 
 interface ModuleCardProps {
   module: Module;
-  handleModuleChange: (moduleId: string, field: string, value: string) => void;
-  handleDeleteModule: (moduleId: string) => void;
-  handleAddLesson: (moduleId: string) => void;
-  handleLessonChange: (
-    moduleId: string,
-    lessonId: string,
-    field: string,
-    value: unknown
-  ) => void;
-  handleDeleteLesson: (moduleId: string, lessonId: string) => void;
+  index: number;
+  handleDeleteModule: (index: number) => void;
   isLast: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<CourseContentForm, any, CourseContentForm>;
+  getValues: UseFormGetValues<CourseContentForm>;
+  watch: UseFormWatch<CourseContentForm>;
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({
   module,
-  handleModuleChange,
+  index: moduleIndex,
   handleDeleteModule,
-  handleAddLesson,
-  handleLessonChange,
-  handleDeleteLesson,
   isLast,
+  control,
+  getValues,
+  watch,
 }) => {
+  const {
+    fields: lessons,
+    append: appendLesson,
+    remove: removeLesson,
+  } = useFieldArray({
+    control,
+    name: `modules.${moduleIndex}.lessons`,
+  });
+
+  const handleAddLesson = () => {
+    appendLesson({
+      ...{
+        id: `lession-2`,
+        title: `Bài ${lessons.length + 1}: Cài đặt môi trường`,
+        type: "article",
+        duration: 15,
+        content: "Hướng dẫn cài đặt môi trường làm việc",
+      },
+    });
+  };
+
+  const handleRemoveLesson = (lessonIndex: number) => {
+    removeLesson(lessonIndex);
+  };
+
   return (
     <StyledCard>
       <CardContent sx={{ pb: 1 }}>
         <Box sx={{ mb: 2 }}>
-          <TextField
-            fullWidth
-            label="Tiêu đề module"
-            value={module.title}
-            onChange={(e) =>
-              handleModuleChange(module.id, "title", e.target.value)
-            }
-            variant="outlined"
-            sx={{ mb: 2 }}
+          <Controller
+            name={`modules.${moduleIndex}.title`}
+            control={control}
+            rules={{ required: true }}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                fullWidth
+                label="Tiêu đề module"
+                value={field.value}
+                onChange={field.onChange}
+                error={!!error}
+                helperText={error?.message}
+                variant="outlined"
+                sx={{ mb: 2 }}
+              />
+            )}
           />
-          <TextField
-            fullWidth
-            label="Mô tả module"
-            value={module.description}
-            onChange={(e) =>
-              handleModuleChange(module.id, "description", e.target.value)
-            }
-            variant="outlined"
-            multiline
-            rows={2}
+
+          <Controller
+            name={`modules.${moduleIndex}.description`}
+            control={control}
+            rules={{ required: true }}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                fullWidth
+                label="Mô tả module"
+                value={field.value}
+                onChange={field.onChange}
+                error={!!error}
+                helperText={error?.message}
+                variant="outlined"
+                multiline
+                rows={2}
+              />
+            )}
           />
         </Box>
 
@@ -78,14 +122,14 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           mb={2}
         >
           <Typography variant="subtitle2">
-            Bài học ({module.lessons.length})
+            Bài học ({lessons.length})
           </Typography>
           <Box>
             <Button
               variant="outlined"
               startIcon={<AddIcon />}
               size="small"
-              onClick={() => handleAddLesson(module.id)}
+              onClick={handleAddLesson}
               sx={{ mr: 1 }}
             >
               Thêm bài học
@@ -96,7 +140,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
                 color="error"
                 startIcon={<DeleteIcon />}
                 size="small"
-                onClick={() => handleDeleteModule(module.id)}
+                onClick={() => handleDeleteModule(moduleIndex)}
               >
                 Xóa module
               </Button>
@@ -104,7 +148,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           </Box>
         </Box>
         <Droppable
-          droppableId={`${module.id}`}
+          droppableId={`${moduleIndex}`}
           type="LESSON"
           direction="vertical"
           isDropDisabled={false}
@@ -125,18 +169,21 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
                 transition: "background-color 0.2s ease",
               }}
             >
-              {module.lessons.map((lesson, index) => (
+              {lessons.map((lesson, index) => (
                 <LessonCard
                   key={index}
                   lesson={lesson}
                   index={index}
                   moduleId={module.id}
-                  handleLessonChange={handleLessonChange}
-                  handleDeleteLesson={handleDeleteLesson}
+                  handleDeleteLesson={handleRemoveLesson}
+                  control={control}
+                  moduleIndex={moduleIndex}
+                  getValues={getValues}
+                  watch={watch}
                 />
               ))}
               {provided.placeholder}
-              {module.lessons.length === 0 && (
+              {lessons.length === 0 && (
                 <Box
                   sx={{
                     p: 2,

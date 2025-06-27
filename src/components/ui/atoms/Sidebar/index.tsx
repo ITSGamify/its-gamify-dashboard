@@ -14,15 +14,10 @@ import {
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
-  Book as BookIcon,
   People as PeopleIcon,
-  Assignment as AssignmentIcon,
-  Settings as SettingsIcon,
   ExpandLess,
   ExpandMore,
-  ChevronLeft as ChevronLeftIcon,
-  MenuBook as MenuBookIcon,
-  Category as CategoryIcon,
+  Apartment as ApartmentIcon,
   School as SchoolIcon,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -31,7 +26,6 @@ import useCustomTranslation from "@hooks/shared/useTranslation";
 import { TRANSLATION_NAME_SPACES } from "@i18n/config";
 import { PATH } from "@constants/path";
 interface SidebarProps {
-  onClose: () => void;
   isOpen: boolean;
 }
 
@@ -45,7 +39,7 @@ interface MenuItem {
     path: string;
   }[];
 }
-const Sidebar: React.FC<SidebarProps> = ({ onClose, isOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
@@ -95,6 +89,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose, isOpen }) => {
       text: t("dashboard"),
       icon: <DashboardIcon />,
       path: PATH.HOME,
+    },
+    {
+      text: t("department"),
+      icon: <ApartmentIcon />,
+      path: PATH.DEPARTMENTS,
     },
     // {
     //   text: "Khóa học",

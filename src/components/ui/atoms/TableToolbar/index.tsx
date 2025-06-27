@@ -13,12 +13,24 @@ import { styled } from "@mui/material/styles";
 import { Search as SearchIcon } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import { ReactElement } from "react";
+import { simulateEnterKeyDown } from "@utils/common";
+import { FilterGroup, FilterValues } from "@interfaces/dom/filter";
 
 interface TableToolbarProps {
+  filterTitle?: string;
   numSelected: number;
   onCreate: () => void;
   createLabel: string;
-  filterButton: ReactElement;
+  filterButton?: ReactElement;
+  handleAppyFilter?: (
+    filterGroups: FilterGroup[],
+    filters: FilterValues,
+    onSuccess: () => void
+  ) => void;
+  searchValue: string | "";
+  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onEnter?: () => void;
+  onDelete?: () => void;
 }
 
 const SearchWrapper = styled("div")(({ theme }) => ({
@@ -63,7 +75,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 function TableToolbar(props: TableToolbarProps) {
-  const { numSelected, onCreate, createLabel, filterButton } = props;
+  const {
+    numSelected,
+    onCreate,
+    createLabel,
+    filterButton,
+    filterTitle = "Bộ lọc:",
+    searchValue = "",
+    onInputChange,
+    onEnter,
+    onDelete,
+  } = props;
 
   return (
     <>
@@ -113,15 +135,19 @@ function TableToolbar(props: TableToolbarProps) {
                 id="tableTitle"
                 component="div"
               >
-                Bộ lọc:
+                {filterTitle}
               </Typography>
-              <Tooltip title="Lọc danh sách">{filterButton}</Tooltip>
-
+              {filterButton && (
+                <Tooltip title="Lọc danh sách">{filterButton}</Tooltip>
+              )}
               <SearchWrapper>
                 <SearchIconWrapper>
                   <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
+                  onKeyDown={simulateEnterKeyDown(onEnter)}
+                  value={searchValue}
+                  onChange={onInputChange}
                   placeholder="Tìm kiếm..."
                   inputProps={{ "aria-label": "search" }}
                 />
@@ -135,7 +161,7 @@ function TableToolbar(props: TableToolbarProps) {
         {numSelected > 0 && (
           <>
             <Tooltip title="Xóa">
-              <IconButton>
+              <IconButton onClick={onDelete}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>

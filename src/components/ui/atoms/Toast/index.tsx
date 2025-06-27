@@ -1,5 +1,6 @@
 import { ToastContentProps, TypeOptions } from "react-toastify";
 import { CheckCircle, Info, Warning, Error, Close } from "@mui/icons-material";
+import { Box, Typography, IconButton, Stack } from "@mui/material";
 
 interface ToastIconProps {
   severity?: TypeOptions;
@@ -14,15 +15,15 @@ interface ToastDataProps {
 const ToastIcon = ({ severity }: ToastIconProps) => {
   switch (severity) {
     case "success":
-      return <CheckCircle className="text-green-500" />;
+      return <CheckCircle sx={{ color: "success.main" }} />;
     case "info":
-      return <Info className="text-blue-500" />;
+      return <Info sx={{ color: "info.main" }} />;
     case "warning":
-      return <Warning className="text-yellow-500" />;
+      return <Warning sx={{ color: "warning.main" }} />;
     case "error":
-      return <Error className="text-red-500" />;
+      return <Error sx={{ color: "error.main" }} />;
     default:
-      return <Info className="text-blue-500" />;
+      return <Info sx={{ color: "info.main" }} />;
   }
 };
 
@@ -32,34 +33,48 @@ const ToastContent = (props: ToastContentProps<ToastDataProps>) => {
   const isErrorWithCode = errorCode && message;
 
   return (
-    <div className="flex items-start gap-3 w-full">
+    <Stack direction="row" spacing={2} alignItems="center" width="100%">
       {/* Icon bên trái */}
-      <div className="flex-shrink-0 pt-0.5">
+      <Box sx={{ pt: 0.5, flexShrink: 0 }}>
         <ToastIcon severity={severity} />
-      </div>
+      </Box>
 
       {/* Nội dung chính */}
-      <div className="flex-1">
+      <Box sx={{ flex: 1 }}>
         {isErrorWithCode ? (
           <>
-            <div className="font-medium">Error {errorCode}</div>
-            <div className="text-sm opacity-90 mt-1">{message}</div>
+            <Typography variant="body1" fontWeight="medium">
+              Error {errorCode}
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }}>
+              {message}
+            </Typography>
           </>
         ) : (
-          <div className="font-medium">{message}</div>
+          <Typography variant="body1" fontWeight="medium">
+            {message}
+          </Typography>
         )}
-      </div>
+      </Box>
 
       {/* Nút đóng (tùy chọn - react-toastify đã có sẵn) */}
       {props.closeToast && (
-        <button
+        <IconButton
           onClick={props.closeToast}
-          className="flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity"
+          size="small"
+          sx={{
+            flexShrink: 0,
+            opacity: 0.7,
+            "&:hover": {
+              opacity: 1,
+            },
+            transition: "opacity 0.2s",
+          }}
         >
           <Close fontSize="small" />
-        </button>
+        </IconButton>
       )}
-    </div>
+    </Stack>
   );
 };
 

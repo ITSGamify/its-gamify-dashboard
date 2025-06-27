@@ -1,7 +1,6 @@
 import { Button, MenuItem } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import CustomPopper from "../Popper";
-import { Fragment } from "react/jsx-runtime";
 import { useState } from "react";
 
 interface MenuItemProps {
@@ -34,18 +33,22 @@ const TableActionButton = ({ menuItems }: TableActionButtonProp) => {
         <MoreHorizIcon />
       </Button>
       <CustomPopper isOpen={open} onClose={handleClose} anchorEl={anchorEl}>
-        <Fragment>
-          {menuItems.map((item, index) => (
-            <MenuItem
-              key={index}
-              onClick={item.onClick}
-              sx={{ fontSize: "14px", ...item.sx }}
-            >
-              {item.icon && <span style={{ marginRight: 8 }}>{item.icon}</span>}
-              {item.label}
-            </MenuItem>
-          ))}
-        </Fragment>
+        {menuItems.map((item, index) => (
+          <MenuItem
+            key={index}
+            onClick={(event) => {
+              event.stopPropagation();
+              if (item.onClick) {
+                item.onClick();
+              }
+              handleClose();
+            }}
+            sx={{ fontSize: "14px", ...item.sx }}
+          >
+            {item.icon && <span style={{ marginRight: 8 }}>{item.icon}</span>}
+            {item.label}
+          </MenuItem>
+        ))}
       </CustomPopper>
     </>
   );

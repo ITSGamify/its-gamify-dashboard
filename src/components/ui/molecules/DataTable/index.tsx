@@ -10,41 +10,13 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { visuallyHidden } from "@mui/utils";
 import { OrderDirection } from "@interfaces/dom/query";
-
-// Định nghĩa interface cho HeadCell để linh hoạt hơn
-export interface HeadCell {
-  id: string;
-  numeric: boolean;
-  align: "right" | "left" | "center";
-  disablePadding: boolean;
-  label: string;
-}
-interface EnhancedTableProps {
-  numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: OrderDirection;
-  orderBy: string;
-  rowCount: number;
-  headCells: HeadCell[];
-}
+import { HeadCell, EnhancedTableProps } from "@interfaces/dom/table";
+import { CircularProgress, Typography } from "@mui/material";
+import InboxIcon from "@mui/icons-material/Inbox";
 
 function CustomTableHead(props: EnhancedTableProps) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-    headCells,
-  } = props;
-
-  const createSortHandler =
-    (property: string) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
-
+  const { onSelectAllClick, numSelected, rowCount, onRequestSort, headCells } =
+    props;
   return (
     <TableHead>
       <TableRow>
@@ -64,17 +36,24 @@ function CustomTableHead(props: EnhancedTableProps) {
             key={index}
             align={headCell.align}
             padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
+            sortDirection={headCell.sortDirection || false}
           >
             <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
+              active={!headCell.disableSort}
+              direction={headCell.sortDirection || undefined}
+              onClick={() =>
+                onRequestSort(
+                  headCell.id,
+                  headCell.sortDirection == "asc" ? "desc" : "asc"
+                )
+              }
             >
               {headCell.label}
-              {orderBy === headCell.id ? (
+              {headCell.isSorted ? (
                 <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+                  {headCell.sortDirection === "desc"
+                    ? "sorted descending"
+                    : "sorted ascending"}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -85,90 +64,111 @@ function CustomTableHead(props: EnhancedTableProps) {
   );
 }
 
+const TableLoadingOverlay = () => {
+  return (
+    <Box
+      sx={{
+        py: 10,
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(255, 255, 255, 0.7)",
+        zIndex: 1,
+      }}
+    >
+      <CircularProgress color="primary" />
+    </Box>
+  );
+};
+
 export interface DataTableProps {
   headCells: HeadCell[];
   data: React.ReactNode[][];
-  dense: boolean;
-  page: number;
-  rowsPerPage: number;
-  order: OrderDirection;
-  orderBy: string;
+  dense?: boolean;
+  isLoading: boolean;
   selected: string[];
   handleSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: string
-  ) => void;
-  handleClick: (event: React.MouseEvent<unknown>, id: string) => void;
+  handleRequestSort: (ecolumn: string, direction: OrderDirection) => void;
+  handleClick: (event: React.MouseEvent<unknown>, id: number) => void;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
-  dense = false,
+  dense = true,
   headCells,
   data,
-  page,
-  rowsPerPage = 5,
   selected = [],
-  order = "asc",
-  orderBy = headCells[0]?.id || "",
   handleSelectAllClick,
   handleRequestSort,
   handleClick,
+  isLoading,
 }) => {
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
-
   return (
     <>
-      <TableContainer>
-        <Table
-          sx={{ minWidth: 750 }}
-          aria-labelledby="tableTitle"
-          size={dense ? "small" : "medium"}
-        >
-          <CustomTableHead
-            headCells={headCells}
-            numSelected={selected.length}
-            order={order}
-            orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
-            rowCount={data.length}
-          />
-          <TableBody>
-            {data.map((row, index) => {
-              const actualIndex = page * rowsPerPage + index + "";
-              const isItemSelected = isSelected(actualIndex);
-              const labelId = `enhanced-table-checkbox-${actualIndex}`;
-
-              return (
-                <TableRow
-                  hover
-                  onClick={(event) => handleClick(event, "actualIndex")}
-                  role="checkbox"
-                  aria-checked={isItemSelected}
-                  tabIndex={-1}
-                  key={actualIndex}
-                  selected={isItemSelected}
-                  sx={{ cursor: "pointer" }}
-                >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      color="primary"
-                      checked={isItemSelected}
-                      inputProps={{
-                        "aria-labelledby": labelId,
+      <Box sx={{ position: "relative" }}>
+        {isLoading && <TableLoadingOverlay />}
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size={dense ? "small" : "medium"}
+          >
+            {data.length !== 0 && !isLoading && (
+              <CustomTableHead
+                headCells={headCells}
+                numSelected={selected.length}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={data.length}
+              />
+            )}
+            <TableBody>
+              {data.map((row, index) => {
+                return (
+                  <TableRow
+                    hover
+                    onClick={(event) => handleClick(event, index)}
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={index}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    {row.map((cell, cellIndex) => (
+                      <React.Fragment key={cellIndex}>{cell}</React.Fragment>
+                    ))}
+                  </TableRow>
+                );
+              })}
+              {data.length === 0 && !isLoading && (
+                <TableRow sx={{ height: 200 }}>
+                  <TableCell colSpan={headCells.length + 1} align="center">
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        py: 3,
                       }}
-                    />
+                    >
+                      <InboxIcon
+                        sx={{
+                          fontSize: 64,
+                          color: "text.secondary",
+                          mb: 1,
+                        }}
+                      />
+                      <Typography variant="h6" color="text.secondary">
+                        Không có dữ liệu
+                      </Typography>
+                    </Box>
                   </TableCell>
-                  {row.map((cell, cellIndex) => (
-                    <React.Fragment key={cellIndex}>{cell}</React.Fragment>
-                  ))}
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
     </>
   );
 };
