@@ -198,6 +198,7 @@ export const themeOptions: ThemeOptions = {
   shape: {
     borderRadius: 8,
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   shadows: shadows as any,
   breakpoints: {
     values: {

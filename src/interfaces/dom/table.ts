@@ -1,13 +1,25 @@
-interface HeadCell {
+import { OrderDirection } from "./query";
+
+export interface HeadCell {
+  id: string;
+  numeric: boolean;
+  align: "right" | "left" | "center";
   disablePadding: boolean;
   label: string;
-  numeric: boolean;
+  isSorted: boolean;
+  disableSort: boolean;
+  sortDirection: OrderDirection | null;
 }
-interface Data {
-  id: number;
-  calories: number;
-  carbs: number;
-  fat: number;
-  name: string;
-  protein: number;
+
+export interface EnhancedTableProps {
+  numSelected: number;
+  onRequestSort: (column: string, direction: OrderDirection) => void;
+  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  rowCount: number;
+  headCells: HeadCell[];
 }
+
+export type TableColumns = Array<{
+  column: string | null;
+  direction: OrderDirection | null;
+}>;

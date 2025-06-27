@@ -7,7 +7,7 @@ interface TagInputProps {
   tags: string[];
   currentTag: string;
   setCurrentTag: (tag: string) => void;
-  handleAddTag: () => void;
+  handleAddTag: (tag: string) => void;
   handleDeleteTag: (tag: string) => void;
   maxTags?: number;
 }
@@ -32,7 +32,8 @@ const TagInput: React.FC<TagInputProps> = ({
           onKeyPress={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              handleAddTag();
+              handleAddTag(currentTag.trim());
+              setCurrentTag("");
             }
           }}
           sx={{ mr: 1 }}
@@ -41,7 +42,10 @@ const TagInput: React.FC<TagInputProps> = ({
         <Button
           variant="contained"
           color="primary"
-          onClick={handleAddTag}
+          onClick={() => {
+            handleAddTag(currentTag.trim());
+            setCurrentTag("");
+          }}
           disabled={!currentTag.trim() || tags.length >= maxTags}
         >
           <AddIcon />

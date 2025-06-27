@@ -7,11 +7,17 @@ import { FilterValues, FilterGroup } from "@interfaces/dom/filter";
 interface FilterButtonProps extends Omit<ButtonProps, "onClick"> {
   filterGroups: FilterGroup[];
   title?: string;
+  handleApplyFilters: (
+    filterGroups: FilterGroup[],
+    filters: FilterValues,
+    onSuccess: () => void
+  ) => void;
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({
   filterGroups,
   title = "Lọc người dùng",
+  handleApplyFilters,
   ...buttonProps
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -36,7 +42,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         try {
           // Thử parse JSON
           initialFilters[group.id] = JSON.parse(paramValue);
-        } catch (e) {
+        } catch {
           // Nếu không phải JSON, xử lý như một giá trị đơn lẻ hoặc danh sách phân tách bằng dấu phẩy
           if (paramValue.includes(".")) {
             // Nếu có dấu phẩy, xem như danh sách các giá trị
@@ -60,10 +66,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleApplyFilter = (newFilters: FilterValues) => {
     setAnchorEl(null);
   };
 
@@ -98,6 +100,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
       </Badge>
 
       <FilterPopper
+        handleApplyFilters={handleApplyFilters}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}

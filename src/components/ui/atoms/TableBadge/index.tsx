@@ -1,24 +1,16 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
 import { Chip, ChipProps } from "@mui/material";
-
-type StatusType =
-  | "active"
-  | "pending"
-  | "completed"
-  | "cancelled"
-  | "error"
-  | "banned"
-  | "disbaled";
+import { StatusType } from "@pages/Account";
 
 interface StatusBadgeProps extends Omit<ChipProps, "color"> {
   status: StatusType;
 }
 
-const StyledChip = styled(Chip)<{ status: StatusType }>(({ theme, status }) => {
+const StyledChip = styled(Chip)<{ status: StatusType }>(({ status }) => {
   const getStatusColor = () => {
     switch (status) {
-      case "active":
+      case "ACTIVE":
         return {
           color: "#23AC00",
           bgcolor: "#E9F7E6",

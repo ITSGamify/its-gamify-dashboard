@@ -27,9 +27,14 @@ interface FilterPopperProps {
   setFilters: React.Dispatch<React.SetStateAction<FilterValues>>;
   handleResetFilters: () => void;
   title?: string;
+  handleApplyFilters: (
+    filterGroups: FilterGroup[],
+    filters: FilterValues,
+    onSuccess: () => void
+  ) => void;
 }
 
-// Styled components
+//#region  Styled components
 const FilterContainer = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
   width: 320,
@@ -66,6 +71,7 @@ const StyledChip = styled(Chip)(({ theme }) => ({
     paddingRight: 10,
   },
 }));
+//#endregion
 
 // Component chính
 const FilterPopper: React.FC<FilterPopperProps> = ({
@@ -76,6 +82,7 @@ const FilterPopper: React.FC<FilterPopperProps> = ({
   filters,
   setFilters,
   handleResetFilters,
+  handleApplyFilters,
   title = "Bộ lọc",
 }) => {
   // Xử lý thay đổi các giá trị filter
@@ -91,28 +98,6 @@ const FilterPopper: React.FC<FilterPopperProps> = ({
         [groupId]: newValues,
       };
     });
-  };
-
-  // Xử lý áp dụng filter
-  const handleApplyFilters = () => {
-    // Thêm params vào URL
-    const url = new URL(window.location.href);
-
-    // Xử lý từng nhóm filter
-    filterGroups.forEach((group) => {
-      const selectedValues = filters[group.id] || [];
-      if (selectedValues.length > 0) {
-        url.searchParams.set(group.id, selectedValues.join("."));
-      } else {
-        url.searchParams.delete(group.id);
-      }
-    });
-
-    // Cập nhật URL mà không làm tải lại trang
-    window.history.pushState({}, "", url.toString());
-
-    // Đóng popper
-    onClose();
   };
 
   // Xóa một nhóm filter
@@ -242,7 +227,7 @@ const FilterPopper: React.FC<FilterPopperProps> = ({
             <Button
               variant="contained"
               color="primary"
-              onClick={handleApplyFilters}
+              onClick={() => handleApplyFilters(filterGroups, filters, onClose)}
               startIcon={<CheckIcon />}
             >
               Áp dụng

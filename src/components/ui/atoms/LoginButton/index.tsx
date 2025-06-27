@@ -21,7 +21,7 @@ const LoginButton: React.FC<CustomButtonProps> = ({
     <MuiButton
       fullWidth
       variant={muiVariant}
-      color={color as any}
+      color={color}
       sx={{
         borderRadius: "8px",
         padding: "12px 16px",

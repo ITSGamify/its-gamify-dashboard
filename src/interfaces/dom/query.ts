@@ -5,7 +5,7 @@ export type OrderDirection = "asc" | "desc";
 export type PaginationParams = {
   page?: number;
   limit?: number;
-  q?: string;
+  q?: string; // Search query parameter used for filtering results
   order_by?: {
     order_dir?: OrderDirection;
     order_column?: string;
@@ -14,10 +14,13 @@ export type PaginationParams = {
 
 export type PaginatedResponse<T> = {
   data: T[];
-  pagination: {
-    total_pages: number;
-    total_records: number;
-    records_per_page: number;
-    current_page: number;
-  };
+  pagination: Pagination;
 };
+
+export interface Pagination {
+  total_pages: number;
+  total_items_count: number;
+  total_pages_count: number;
+  page_size: number;
+  page_index: number;
+}

@@ -1,4 +1,4 @@
-import { RoleEnum } from "@interfaces/shared/user";
+import { RoleEnum } from "@interfaces/api/user";
 
 type RoleObject = {
   [key in RoleEnum]: string;
