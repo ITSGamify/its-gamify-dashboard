@@ -26,7 +26,7 @@ export interface CourseRequestParams {
   description?: string;
   thumbnail_image_id?: string;
   introduction_video_id?: string;
-  classify?: string;
+  classify?: number;
   department_id?: string;
   category_id?: string;
   tags?: string[];
