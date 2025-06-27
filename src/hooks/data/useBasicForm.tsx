@@ -10,7 +10,7 @@ export interface BasicForm {
   description?: string;
   thumbnail_image_id?: string;
   introduction_video_id?: string;
-  classify?: string;
+  classify?: number;
   department_id?: string;
   category_id?: string;
   tags: string[];
@@ -32,7 +32,7 @@ export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
       description: data?.description || "",
       thumbnail_image_id: data?.thumbnail_image_id || "111111",
       introduction_video_id: data?.introduction_video_id || "111111",
-      classify: data?.classify || "",
+      classify: data?.classify || 1,
       department_id: data?.department_id || "1111111",
       category_id: data?.category_id || "111111",
       tags: data?.tags || [],

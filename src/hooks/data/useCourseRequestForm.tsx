@@ -39,11 +39,7 @@ export const useCourseForm = () => {
     navigation(PATH.COURSES);
   };
 
-  const {
-    data: courseDetail,
-    isLoading,
-    refetchData,
-  } = useGetCourseDetail(courseId || "");
+  const { data: courseDetail, isLoading } = useGetCourseDetail(courseId || "");
 
   const { mutateAsync: createCourse } = useCreateCourse();
 

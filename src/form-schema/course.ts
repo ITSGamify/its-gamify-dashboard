@@ -7,7 +7,7 @@ export interface BasicsFormData {
   description: string;
   thumbnail_image_id: string;
   introduction_video_id: string;
-  classify: string;
+  classify: number;
   department_id: string;
   category_id: string;
   tags: string[];
@@ -31,7 +31,7 @@ export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
     description: yup.string().required(),
     thumbnail_image_id: yup.string().required(),
     introduction_video_id: yup.string().required(),
-    classify: yup.string().required(),
+    classify: yup.number().required(),
     department_id: yup.string().required(),
     category_id: yup.string().required(),
     tags: yup.array().of(yup.string().defined()).required(),

@@ -64,7 +64,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           },
         }}
       >
-        <Sidebar onClose={handleToggleDrawer} isOpen={isDrawerOpen} />
+        <Sidebar isOpen={isDrawerOpen} />
       </Drawer>
       <Box
         component="main"
