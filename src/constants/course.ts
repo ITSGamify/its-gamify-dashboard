@@ -9,3 +9,13 @@ export const STEPS = [
   "Tài liệu học tập",
   "Xem trước & Xuất bản",
 ];
+
+export const LEADER_ONLY = "0";
+export const DEPARTMENT_ONLY = "1";
+export const ALL = "2";
+
+export const INITIAL = "INITIAL";
+export const CONTENT = "CONTENT";
+export const MATERIAL = "MATERIAL";
+export const CONFIRM = "CONFIRM";
+export const PUBLISHED = "PUBLISHED";

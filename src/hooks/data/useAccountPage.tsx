@@ -1,8 +1,10 @@
+import ToastContent from "@components/ui/atoms/Toast";
 import {
   ACCOUNT_TABLE_HEAD,
   DEFAULT_TABLE_LIMIT,
   DEFAULT_TABLE_PAGE_NUMBER,
 } from "@constants/table";
+import { User } from "@interfaces/api/user";
 import { FilterGroup, FilterValues } from "@interfaces/dom/filter";
 import { OrderDirection } from "@interfaces/dom/query";
 import { HeadCell, TableColumns } from "@interfaces/dom/table";
@@ -19,6 +21,7 @@ import {
 } from "@utils/url";
 import { useCallback, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const defaultSort = [
   {
@@ -37,7 +40,7 @@ export const useAccountPage = () => {
   const activeRoleFiler = searchParams.get("role");
   const activeStatusFilter = searchParams.get("status");
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
-
+  const [account, setAccount] = useState<User | null>(null);
   const [sortedColumns, setSortedColumns] = useState<TableColumns>(
     getInitialSorted(searchParams, defaultSort)
   );
@@ -57,11 +60,13 @@ export const useAccountPage = () => {
   };
 
   const handleOpenModal = () => {
+    setAccount(null);
     setOpenModal(true);
   };
 
   const handleCloseModal = useCallback(() => {
     setOpenModal(false);
+    setAccount(null);
   }, []);
 
   const handlePageChange = (event: unknown, page: number) => {
@@ -132,6 +137,8 @@ export const useAccountPage = () => {
   const page_index = pagination?.page_index ?? 0;
   const total_page_count = pagination?.total_pages_count ?? 0;
   const page_size = pagination?.page_size ?? 0;
+  const total_items_count = pagination?.total_items_count ?? 0;
+
   const accountColumns = ACCOUNT_TABLE_HEAD.map((col) => {
     const sortEntry = sortedColumns.find((s) => s.column === col.id);
 
@@ -173,7 +180,12 @@ export const useAccountPage = () => {
     await deleteAccount(id, {
       onSuccess: () => {
         setSelected((prev) => prev.filter((selectedId) => selectedId !== id));
-        console.log("Delete____________success");
+        toast.success(ToastContent, {
+          data: {
+            message: "Cập nhật thành công!",
+          },
+        });
+        refetch();
       },
     });
   };
@@ -186,7 +198,12 @@ export const useAccountPage = () => {
       {
         onSuccess: () => {
           setSelected([]);
-          console.log("Delete____________success");
+          toast.success(ToastContent, {
+            data: {
+              message: "Cập nhật thành công!",
+            },
+          });
+          refetch();
         },
       }
     );
@@ -197,6 +214,11 @@ export const useAccountPage = () => {
     refetch();
     handleCloseModal();
   }, [handleCloseModal, refetch]);
+
+  const handleEdit = (user: User) => {
+    setAccount(user);
+    setOpenModal(true);
+  };
 
   const { data: roles, isLoading: isRoleLoading } = useGetRoles();
 
@@ -222,11 +244,14 @@ export const useAccountPage = () => {
     handleDelete,
     handleDeleteAll,
     onActionSuccess,
+    handleEdit,
+    account,
     accountColumns,
-    roles: roles || [],
+    roles: roles?.data || [],
     isRoleLoading,
     total_page_count,
     page_index,
     page_size,
+    total_items_count,
   };
 };

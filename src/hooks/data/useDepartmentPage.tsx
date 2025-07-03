@@ -18,6 +18,8 @@ import {
 } from "@utils/url";
 import { OrderDirection } from "@interfaces/dom/query";
 import { HeadCell, TableColumns } from "@interfaces/dom/table";
+import ToastContent from "@components/ui/atoms/Toast";
+import { toast } from "react-toastify";
 
 const defaultSort = [
   {
@@ -110,6 +112,7 @@ export const useDepartmentPage = () => {
   const page_index = pagination?.page_index ?? 0;
   const total_page_count = pagination?.total_pages_count ?? 0;
   const page_size = pagination?.page_size ?? 0;
+  const total_items_count = pagination?.total_items_count ?? 0;
 
   const departmentColumns = DEPARTMENT_TABLE_HEAD.map((col) => {
     const sortEntry = sortedColumns.find((s) => s.column === col.id);
@@ -156,8 +159,13 @@ export const useDepartmentPage = () => {
   const handleDelete = async (id: string) => {
     await deleteDepartment(id, {
       onSuccess: () => {
+        refetch();
         setSelected((prev) => prev.filter((selectedId) => selectedId !== id));
-        console.log("Delete____________success");
+        toast.success(ToastContent, {
+          data: {
+            message: "Cập nhật thành công!",
+          },
+        });
       },
     });
   };
@@ -169,8 +177,13 @@ export const useDepartmentPage = () => {
       { ids: selected },
       {
         onSuccess: () => {
+          refetch();
           setSelected([]);
-          console.log("Delete____________success");
+          toast.success(ToastContent, {
+            data: {
+              message: "Cập nhật thành công!",
+            },
+          });
         },
       }
     );
@@ -209,5 +222,6 @@ export const useDepartmentPage = () => {
     total_page_count,
     page_index,
     page_size,
+    total_items_count,
   };
 };

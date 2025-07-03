@@ -5,10 +5,10 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { SectionTitle } from "@components/ui/atoms/SectionTitle";
 import ModuleCard from "@components/ui/atoms/ModuleCard";
 import { useCourseContentForm } from "@hooks/data/useCourseContentForm";
-import { Module } from "@interfaces/dom/course";
 import { StepFormProps } from "@interfaces/api/course";
 import { Save as SaveIcon } from "@mui/icons-material";
 import { STEPS } from "@constants/course";
+import CustomButton from "@components/ui/atoms/CustomButton";
 
 const CourseContentForm = ({
   data,
@@ -22,14 +22,15 @@ const CourseContentForm = ({
     handleAddModule,
     handleRemoveModule,
     modules,
-    setValue,
     getValues,
     watch,
+    updateModulesAfterDrag,
+    isCreatePending,
   } = useCourseContentForm({
     data,
     handleNextState,
   });
-
+  // Sửa lại hàm handleDragEnd trong CourseContentForm
   const handleDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
@@ -50,7 +51,8 @@ const CourseContentForm = ({
         return;
       }
 
-      const currentModules = [...modules];
+      const currentValues = getValues();
+      const currentModules = [...currentValues.modules];
 
       if (
         sourceModuleIndex < 0 ||
@@ -62,20 +64,25 @@ const CourseContentForm = ({
         return;
       }
 
-      const updatedModules: Module[] = [...currentModules];
+      const updatedModules = JSON.parse(JSON.stringify(currentModules));
 
       if (sourceModuleIndex === destModuleIndex) {
-        const moduleToUpdate = { ...updatedModules[sourceModuleIndex] };
+        // Di chuyển trong cùng một module
+        const moduleToUpdate = updatedModules[sourceModuleIndex];
         const lessons = [...moduleToUpdate.lessons];
 
         const [movedLesson] = lessons.splice(source.index, 1);
         lessons.splice(destination.index, 0, movedLesson);
 
+        // Update index for all lessons in the module
+        lessons.forEach((lesson, idx) => {
+          lesson.index = idx;
+        });
         moduleToUpdate.lessons = lessons;
-        updatedModules[sourceModuleIndex] = moduleToUpdate;
       } else {
-        const sourceModule = { ...updatedModules[sourceModuleIndex] };
-        const destModule = { ...updatedModules[destModuleIndex] };
+        // Di chuyển giữa các module khác nhau
+        const sourceModule = updatedModules[sourceModuleIndex];
+        const destModule = updatedModules[destModuleIndex];
 
         const sourceLessons = [...sourceModule.lessons];
         const destLessons = [...destModule.lessons];
@@ -83,18 +90,24 @@ const CourseContentForm = ({
         const [movedLesson] = sourceLessons.splice(source.index, 1);
         destLessons.splice(destination.index, 0, movedLesson);
 
+        // Update index for all lessons in both modules
+        sourceLessons.forEach((lesson, idx) => {
+          lesson.index = idx;
+        });
+
+        destLessons.forEach((lesson, idx) => {
+          lesson.index = idx;
+        });
         sourceModule.lessons = sourceLessons;
         destModule.lessons = destLessons;
-
-        updatedModules[sourceModuleIndex] = sourceModule;
-        updatedModules[destModuleIndex] = destModule;
       }
-
-      setValue("modules", updatedModules);
+      // Cập nhật modules sau khi drag
+      updateModulesAfterDrag(updatedModules);
     } catch (error) {
       console.error("Error in handleDragEnd:", error);
     }
   };
+
   const theme = useTheme();
 
   return (
@@ -117,13 +130,14 @@ const CourseContentForm = ({
               <SectionTitle variant="h6" fontWeight={600}>
                 Nội dung khóa học
               </SectionTitle>
-              <Button
+              <CustomButton
                 variant="contained"
                 startIcon={<AddIcon />}
                 onClick={handleAddModule}
+                disabled={isCreatePending}
               >
                 Thêm module
-              </Button>
+              </CustomButton>
             </Box>
           </Grid>
 

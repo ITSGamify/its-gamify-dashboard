@@ -1,6 +1,12 @@
-// src/sections/course/components/UploadBox.tsx
-import React, { useCallback } from "react";
-import { Box, Typography, Button, styled, alpha } from "@mui/material";
+import React, { useCallback, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  styled,
+  alpha,
+  CircularProgress,
+} from "@mui/material";
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
 import { useFileUpload } from "@services/fileUpload";
 
@@ -52,6 +58,7 @@ interface UploadBoxProps {
   icon: React.ReactNode;
   onChange: (id: string) => void;
   accept: string;
+  defaultUrl?: string;
 }
 
 const UploadBox: React.FC<UploadBoxProps> = ({
@@ -61,25 +68,28 @@ const UploadBox: React.FC<UploadBoxProps> = ({
   icon,
   onChange,
   accept,
+  defaultUrl,
 }) => {
   const isImage = accept.includes("image");
   const isVideo = accept.includes("video");
   const [previewUrl, setPreviewUrl] = React.useState<string | undefined>(
     undefined
   );
-
-  const upload = useFileUpload();
-
+  useEffect(() => {
+    if (defaultUrl) {
+      setPreviewUrl(defaultUrl);
+    }
+  }, [defaultUrl]);
+  const { mutateAsync: uploadFile, isPending: isLoading } = useFileUpload();
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const files = event.target.files;
     if (files && files.length > 0) {
       try {
-        const previewUrl = URL.createObjectURL(files[0]);
-        setPreviewUrl(previewUrl);
-        const result = await upload.mutateAsync({ file: files[0] });
+        const result = await uploadFile({ file: files[0] });
         onChange(result.id);
+        setPreviewUrl(result.url);
       } catch (error) {
         console.error("Error reading file:", error);
       }
@@ -98,8 +108,24 @@ const UploadBox: React.FC<UploadBoxProps> = ({
   }, [isImage, isVideo, previewUrl]);
 
   return (
-    <StyledUploadBox onClick={() => document.getElementById(id)?.click()}>
-      {previewUrl ? (
+    <StyledUploadBox
+      onClick={() => !isLoading && document.getElementById(id)?.click()}
+    >
+      {isLoading ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            py: 4,
+          }}
+        >
+          <CircularProgress size={40} />
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+            Đang tải lên...
+          </Typography>
+        </Box>
+      ) : previewUrl ? (
         <PreviewContainer>{renderPreview()}</PreviewContainer>
       ) : (
         <Box>
@@ -125,6 +151,7 @@ const UploadBox: React.FC<UploadBoxProps> = ({
         accept={accept}
         hidden
         onChange={handleFileChange}
+        disabled={isLoading}
       />
     </StyledUploadBox>
   );

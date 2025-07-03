@@ -2,15 +2,20 @@
 import { JSX, useEffect, useState } from "react";
 
 // Type definitions
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { PATH } from "@constants/path";
 import { getRoute } from "@utils/route";
 import {
   CourseRequestParams,
+  RequestUpdateCourseParams,
   useCreateCourse,
   useGetCourseDetail,
+  useUpdateCourse,
 } from "@services/course";
-import { getCourseRequestTransformations } from "@utils/course";
+import {
+  getCourseRequestTransformations,
+  getStateTransition,
+} from "@utils/course";
 import { StepFormProps } from "@interfaces/api/course";
 import {
   CONFIRMING_DETAILS_STEP,
@@ -22,13 +27,14 @@ import BasicInfoForm from "@components/ui/molecules/BasicInfoForm";
 import CourseContentForm from "@components/ui/molecules/CourseContentForm";
 import LearningMaterialsForm from "@components/ui/molecules/LearningMaterialsForm";
 import PreviewPublishForm from "@components/ui/molecules/PreviewPublishForm";
+import { toast } from "react-toastify";
+import ToastContent from "@components/ui/atoms/Toast";
 
-export const useCourseForm = () => {
+export const useCourseForm = (courseId?: string, editMode?: boolean) => {
   const navigation = useNavigate();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const paramsCurrentStep = searchParams.get("step") || 0;
-  const { courseId } = useParams();
   const [activeStep, setActiveStep] = useState(+paramsCurrentStep);
 
   useEffect(() => {
@@ -39,23 +45,29 @@ export const useCourseForm = () => {
     navigation(PATH.COURSES);
   };
 
-  const { data: courseDetail, isLoading } = useGetCourseDetail(courseId || "");
+  const { data: courseDetail, refetch } = useGetCourseDetail(courseId || "");
+
+  useEffect(() => {
+    if (courseId) {
+      refetch();
+    }
+  }, [activeStep, courseId, refetch]);
 
   const { mutateAsync: createCourse } = useCreateCourse();
+
+  const { mutateAsync: updateCourse } = useUpdateCourse();
 
   const handleBack = () => {
     if (activeStep === INITIAL_CREATE_STEP) {
       return handleBackToList();
     }
 
-    return handleStepChange(activeStep - 1);
-  };
-
-  const handleStepChange = (step: number) => {
-    const route = getRoute(PATH.COURSES_CREATE, {
-      courseId: courseDetail ? courseDetail.id : "1",
-    });
-    return navigation(route + "?step=" + step);
+    if (courseDetail) {
+      const route = getRoute(PATH.COURSES_EDIT, {
+        courseId: courseDetail.id,
+      });
+      navigation(route + "?step=" + (activeStep - 1), { replace: true });
+    }
   };
 
   const createRequestBody = <T,>(formData: T) => {
@@ -74,26 +86,55 @@ export const useCourseForm = () => {
 
   const handleNextStep = async <T,>(formData: T) => {
     const requestBody = createRequestBody(formData);
-    console.log("Debug__________________formData", formData);
-    console.log("Debug__________________request body", requestBody);
-    handleStepChange(activeStep + 1);
+    if (!editMode) {
+      await createCourse(
+        {
+          ...(requestBody as CourseRequestParams),
+        },
+        {
+          onSuccess: (newCourse) => {
+            toast.success(ToastContent, {
+              data: {
+                message: "Tạo thành công!",
+              },
+            });
+            const route = getRoute(PATH.COURSES_EDIT, {
+              courseId: !courseDetail ? newCourse.id : courseDetail.id,
+            });
+            navigation(route + "?step=" + (activeStep + 1));
+          },
+        }
+      );
+    }
+    // f182d5cd-7c4d-469a-890a-212e93749abe
+    const next_state = getStateTransition(courseDetail?.status || "");
 
-    // await createCourse(
-    //   {
-    //     ...(requestBody as CourseRequestParams),
-    //   },
-    //   {
-    //     onSuccess: (newCourse) => {
-    //       const route = getRoute(PATH.COURSES_EDIT, {
-    //         courseId: !courseDetail ? newCourse.id : courseDetail.id,
-    //       });
-    //       navigation(route + "step=" + (activeStep + 1));
-    //     },
-    //     onError: (error) => {
-    //       console.error("Error creating course:", error);
-    //     },
-    //   }
-    // );
+    const isLastStep = activeStep === 3;
+    await updateCourse(
+      {
+        ...(requestBody as RequestUpdateCourseParams),
+        ...(courseId ? { id: courseId } : {}),
+        ...(courseId ? { current_step: next_state } : {}),
+      },
+      {
+        onSuccess: (newCourse) => {
+          toast.success(ToastContent, {
+            data: {
+              message: "Cập nhật thành công!",
+            },
+          });
+
+          if (isLastStep) {
+            return handleBackToList();
+          }
+
+          const route = getRoute(PATH.COURSES_EDIT, {
+            courseId: !courseDetail ? newCourse.id : courseDetail.id,
+          });
+          navigation(route + "?step=" + (activeStep + 1));
+        },
+      }
+    );
   };
 
   const stepForms: Record<number, (props: StepFormProps) => JSX.Element> = {

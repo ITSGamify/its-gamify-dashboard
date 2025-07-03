@@ -20,7 +20,7 @@ export interface RequestDeleteParams {
 export interface RequestDepartmentsParams {
   name: string;
   description?: string;
-  location: string;
+  location?: string;
 }
 
 export interface RequestUpdateDepartmentsParams

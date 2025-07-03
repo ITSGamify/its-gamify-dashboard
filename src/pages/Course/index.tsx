@@ -16,6 +16,7 @@ import { useCoursePage } from "@hooks/data/useCoursePage";
 import { Course } from "@interfaces/api/course";
 import FilterButton from "@components/ui/molecules/FilterButton";
 import { FilterGroup } from "@interfaces/dom/filter";
+import defaultCourseImage from "@assets/images/its_gamify_course_default.png";
 
 const departments = [
   { id: "it", name: "Công nghệ thông tin" },
@@ -51,8 +52,9 @@ const CoursePage: React.FC = () => {
     isLoading,
     handleDeleteAll,
     handleDelete,
-    total_page_count,
     page_size,
+    total_items_count,
+    handleUpdateCourse,
   } = useCoursePage();
 
   const menuItems = (course: Course) => [
@@ -64,7 +66,9 @@ const CoursePage: React.FC = () => {
     {
       icon: <EditIcon color="action" />,
       label: "Chỉnh sửa",
-      onClick: () => {},
+      onClick: () => {
+        handleUpdateCourse(course.id, course.status);
+      },
     },
     {
       icon: <DeleteOutlineIcon color="error" />,
@@ -100,26 +104,25 @@ const CoursePage: React.FC = () => {
                 objectFit: "cover",
               }}
               onError={(e) => {
-                e.currentTarget.src =
-                  "@assets/images/its_gamify_course_default.png";
+                e.currentTarget.src = defaultCourseImage;
               }}
             />
           </Box>
           {row.title}
         </Box>
       </TableCell>,
-      <TableCell key="category" align="left">
-        {row.category?.name}
-      </TableCell>,
       <TableCell key="classify" align="left">
-        {row.classify === 0
+        {row.classify === "LEADERONLY"
           ? "Leader"
-          : row.classify === 1
+          : row.classify === "DEPARTMENTONLY"
           ? "Department"
           : "All"}
       </TableCell>,
-      <TableCell key="department" align="center">
-        {/* <Rating name="read-only" value={row.reviews} readOnly /> */}
+      <TableCell key="department" align="left">
+        {row.deparment?.name || ""}
+      </TableCell>,
+      <TableCell key="status" align="left">
+        {row.status}
       </TableCell>,
       <TableCell key="sessions" align="center">
         {row.modules?.length}
@@ -164,7 +167,7 @@ const CoursePage: React.FC = () => {
               labelRowsPerPage="Số dòng mỗi trang:"
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={total_page_count}
+              count={total_items_count}
               rowsPerPage={page_size}
               page={activePage}
               onPageChange={handlePageChange}

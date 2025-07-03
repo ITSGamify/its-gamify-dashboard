@@ -28,18 +28,10 @@ import { SectionTitle } from "@components/ui/atoms/SectionTitle";
 import { useLearningMaterialsForm } from "@hooks/data/useLearningMaterialsForm";
 import { StepFormProps } from "@interfaces/api/course";
 import { Controller } from "react-hook-form";
-import { useFileUpload } from "@services/fileUpload";
 import { STEPS } from "@constants/course";
 import { Save as SaveIcon } from "@mui/icons-material";
 
 export const MAX_TARGET_COUNTS = 10;
-
-export interface Attachment {
-  id: string;
-  name: string;
-  size: string;
-  type: string;
-}
 
 const LearningMaterialsForm = ({
   data,
@@ -51,42 +43,12 @@ const LearningMaterialsForm = ({
     targets,
     handleAddTaget,
     handleRemoveTaget,
-    handleAddFile,
-    handleRemoveFile,
     control,
     handleSubmit,
+    handleDeleteFile,
+    handleFileUpload,
+    attachments,
   } = useLearningMaterialsForm({ data, handleNextState });
-
-  // Mock data for attachments
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
-
-  const upload = useFileUpload();
-
-  // Handle file upload
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const files = event.target.files;
-      // Process uploaded files
-      const newFiles = Array.from(event.target.files).map((file, index) => ({
-        id: `new-${Date.now()}-${index}`,
-        name: file.name,
-        size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-        type: file.type,
-      }));
-
-      setAttachments([...attachments, ...newFiles]);
-      const result = await upload.mutateAsync({ file: files[0] });
-      handleAddFile(result.id);
-    }
-  };
-
-  // Handle file delete
-  const handleDeleteFile = (id: string) => {
-    setAttachments(attachments.filter((file) => file.id !== id));
-    handleRemoveFile(id);
-  };
 
   const [currentTaget, setCurrentTaget] = useState("");
   const theme = useTheme();
@@ -228,11 +190,11 @@ const LearningMaterialsForm = ({
             <Typography variant="subtitle1" gutterBottom>
               Mục tiêu học tập
             </Typography>
-            <Box sx={{ mb: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 0 }}>
               <TextField
                 fullWidth
+                size="small"
                 placeholder="Thêm mục tiêu học tập"
-                sx={{ mb: 1 }}
                 value={currentTaget}
                 onChange={(e) => setCurrentTaget(e.target.value)}
                 onKeyPress={(e) => {
@@ -242,11 +204,11 @@ const LearningMaterialsForm = ({
                     setCurrentTaget("");
                   }
                 }}
+                sx={{ mr: 1 }}
                 disabled={targets.length >= MAX_TARGET_COUNTS}
               />
               <Button
                 variant="outlined"
-                startIcon={<AddIcon />}
                 onClick={() => {
                   handleAddTaget(currentTaget.trim());
                   setCurrentTaget("");
@@ -255,7 +217,7 @@ const LearningMaterialsForm = ({
                   !currentTaget.trim() || targets.length >= MAX_TARGET_COUNTS
                 }
               >
-                Thêm mục tiêu
+                <AddIcon />
               </Button>
             </Box>
             <List>

@@ -9,6 +9,9 @@ import {
 import { useLogin } from "@services/authentication";
 import userSession from "@utils/user-session";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { getRoute } from "@utils/route";
+import { PATH } from "@constants/path";
 
 export interface AuthenticationFormValues {
   email: string;
@@ -21,6 +24,7 @@ const SAVED_EMAIL_COOKIE = "saved_email";
 const COOKIE_EXPIRY_DAYS = 30;
 
 export const useLoginPage = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(() => {
@@ -76,7 +80,6 @@ export const useLoginPage = () => {
 
   const handleLogin = useCallback(
     async (formData: AuthenticationFormValues) => {
-      console.log("Debug__________________", formData);
       if (rememberMe) {
         Cookies.set(SAVED_EMAIL_COOKIE, formData.email, {
           expires: COOKIE_EXPIRY_DAYS,
@@ -84,14 +87,17 @@ export const useLoginPage = () => {
           secure: true,
         });
       }
-      const result = await login(formData);
 
-      userSession.storeUserProfile(result);
-
-      // console.log("Debug_____________resule", result);
-      reset();
+      await login(formData, {
+        onSuccess: (data) => {
+          userSession.storeUserProfile(data);
+          reset();
+          const route = getRoute(PATH.HOME);
+          navigate(route);
+        },
+      });
     },
-    [login, reset, rememberMe]
+    [rememberMe, login, reset, navigate]
   );
 
   useEffect(() => {

@@ -26,8 +26,8 @@ export interface CourseRequestParams {
   description?: string;
   thumbnail_image_id?: string;
   introduction_video_id?: string;
-  classify?: number;
-  department_id?: string;
+  classify?: string;
+  department_id?: string | null;
   category_id?: string;
   tags?: string[];
   modules?: Module[];
@@ -39,6 +39,7 @@ export interface CourseRequestParams {
 //update
 export interface RequestUpdateCourseParams extends CourseRequestParams {
   id: string;
+  current_step: string;
 }
 
 export const useGetCourses = (params?: GetCourseParams) => {

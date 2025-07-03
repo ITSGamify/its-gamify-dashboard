@@ -34,11 +34,11 @@ export const createDepartment = async (
 export const updateDepartment = async (
   payload: RequestUpdateDepartmentsParams
 ): Promise<void> => {
-  const { id: departmentId, ...data } = payload;
+  const { id: departmentId } = payload;
   return request({
     url: getRoute(END_POINTS.DEPARTMENT.DETAIL, { departmentId }),
     method: HTTP_METHODS.PUT,
-    data,
+    data: payload,
   });
 };
 
@@ -55,7 +55,7 @@ export const deleteRangeDepartment = async (
   const { ids: params } = payload;
   return request({
     url: getRoute(END_POINTS.DEPARTMENT.DELETE_RANGE),
-    method: HTTP_METHODS.PUT,
+    method: HTTP_METHODS.DELETE,
     data: params,
   });
 };

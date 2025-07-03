@@ -1,11 +1,13 @@
 import { Module } from "@interfaces/dom/course";
 import { Category } from "./category";
+import { Department } from "./department";
 
 export interface Course {
   id: string;
   title: string;
   sessions: number;
   department_id: string;
+  deparment?: Department;
   reviews: number;
   category_id?: string;
   category?: Category;
@@ -21,7 +23,20 @@ export interface Course {
   requirement: string;
   targets: string[];
   duration_in_hours: number;
-  classify: number;
+  classify: string;
+  status: string;
+  introduction_video?: string;
+  learning_materials?: Material[];
+}
+
+export interface Material {
+  id: string;
+  url: string;
+  name: string;
+  file_id: string;
+  type: string;
+  size: string;
+  course_id: string;
 }
 
 export interface StepFormProps {

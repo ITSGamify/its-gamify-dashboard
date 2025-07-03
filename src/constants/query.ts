@@ -12,6 +12,9 @@ export const QUERY_KEYS = {
     BASE: BASE_KEYS.COURSES,
     DETAIL: `${BASE_KEYS.COURSES}/:courseId`,
   },
+  CATEGORIES: {
+    BASE: BASE_KEYS.CATEGORIES,
+  },
 };
 
 export const DEFAULT_LIMIT_OPTIONS_PARAMS = 50;

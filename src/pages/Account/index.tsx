@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import StatusBadge from "@components/ui/atoms/TableBadge";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import TableActionButton from "@components/ui/atoms/TableActionButton";
@@ -22,18 +21,18 @@ import { User } from "@interfaces/api/user";
 
 export type StatusType =
   | "ACTIVE"
-  | "pending"
-  | "completed"
-  | "cancelled"
-  | "error"
-  | "banned"
-  | "disbaled";
+  | "PENDING"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "ERROR"
+  | "BANNED"
+  | "DISABLE";
 
 const statuses = [
   { id: "ACTIVE", name: "Đang hoạt động" },
-  { id: "inactive", name: "Không hoạt động" },
-  { id: "pending", name: "Chờ xác nhận" },
-  { id: "blocked", name: "Đã khóa" },
+  { id: "DISABLE", name: "Không hoạt động" },
+  { id: "PENDING", name: "Chờ xác nhận" },
+  { id: "BANNED", name: "Đã khóa" },
 ];
 
 const AccountPage: React.FC = () => {
@@ -60,15 +59,17 @@ const AccountPage: React.FC = () => {
     onActionSuccess,
     roles,
     isRoleLoading,
-    total_page_count,
     page_size,
+    account,
+    total_items_count,
+    handleEdit,
   } = useAccountPage();
 
   const filterGroups: FilterGroup[] = [
     {
       id: "role",
       title: "Vai trò",
-      options: roles,
+      options: roles.map((role) => ({ id: role.name, name: role.name })),
     },
     {
       id: "status",
@@ -79,14 +80,11 @@ const AccountPage: React.FC = () => {
 
   const menuItems = (account: User) => [
     {
-      icon: <VisibilityIcon color="action" />,
-      label: "Xem chi tiết",
-      onClick: () => {},
-    },
-    {
       icon: <EditIcon color="action" />,
       label: "Chỉnh sửa",
-      onClick: () => {},
+      onClick: () => {
+        handleEdit(account);
+      },
     },
     {
       icon: <DeleteOutlineIcon color="error" />,
@@ -164,7 +162,7 @@ const AccountPage: React.FC = () => {
               labelRowsPerPage="Số dòng mỗi trang:"
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={total_page_count}
+              count={total_items_count}
               rowsPerPage={page_size}
               page={activePage}
               onPageChange={handlePageChange}
@@ -176,7 +174,7 @@ const AccountPage: React.FC = () => {
       <AccountModalForm
         open={openModal}
         onClose={handleCloseModal}
-        data={null}
+        data={account}
         onSuccess={onActionSuccess}
         isRoleLoading={isRoleLoading}
         roles={roles}

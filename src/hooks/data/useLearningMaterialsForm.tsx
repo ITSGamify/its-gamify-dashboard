@@ -1,11 +1,11 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { StepFormProps } from "@interfaces/api/course";
-import { useCallback } from "react";
+import { Material, StepFormProps } from "@interfaces/api/course";
+import { useCreateMaterial, useDeleteMaterial } from "@services/material";
+import { useCallback, useEffect, useState } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import { learningMaterialsFormSchema } from "src/form-schema/course";
 
 export interface LearningMaterialsForm {
-  file_ids: string[];
   requirement: string;
   targets: string[];
 }
@@ -14,28 +14,20 @@ export const useLearningMaterialsForm = ({
   data,
   handleNextState,
 }: StepFormProps) => {
-  const {
-    control,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<LearningMaterialsForm>({
-    mode: "onChange",
-    reValidateMode: "onChange",
-    defaultValues: {
-      file_ids: data?.file_ids || [],
-      requirement: data?.requirement || "",
-      targets: data?.targets || [],
-    },
-    resolver: yupResolver(
-      learningMaterialsFormSchema
-    ) as Resolver<LearningMaterialsForm>,
-  });
+  const { control, handleSubmit, watch, setValue, reset } =
+    useForm<LearningMaterialsForm>({
+      mode: "onChange",
+      reValidateMode: "onChange",
+      defaultValues: {
+        requirement: data?.requirement || "",
+        targets: data?.targets || [],
+      },
+      resolver: yupResolver(
+        learningMaterialsFormSchema
+      ) as Resolver<LearningMaterialsForm>,
+    });
 
-  console.log(errors);
   const targets = watch("targets");
-  const file_ids = watch("file_ids");
 
   const handleAddTaget = useCallback(
     (newTaget: string) => {
@@ -55,32 +47,57 @@ export const useLearningMaterialsForm = ({
     [targets, setValue]
   );
 
-  const handleAddFile = useCallback(
-    (id: string) => {
-      if (id && !file_ids.includes(id)) {
-        const updateFileIds = [...file_ids, id];
-        setValue("file_ids", updateFileIds);
-      }
-    },
-    [file_ids, setValue]
+  const [attachments, setAttachments] = useState<Material[]>(
+    data?.learning_materials || []
   );
 
-  const handleRemoveFile = useCallback(
-    (idToRemove: string) => {
-      const updateFileIds = file_ids.filter((id) => id !== idToRemove);
-      setValue("file_ids", updateFileIds);
-    },
-    [file_ids, setValue]
-  );
+  const { mutateAsync: createMaterial } = useCreateMaterial();
+
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const files = event.target.files;
+
+      try {
+        await createMaterial(
+          {
+            file: files[0],
+            CourseId: data?.id as string,
+          },
+          {
+            onSuccess: (new_material) => {
+              setAttachments([...attachments, new_material]);
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    }
+  };
+
+  const { mutateAsync: deleteMaterial } = useDeleteMaterial();
+  const handleDeleteFile = async (id: string) => {
+    await deleteMaterial(id, {
+      onSuccess: () => {
+        setAttachments(attachments.filter((file) => file.id !== id));
+      },
+    });
+  };
+
+  useEffect(() => {
+    setAttachments(data?.learning_materials || []);
+  }, [data, reset]);
 
   return {
     handleSubmit: handleSubmit(handleNextState),
-    file_ids,
     targets,
     handleAddTaget,
     handleRemoveTaget,
-    handleAddFile,
-    handleRemoveFile,
     control,
+    handleDeleteFile,
+    handleFileUpload,
+    attachments,
   };
 };

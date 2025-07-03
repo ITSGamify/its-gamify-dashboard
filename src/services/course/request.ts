@@ -31,11 +31,11 @@ export const getCourseDetail = async (courseId: string): Promise<Course> => {
 export const updateCourse = async (
   payload: RequestUpdateCourseParams
 ): Promise<Course> => {
-  const { id: courseId, ...courseData } = payload;
+  const { id: courseId } = payload;
   return request({
     url: getRoute(END_POINTS.COURSE.DETAIL, { courseId }),
     method: HTTP_METHODS.PUT,
-    data: courseData,
+    data: payload,
   });
 };
 
