@@ -15,9 +15,13 @@ axiosInstance.defaults.withCredentials = false;
 axiosInstance.interceptors.request.use(async function (config) {
   config.baseURL = baseApiURL;
   config.headers["Accept"] = "application/json";
+
+  const profile = userSession.getUserProfile();
+  if (profile) {
+    config.headers["Authorization"] = `Bearer ${profile.token}`;
+  }
   return config;
 });
-
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {

@@ -35,7 +35,7 @@ export const updateAccount = async (
 ): Promise<void> => {
   const { id: accountId, ...data } = payload;
   return request({
-    url: getRoute(END_POINTS.ACCOUNT.BASE, { accountId }),
+    url: getRoute(END_POINTS.ACCOUNT.DETAIL, { accountId }),
     method: HTTP_METHODS.PUT,
     data,
   });
@@ -43,7 +43,7 @@ export const updateAccount = async (
 
 export const deleteAccount = async (accountId: string): Promise<void> => {
   return request({
-    url: getRoute(END_POINTS.DEPARTMENT.DETAIL, { accountId }),
+    url: getRoute(END_POINTS.ACCOUNT.DETAIL, { accountId }),
     method: HTTP_METHODS.DELETE,
   });
 };
@@ -53,7 +53,7 @@ export const deleteRangeAccount = async (
 ): Promise<void> => {
   const { ids: params } = payload;
   return request({
-    url: getRoute(END_POINTS.DEPARTMENT.DELETE_RANGE),
+    url: getRoute(END_POINTS.ACCOUNT.DELETE_RANGE),
     method: HTTP_METHODS.PUT,
     data: params,
   });

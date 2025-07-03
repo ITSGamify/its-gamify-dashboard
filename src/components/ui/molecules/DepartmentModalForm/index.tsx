@@ -110,25 +110,6 @@ const DepartmentModalForm: React.FC<DepartmentModalProps> = ({
                 )}
               />
             </Grid>
-            <Grid container size={{ md: 12 }}>
-              <Controller
-                name="location"
-                control={control}
-                rules={{ required: true }}
-                render={({ field, fieldState: { error } }) => (
-                  <TextField
-                    fullWidth
-                    label="Địa điểm"
-                    name="location"
-                    value={field.value || ""}
-                    onChange={field.onChange}
-                    error={!!error}
-                    helperText={error?.message}
-                    required
-                  />
-                )}
-              />
-            </Grid>
 
             {/* {data && (
               <Grid container size={{ md: 12 }}>

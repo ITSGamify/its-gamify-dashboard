@@ -4,6 +4,10 @@ export const BASE_KEYS = {
   COURSES: "courses",
   ROLES: "roles",
   STORAGE_FILES: "files",
+  CATEGORIES: "categories",
+  MODULES: "course-sections",
+  LESSONS: "lessons",
+  MATERIALS: "learning-materials",
 };
 
 export const END_POINTS = {
@@ -21,17 +25,34 @@ export const END_POINTS = {
   DEPARTMENT: {
     BASE: BASE_KEYS.DEPARTMENTS,
     DETAIL: `${BASE_KEYS.DEPARTMENTS}/:departmentId`,
-    DELETE_RANGE: `${BASE_KEYS.DEPARTMENTS}/delete`,
+    DELETE_RANGE: `${BASE_KEYS.DEPARTMENTS}/delete-range`,
   },
   ACCOUNT: {
     BASE: BASE_KEYS.ACCOUNTS,
+    DETAIL: `${BASE_KEYS.ACCOUNTS}/:accountId`,
+    DELETE_RANGE: `${BASE_KEYS.ACCOUNTS}/delete-range`,
   },
   COURSE: {
     BASE: BASE_KEYS.COURSES,
     DETAIL: `${BASE_KEYS.COURSES}/:courseId`,
-    DELETE_RANGE: `${BASE_KEYS.COURSES}/delete`,
+    DELETE_RANGE: `${BASE_KEYS.COURSES}/delete-range`,
+  },
+  CATEGORIES: {
+    BASE: BASE_KEYS.CATEGORIES,
   },
   STORAGE_FILES: {
     UPLOAD: `${BASE_KEYS.STORAGE_FILES}`,
+  },
+  MODULES: {
+    BASE: BASE_KEYS.MODULES,
+    DETAIL: `${BASE_KEYS.MODULES}/:moduleId`,
+  },
+  LESSONS: {
+    BASE: BASE_KEYS.LESSONS,
+    DETAIL: `${BASE_KEYS.LESSONS}/:lessonId`,
+  },
+  MATERIALS: {
+    BASE: BASE_KEYS.MATERIALS,
+    DETAIL: `${BASE_KEYS.MATERIALS}/:materialId`,
   },
 };

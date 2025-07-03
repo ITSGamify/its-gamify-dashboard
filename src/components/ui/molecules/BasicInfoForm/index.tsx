@@ -1,9 +1,8 @@
 // src/sections/course/create/BasicInfoForm.tsx
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Grid,
   TextField,
-  MenuItem,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -32,6 +31,8 @@ import AutocompleteAsync from "@components/ui/atoms/AutocompleteAsync";
 import { useGetOptions } from "@hooks/shared/useGetOptions";
 import { useGetDeparments } from "@services/department";
 import { deparmentOptionField } from "@constants/departments";
+import { useGetCategories } from "@services/category";
+import { categoryOptionField } from "@constants/category";
 
 const BasicInfoForm = ({
   data,
@@ -39,11 +40,17 @@ const BasicInfoForm = ({
   activeStep,
   handleBack,
 }: StepFormProps) => {
-  const { control, tags, handleAddTag, handleSubmit, handleRemoveTag } =
-    useBasicForm({
-      data,
-      handleNextState,
-    });
+  const {
+    control,
+    tags,
+    handleAddTag,
+    handleSubmit,
+    handleRemoveTag,
+    classify,
+  } = useBasicForm({
+    data,
+    handleNextState,
+  });
 
   const {
     options: departmentsOptions,
@@ -51,21 +58,54 @@ const BasicInfoForm = ({
     isLoading: isLoadingDepartments,
   } = useGetOptions(useGetDeparments, deparmentOptionField);
 
+  const {
+    options: categoryOptions,
+    handleSearchOptions: handleSearchCategoryOptions,
+    isLoading: isLoadingCategories,
+  } = useGetOptions(useGetCategories, categoryOptionField);
+
   const [currentTag, setCurrentTag] = useState("");
 
-  // Categories for dropdown
-  const categories = [
-    "UI/UX Design",
-    "Frontend Development",
-    "Backend Development",
-    "Mobile Development",
-    "Graphic Design",
-    "Programming",
-    "Data Science",
-    "Business",
-    "Marketing",
-  ];
   const theme = useTheme();
+
+  const renderDepartment = useMemo(() => {
+    if (classify === "DEPARTMENTONLY") {
+      return (
+        <Grid container size={{ xs: 12, md: 12 }}>
+          <Controller
+            name="department_id"
+            control={control}
+            rules={{ required: true }}
+            render={({ field, fieldState: { error } }) => (
+              <FormControl fullWidth error={!!error} required>
+                <AutocompleteAsync
+                  options={departmentsOptions}
+                  label="Phòng ban"
+                  value={
+                    field.value
+                      ? departmentsOptions.find((x) => x.id === field.value) ||
+                        null
+                      : null
+                  }
+                  onChange={field.onChange}
+                  onSearch={handleSearchDepartmentsOptions}
+                  loading={isLoadingDepartments}
+                  required
+                />
+              </FormControl>
+            )}
+          />
+        </Grid>
+      );
+    }
+    return null;
+  }, [
+    classify,
+    control,
+    departmentsOptions,
+    handleSearchDepartmentsOptions,
+    isLoadingDepartments,
+  ]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -162,25 +202,22 @@ const BasicInfoForm = ({
               control={control}
               rules={{ required: true }}
               render={({ field, fieldState: { error } }) => (
-                <TextField
-                  select
-                  label="Danh mục"
-                  fullWidth
-                  required
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={!!error}
-                  helperText={
-                    error?.message ||
-                    "Chọn danh mục phù hợp nhất với nội dung khóa học"
-                  }
-                >
-                  {categories.map((category) => (
-                    <MenuItem key={category} value={category}>
-                      {category}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                <FormControl fullWidth error={!!error} required>
+                  <AutocompleteAsync
+                    options={categoryOptions}
+                    label="Danh mục"
+                    value={
+                      field.value
+                        ? categoryOptions.find((x) => x.id === field.value) ||
+                          null
+                        : null
+                    }
+                    onChange={field.onChange}
+                    onSearch={handleSearchCategoryOptions}
+                    loading={isLoadingCategories}
+                    required
+                  />
+                </FormControl>
               )}
             />
           </Grid>
@@ -195,17 +232,17 @@ const BasicInfoForm = ({
                   <FormLabel component="legend">Phân loại</FormLabel>
                   <RadioGroup row value={field.value} onChange={field.onChange}>
                     <FormControlLabel
-                      value="leader"
+                      value="LEADERONLY"
                       control={<Radio />}
                       label="Leader Only"
                     />
                     <FormControlLabel
-                      value="department"
+                      value="DEPARTMENTONLY"
                       control={<Radio />}
                       label="Department Only"
                     />
                     <FormControlLabel
-                      value="all"
+                      value="ALL"
                       control={<Radio />}
                       label="All Levels"
                     />
@@ -214,28 +251,9 @@ const BasicInfoForm = ({
               )}
             />
           </Grid>
-          {/* <Grid container size={{ md: 12 }}>
-            <Controller
-              name="department_id"
-              control={control}
-              rules={{ required: true }}
-              render={({ field, fieldState: { error } }) => (
-                <FormControl fullWidth error={!!error} required>
-                  <FormControl fullWidth required>
-                    <AutocompleteAsync
-                      options={departmentsOptions}
-                      label="Phòng ban"
-                      value={field.value}
-                      onChange={field.onChange}
-                      onSearch={handleSearchDepartmentsOptions}
-                      loading={isLoadingDepartments}
-                      required
-                    />
-                  </FormControl>
-                </FormControl>
-              )}
-            />
-          </Grid> */}
+
+          {renderDepartment}
+
           <Grid size={{ xs: 12 }}>
             <Divider sx={{ my: 0 }} />
           </Grid>
@@ -263,6 +281,7 @@ const BasicInfoForm = ({
                       sx={{ fontSize: 40, color: "text.secondary", mb: 1 }}
                     />
                   }
+                  defaultUrl={data?.thumbnail_image}
                   onChange={onChange}
                   accept="image/*"
                 />
@@ -287,6 +306,7 @@ const BasicInfoForm = ({
                       sx={{ fontSize: 40, color: "text.secondary", mb: 1 }}
                     />
                   }
+                  defaultUrl={data?.introduction_video}
                   onChange={onChange}
                   accept="video/*"
                 />

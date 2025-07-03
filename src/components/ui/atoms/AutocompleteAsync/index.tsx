@@ -9,7 +9,7 @@ export interface Option {
 interface AutocompleteAsyncProps<T extends Option = Option> {
   options: T[];
   label: string;
-  value: T | undefined;
+  value: T | null;
   onChange: (value: string) => void;
   onSearch: (query: string) => void;
   loading?: boolean;

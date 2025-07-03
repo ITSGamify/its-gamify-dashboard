@@ -2,7 +2,6 @@
 import React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AuthProvider } from "@providers/AuthProvider";
 import { ToastProvider } from "@providers/ToastProvider";
 import { QueryProvider } from "@providers/QueryProvider";
 import { RouterProvider } from "react-router-dom";
@@ -31,9 +30,7 @@ const App: React.FC = () => {
         <CssBaseline />
         <ToastProvider>
           <ToastContainer {...toastConfig} />
-          <AuthProvider>
-            <RouterProvider router={router} />
-          </AuthProvider>
+          <RouterProvider router={router} />
         </ToastProvider>
       </ThemeProvider>
     </QueryProvider>

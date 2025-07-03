@@ -1,3 +1,4 @@
+import ToastContent from "@components/ui/atoms/Toast";
 import { PATH } from "@constants/path";
 import {
   COURSE_TABLE_HEAD,
@@ -12,6 +13,8 @@ import {
   useDeleteRangeCourses,
   useGetCourses,
 } from "@services/course";
+import { getStepNumberFromName } from "@utils/course";
+import { getRoute } from "@utils/route";
 import {
   appendFirstSearchParams,
   createParamSetter,
@@ -19,6 +22,7 @@ import {
 } from "@utils/url";
 import { useCallback, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const defaultSort = [
   {
@@ -135,6 +139,8 @@ export const useCoursePage = () => {
   const page_index = pagination?.page_index ?? 0;
   const total_page_count = pagination?.total_pages_count ?? 0;
   const page_size = pagination?.page_size ?? 0;
+  const total_items_count = pagination?.total_items_count ?? 0;
+
   const handleClick = (event: React.MouseEvent<unknown>, index: number) => {
     setSelected((prev) => {
       const selectedIndex = prev.indexOf(courses[index].id);
@@ -165,7 +171,12 @@ export const useCoursePage = () => {
     await deleteAccount(id, {
       onSuccess: () => {
         setSelected((prev) => prev.filter((selectedId) => selectedId !== id));
-        console.log("Delete____________success");
+        toast.success(ToastContent, {
+          data: {
+            message: "Cập nhật thành công!",
+          },
+        });
+        refetch();
       },
     });
   };
@@ -178,10 +189,25 @@ export const useCoursePage = () => {
       {
         onSuccess: () => {
           setSelected([]);
-          console.log("Delete____________success");
+          toast.success(ToastContent, {
+            data: {
+              message: "Cập nhật thành công!",
+            },
+          });
+          refetch();
         },
       }
     );
+  };
+
+  const handleUpdateCourse = (id: string, step: string) => {
+    const step_num = getStepNumberFromName(step);
+    const route = getRoute(PATH.COURSES_EDIT, {
+      courseId: id,
+    });
+    return step_num !== -1
+      ? navigate(route + "?step=" + step_num)
+      : navigate(route + "?step=0");
   };
 
   const onActionSuccess = useCallback(() => {
@@ -209,8 +235,10 @@ export const useCoursePage = () => {
     handleDeleteAll,
     onActionSuccess,
     handleDelete,
+    handleUpdateCourse,
     total_page_count,
     page_index,
     page_size,
+    total_items_count,
   };
 };

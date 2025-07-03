@@ -85,9 +85,23 @@ export const useAccountModal = ({ user: data, onActionSuccess }: Props) => {
 
   useEffect(() => {
     if (data) {
-      reset();
+      reset({
+        full_name: data?.full_name || "",
+        password: data?.password || "",
+        email: data?.email ? data.email : "",
+        role_id: data?.role_id || "",
+        department_id: data?.department_id || "",
+        avatar_url: data?.avatar_url || "",
+      });
     } else {
-      reset();
+      reset({
+        full_name: "",
+        password: "",
+        email: "",
+        role_id: "",
+        department_id: "",
+        avatar_url: "",
+      });
     }
   }, [data, reset]);
 

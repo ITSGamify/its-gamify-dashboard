@@ -9,6 +9,7 @@ interface GlobalContextProps {
 }
 
 // Create a context object
+// eslint-disable-next-line react-refresh/only-export-components
 export const GlobalContext = createContext<GlobalContextProps | undefined>(
   undefined
 );

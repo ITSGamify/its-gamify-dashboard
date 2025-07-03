@@ -26,6 +26,7 @@ const defaultState = {
   key: 0,
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const ToastContext = createContext<ToastContextProps>({
   state: defaultState,
   showToast: () => null,

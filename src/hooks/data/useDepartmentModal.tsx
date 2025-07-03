@@ -15,7 +15,7 @@ interface Props {
 export interface DepartmentFormValues {
   name: string;
   description?: string;
-  location: string;
+  location?: string;
   leaderId?: string | "";
 }
 
@@ -54,7 +54,7 @@ export const useDepartmentModal = ({ data, onActionSuccess }: Props) => {
       const onSuccess = () => {
         toast.success(ToastContent, {
           data: {
-            message: "Cập nhật thành công",
+            message: "Cập nhật thành công!",
           },
         });
         onActionSuccess();
@@ -71,8 +71,6 @@ export const useDepartmentModal = ({ data, onActionSuccess }: Props) => {
   );
 
   useEffect(() => {
-    console.log(data);
-
     if (data) {
       reset({ name: data.name, location: data.location });
     } else {

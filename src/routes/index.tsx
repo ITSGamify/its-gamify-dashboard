@@ -17,7 +17,9 @@ import AccountPage from "@pages/Account";
 import { ErrorBoundary } from "react-error-boundary";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router-dom";
 import { JSX } from "react";
+import UpdateCoursePage from "@pages/Course/Update";
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => {
   {
     return <ServerError500 />;
@@ -41,6 +43,7 @@ const getRoutes = (routes: RouteObject[]) => {
   }));
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   fallbackUrl = PATH.LOGIN,
@@ -51,13 +54,27 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const isNotAllowedRole =
     userProfile &&
     allowedRoles?.length > 0 &&
-    !allowedRoles.includes(userProfile?.role);
+    !allowedRoles.includes(userProfile?.user.role);
   if (!isAuthenticated) {
     return <Navigate to={fallbackUrl} />;
   }
 
   if (isNotAllowedRole) {
     return <Navigate to="/403" />;
+  }
+
+  return children;
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+const AuthenticationValidate: React.FC<{
+  children: JSX.Element;
+  redirectTo?: string;
+}> = ({ children, redirectTo = PATH.HOME }) => {
+  const isAuthenticated = userSession.isAuthenticated();
+
+  if (isAuthenticated) {
+    return <Navigate to={redirectTo} />;
   }
 
   return children;
@@ -79,11 +96,19 @@ const router = createBrowserRouter(
     },
     {
       path: PATH.LOGIN,
-      element: <LoginPage />,
+      element: (
+        // <AuthenticationValidate>
+        <LoginPage />
+        // </AuthenticationValidate>
+      ),
     },
     {
       path: PATH.HOME,
-      element: <MainLayout />,
+      element: (
+        // <ProtectedRoute>
+        <MainLayout />
+        // </ProtectedRoute>
+      ),
       children: [
         {
           path: PATH.HOME,
@@ -108,6 +133,10 @@ const router = createBrowserRouter(
         {
           path: PATH.COURSES_CREATE,
           element: <CourseCreatePage />,
+        },
+        {
+          path: PATH.COURSES_EDIT,
+          element: <UpdateCoursePage />,
         },
         {
           path: PATH.DEPARTMENTS,

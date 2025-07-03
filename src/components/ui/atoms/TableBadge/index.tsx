@@ -15,32 +15,32 @@ const StyledChip = styled(Chip)<{ status: StatusType }>(({ status }) => {
           color: "#23AC00",
           bgcolor: "#E9F7E6",
         };
-      case "pending":
+      case "PENDING":
         return {
           color: "#686D76",
           bgcolor: "#F0F0F1",
         };
-      case "completed":
+      case "COMPLETED":
         return {
           color: "#23AC00",
           bgcolor: "#E9F7E6",
         };
-      case "cancelled":
+      case "CANCELLED":
         return {
           color: "#EB5757",
           bgcolor: "#FFF0F0",
         };
-      case "error":
+      case "ERROR":
         return {
           color: "#EB5757",
           bgcolor: "#FFF0F0",
         };
-      case "banned":
+      case "BANNED":
         return {
           color: "#EB5757",
           bgcolor: "#FFF0F0",
         };
-      case "disbaled":
+      case "DISABLE":
         return {
           color: "#686D76",
           bgcolor: "#F0F0F1",

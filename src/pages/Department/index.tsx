@@ -36,10 +36,10 @@ const DepartmentPage: React.FC = () => {
     handleUpdate,
     onActionSuccess,
     isLoading,
-    total_page_count,
     page_size,
     handlePageChange,
     handelLimitChange,
+    total_items_count,
   } = useDepartmentPage();
 
   const menuItems = (department: Department) => [
@@ -75,9 +75,6 @@ const DepartmentPage: React.FC = () => {
             </TableCell>,
             <TableCell key="name" component="th" scope="row" padding="none">
               {row.name}
-            </TableCell>,
-            <TableCell key="location" align="left">
-              {row.location}
             </TableCell>,
             <TableCell key="leader" align="left">
               {row.leader?.full_name || ""}
@@ -122,7 +119,7 @@ const DepartmentPage: React.FC = () => {
               labelRowsPerPage="Số dòng mỗi trang:"
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={total_page_count}
+              count={total_items_count}
               rowsPerPage={page_size}
               page={activePage}
               onPageChange={handlePageChange}

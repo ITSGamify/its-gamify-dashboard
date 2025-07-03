@@ -1,10 +1,12 @@
+export type LessonType = "video" | "article" | "quiz";
+
 export interface QuizQuestion {
-  index: number;
-  question: string;
-  answer_A: string;
-  answer_B: string;
-  answer_C: string;
-  answer_D: string;
+  // index: number;
+  content: string;
+  answer_a: string;
+  answer_b: string;
+  answer_c: string;
+  answer_d: string;
   correct_answer: string;
   description: string;
 }
@@ -12,17 +14,27 @@ export interface QuizQuestion {
 export interface Lesson {
   id: string;
   title: string;
-  type: "video" | "article" | "quiz";
+  type: LessonType;
   duration: number;
   content?: string;
   video_url?: string;
-  quiz?: QuizQuestion[];
+  quiz?: QuizQuestion[] | Quizzes[];
+  quizzes?: Quizzes[];
+  index: number;
+  module_id: string;
+}
+
+export interface Quizzes {
+  total_questions: number;
+  questions: QuizQuestion[];
 }
 
 export interface Module {
-  id?: string;
+  id: string;
   title: string;
   description: string;
+  course_id: string;
+  ordered_number: number;
   lessons: Lesson[];
 }
 

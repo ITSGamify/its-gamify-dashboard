@@ -1,6 +1,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { StepFormProps } from "@interfaces/api/course";
 import { Module } from "@interfaces/dom/course";
+import { useCreateModule, useDeleteModule } from "@services/module";
+import { mapApiModulesToFormModules } from "@utils/course";
+import { useCallback, useEffect, useState } from "react";
 import { Resolver, useFieldArray, useForm } from "react-hook-form";
 import { courseContentSchema } from "src/form-schema/course";
 
@@ -12,76 +15,108 @@ export const useCourseContentForm = ({
   data,
   handleNextState,
 }: StepFormProps) => {
-  const defaultValue: Module = {
-    id: "",
-    title: "Module 1: Giới thiệu",
-    description: "Giới thiệu tổng quan về khóa học",
-    lessons: [
-      {
-        id: "lession-1",
-        title: "Bài 1: Giới thiệu khóa học",
-        type: "video",
-        duration: 10,
-        content: "Nội dung giới thiệu khóa học",
-        video_url: "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  // Sử dụng state để theo dõi và cập nhật modules
+  const [localModules, setLocalModules] = useState<Module[]>([]);
+  const { control, handleSubmit, setValue, getValues, watch, trigger, reset } =
+    useForm<CourseContentForm>({
+      mode: "onChange",
+      reValidateMode: "onChange",
+      defaultValues: {
+        modules: [],
       },
-      {
-        id: "lession-2",
-        title: "Bài 2: Cài đặt môi trường",
-        type: "article",
-        duration: 15,
-        content: "Hướng dẫn cài đặt môi trường làm việc",
-      },
-    ],
-  };
+      resolver: yupResolver(courseContentSchema) as Resolver<CourseContentForm>,
+    });
 
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    getValues,
-    watch,
-    formState: { errors },
-  } = useForm<CourseContentForm>({
-    mode: "onChange",
-    reValidateMode: "onChange",
-    defaultValues: {
-      modules: data?.modules || [
-        {
-          ...defaultValue,
-        },
-      ],
-    },
-    resolver: yupResolver(courseContentSchema) as Resolver<CourseContentForm>,
-  });
-  console.log(errors);
   const {
     fields: fieldModule,
     append: appendModule,
     remove: removeModule,
+    replace,
   } = useFieldArray({
     control,
     name: "modules",
     keyName: "fieldId", // Use fieldId instead of the default 'id' to avoid conflicts
   });
 
-  const handleAddModule = () => {
-    appendModule({
-      ...defaultValue,
+  // Cập nhật localModules khi fieldModule thay đổi
+  useEffect(() => {
+    setLocalModules(fieldModule);
+  }, [fieldModule]);
+
+  useEffect(() => {
+    if (data?.modules) {
+      const mappedModules = mapApiModulesToFormModules(data.modules);
+      reset({
+        modules: mappedModules,
+      });
+      setLocalModules(mappedModules);
+    }
+  }, [reset, data]);
+
+  const { mutateAsync: createModule, isPending: isCreatePending } =
+    useCreateModule();
+
+  const handleAddModule = useCallback(async () => {
+    await createModule(
+      {
+        course_id: data?.id,
+        title: `Module ${fieldModule.length + 1}`,
+        description: `Module ${fieldModule.length + 1}`,
+        ordered_number: fieldModule.length,
+      },
+      {
+        onSuccess: (new_module) => {
+          appendModule({
+            id: new_module.id,
+            title: new_module.title,
+            description: new_module.description,
+            ordered_number: new_module.ordered_number,
+            course_id: new_module.course_id,
+            lessons: [],
+          });
+        },
+      }
+    );
+  }, [createModule, data?.id, fieldModule.length, appendModule]);
+
+  const { mutateAsync: deleteModule, isPending: isDeletePending } =
+    useDeleteModule();
+
+  const handleRemoveModule = useCallback(
+    async (index: number, moduleId: string) => {
+      await deleteModule(moduleId, {
+        onSuccess: () => {
+          removeModule(index);
+        },
+      });
+    },
+    [deleteModule, removeModule]
+  );
+
+  const updateModulesAfterDrag = (updatedModules: Module[]) => {
+    setValue("modules", updatedModules, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
     });
+
+    setLocalModules([...updatedModules]);
+
+    replace(updatedModules);
   };
 
-  const handleRemoveModule = (index: number) => {
-    removeModule(index);
-  };
   return {
     control,
     handleSubmit: handleSubmit(handleNextState),
     handleAddModule,
     handleRemoveModule,
-    modules: fieldModule,
+    modules: localModules,
     setValue,
     getValues,
     watch,
+    trigger,
+    updateModulesAfterDrag,
+    isCreatePending,
+    isDeletePending,
   };
 };

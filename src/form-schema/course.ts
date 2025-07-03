@@ -7,8 +7,8 @@ export interface BasicsFormData {
   description: string;
   thumbnail_image_id: string;
   introduction_video_id: string;
-  classify: number;
-  department_id: string;
+  classify: string;
+  department_id?: string | null;
   category_id: string;
   tags: string[];
 }
@@ -18,7 +18,6 @@ export interface CourseContentFormData {
 }
 
 export interface LearningMaterialsFormData {
-  file_ids: string[];
   requirement: string;
   targets: string[];
 }
@@ -31,29 +30,33 @@ export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
     description: yup.string().required(),
     thumbnail_image_id: yup.string().required(),
     introduction_video_id: yup.string().required(),
-    classify: yup.number().required(),
-    department_id: yup.string().required(),
+    classify: yup.string().required(),
+    department_id: yup.string().nullable().optional(),
     category_id: yup.string().required(),
     tags: yup.array().of(yup.string().defined()).required(),
   });
 
 const moduleSchema = (): yup.ObjectSchema<Module> =>
   yup.object().shape({
-    id: yup.string().optional(),
+    id: yup.string().required(),
     title: yup.string().required("Title is required"),
     description: yup.string().required("Description is required"),
+    course_id: yup.string().required(),
+    ordered_number: yup.number().required(),
     lessons: yup
       .array()
       .of(
         yup.object().shape({
-          id: yup.string().required("Lesson ID is required"),
+          id: yup.string().required(),
           title: yup.string().required("Lesson title is required"),
+          index: yup.number().required(),
           type: yup
             .string()
             .oneOf(["video", "article", "quiz"])
             .required("Lesson type is required"),
           duration: yup.number().required("Duration is required"),
           content: yup.string().required("Content is required"),
+          module_id: yup.string().required("Content is required"),
           video_url: yup.string().when("type", {
             is: "video",
             then: (schema) =>
@@ -72,6 +75,5 @@ export const courseContentSchema = yup.object().shape({
 export const learningMaterialsFormSchema: yup.ObjectSchema<LearningMaterialsFormData> =
   yup.object().shape({
     requirement: yup.string().required("Title is required"),
-    file_ids: yup.array().of(yup.string().defined()).required(),
     targets: yup.array().of(yup.string().defined()).required(),
   });

@@ -316,44 +316,6 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
 
             <Grid container size={{ md: 12 }}>
               <Controller
-                name="password"
-                control={control}
-                rules={{ required: true }}
-                render={({ field, fieldState: { error } }) => (
-                  <TextField
-                    fullWidth
-                    label="Mật khẩu"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={!!error}
-                    helperText={error?.message}
-                    required
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={toggleShowPassword}
-                            edge="end"
-                          >
-                            {showPassword ? (
-                              <VisibilityOffIcon />
-                            ) : (
-                              <VisibilityIcon />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid container size={{ md: 12 }}>
-              <Controller
                 name="role_id"
                 control={control}
                 rules={{ required: true }}
@@ -398,9 +360,13 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                       <AutocompleteAsync
                         options={departmentsOptions}
                         label="Phòng ban"
-                        value={departmentsOptions.find(
-                          (x) => x.id === field.value
-                        )}
+                        value={
+                          field.value
+                            ? departmentsOptions.find(
+                                (x) => x.id === field.value
+                              ) || null
+                            : null
+                        }
                         onChange={field.onChange}
                         onSearch={handleSearchDepartmentsOptions}
                         loading={isLoadingDepartments}
@@ -408,6 +374,44 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                       />
                     </FormControl>
                   </FormControl>
+                )}
+              />
+            </Grid>
+
+            <Grid container size={{ md: 12 }}>
+              <Controller
+                name="password"
+                control={control}
+                rules={{ required: true }}
+                render={({ field, fieldState: { error } }) => (
+                  <TextField
+                    fullWidth
+                    label="Mật khẩu"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={!!error}
+                    helperText={error?.message}
+                    required
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={toggleShowPassword}
+                            edge="end"
+                          >
+                            {showPassword ? (
+                              <VisibilityOffIcon />
+                            ) : (
+                              <VisibilityIcon />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
                 )}
               />
             </Grid>

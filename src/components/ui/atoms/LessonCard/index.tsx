@@ -1,5 +1,5 @@
 // src/sections/course/components/LessonCard.tsx
-import React, { useEffect, useState } from "react";
+import React, { memo, useState } from "react";
 import {
   Box,
   Card,
@@ -33,7 +33,7 @@ import {
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { Draggable } from "react-beautiful-dnd";
-import { Lesson, QuizQuestion } from "@interfaces/dom/course";
+import { Lesson, LessonType, QuizQuestion } from "@interfaces/dom/course";
 import {
   Control,
   Controller,
@@ -42,6 +42,7 @@ import {
 } from "react-hook-form";
 import { CourseContentForm } from "@hooks/data/useCourseContentForm";
 import * as XLSX from "xlsx";
+import { useFileUpload } from "@services/fileUpload";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(2),
@@ -106,8 +107,8 @@ interface LessonCardProps {
   lesson: Lesson;
   index: number;
   moduleIndex: number;
-  moduleId: string | undefined;
-  handleDeleteLesson: (index: number) => void;
+  moduleId: string;
+  handleDeleteLesson: (index: number, lessonId: string) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<CourseContentForm, any, CourseContentForm>;
   getValues: UseFormGetValues<CourseContentForm>;
@@ -121,24 +122,19 @@ const LessonCard: React.FC<LessonCardProps> = ({
   handleDeleteLesson,
   control,
   getValues,
-  watch,
 }) => {
   const theme = useTheme();
 
-  const lessonType = watch(`modules.${moduleIndex}.lessons.${index}.type`);
   const [currentType, setCurrentType] = useState(
     getValues(`modules.${moduleIndex}.lessons.${index}.type`)
   );
-  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>(
+    (lesson.quiz as QuizQuestion[]) || []
+  );
+
   const [previewOpen, setPreviewOpen] = useState(false);
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (lessonType !== currentType) {
-      setCurrentType(lessonType);
-    }
-  }, [lessonType, currentType]);
 
   const handleFileUpload = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -162,12 +158,12 @@ const LessonCard: React.FC<LessonCardProps> = ({
         // Validate the data format
         const isValid = jsonData.every(
           (row: QuizQuestion) =>
-            "index" in row &&
-            "question" in row &&
-            "answer_A" in row &&
-            "answer_B" in row &&
-            "answer_C" in row &&
-            "answer_D" in row &&
+            // "index" in row &&
+            "content" in row &&
+            "answer_a" in row &&
+            "answer_b" in row &&
+            "answer_c" in row &&
+            "answer_d" in row &&
             "correct_answer" in row
         );
 
@@ -190,8 +186,24 @@ const LessonCard: React.FC<LessonCardProps> = ({
     reader.readAsArrayBuffer(file);
   };
 
+  const upload = useFileUpload();
+
+  // Handle file upload
+  const handleVideoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    onChange: (url: string) => void
+  ) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const files = event.target.files;
+
+      const result = await upload.mutateAsync({ file: files[0] });
+
+      onChange(result.url);
+    }
+  };
+
   const handlePreviewClick = () => {
-    if (quizQuestions.length > 0) {
+    if (quizQuestions) {
       setPreviewOpen(true);
     } else {
       setFileError(
@@ -201,7 +213,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
   };
 
   return (
-    <Draggable draggableId={lesson.id} index={index}>
+    <Draggable draggableId={lesson.id || `lesson-${index}`} index={index}>
       {(provided, snapshot) => (
         <StyledCard
           ref={provided.innerRef}
@@ -264,6 +276,9 @@ const LessonCard: React.FC<LessonCardProps> = ({
                           value={field.value}
                           onChange={(e) => {
                             field.onChange(e);
+
+                            setCurrentType(e.target.value as LessonType);
+
                             if (e.target.value === "quiz") {
                               setQuizQuestions([]);
                               setFileName(null);
@@ -281,7 +296,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
                   </Grid>
 
                   {/* Lesson duration */}
-                  <Grid size={{ xs: 6, md: 2 }}>
+                  <Grid size={{ xs: 6, md: currentType === "quiz" ? 2 : 3 }}>
                     <Controller
                       name={`modules.${moduleIndex}.lessons.${index}.duration`}
                       control={control}
@@ -305,30 +320,33 @@ const LessonCard: React.FC<LessonCardProps> = ({
                   </Grid>
 
                   {/* Action buttons */}
-                  <Grid size={{ xs: 12, md: 2 }}>
+                  <Grid size={{ xs: 12, md: currentType === "quiz" ? 2 : 1 }}>
                     <Box display="flex" justifyContent="flex-end">
-                      <Tooltip title="Xem trước">
-                        <IconButton
-                          size="small"
-                          color="primary"
-                          onClick={
-                            currentType === "quiz"
-                              ? handlePreviewClick
-                              : undefined
-                          }
-                        >
-                          {currentType === "quiz" ? (
-                            <VisibilityIcon />
-                          ) : (
-                            <PlayArrowIcon />
-                          )}
-                        </IconButton>
-                      </Tooltip>
+                      {currentType === "quiz" && (
+                        <Tooltip title="Xem trước">
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            onClick={
+                              currentType === "quiz"
+                                ? handlePreviewClick
+                                : undefined
+                            }
+                          >
+                            {currentType === "quiz" ? (
+                              <VisibilityIcon />
+                            ) : (
+                              <PlayArrowIcon />
+                            )}
+                          </IconButton>
+                        </Tooltip>
+                      )}
+
                       <Tooltip title="Xóa bài học">
                         <IconButton
                           size="small"
                           color="error"
-                          onClick={() => handleDeleteLesson(index)}
+                          onClick={() => handleDeleteLesson(index, lesson.id)}
                         >
                           <DeleteIcon />
                         </IconButton>
@@ -356,7 +374,17 @@ const LessonCard: React.FC<LessonCardProps> = ({
                             InputProps={{
                               endAdornment: (
                                 <InputAdornment position="end">
-                                  <Button size="small">Tải lên</Button>
+                                  <Button size="small" component="label">
+                                    Tải lên
+                                    <input
+                                      type="file"
+                                      hidden
+                                      accept="video/*"
+                                      onChange={(e) => {
+                                        handleVideoUpload(e, field.onChange);
+                                      }}
+                                    />
+                                  </Button>
                                 </InputAdornment>
                               ),
                             }}
@@ -402,16 +430,6 @@ const LessonCard: React.FC<LessonCardProps> = ({
                                     {fileName}
                                   </Typography>
                                 )}
-                                {quizQuestions.length > 0 && (
-                                  <Button
-                                    size="small"
-                                    sx={{ ml: 2 }}
-                                    onClick={handlePreviewClick}
-                                    startIcon={<VisibilityIcon />}
-                                  >
-                                    Xem trước ({quizQuestions.length} câu hỏi)
-                                  </Button>
-                                )}
                               </Box>
                               {fileError && (
                                 <Alert severity="error" sx={{ mt: 1 }}>
@@ -428,7 +446,6 @@ const LessonCard: React.FC<LessonCardProps> = ({
                     </Grid>
                   )}
 
-                  {/* Lesson content */}
                   <Grid size={{ xs: 12 }}>
                     <Controller
                       name={`modules.${moduleIndex}.lessons.${index}.content`}
@@ -452,7 +469,6 @@ const LessonCard: React.FC<LessonCardProps> = ({
                           onChange={field.onChange}
                           error={!!error}
                           helperText={error?.message}
-                          disabled={currentType === "quiz"}
                         />
                       )}
                     />
@@ -495,7 +511,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
               <ModalBody>
                 <Box sx={{ mb: 2 }}>
                   <Alert severity="info" sx={{ mb: 2 }}>
-                    Tổng số câu hỏi: <strong>{quizQuestions.length}</strong>
+                    Tổng số câu hỏi: <strong>{quizQuestions?.length}</strong>
                   </Alert>
                 </Box>
 
@@ -536,13 +552,13 @@ const LessonCard: React.FC<LessonCardProps> = ({
                       {quizQuestions.map((question, idx) => (
                         <TableRow key={idx} hover>
                           <StyledTableCell align="center">
-                            {question.index}
+                            {idx}
                           </StyledTableCell>
-                          <StyledTableCell>{question.question}</StyledTableCell>
-                          <StyledTableCell>{question.answer_A}</StyledTableCell>
-                          <StyledTableCell>{question.answer_B}</StyledTableCell>
-                          <StyledTableCell>{question.answer_C}</StyledTableCell>
-                          <StyledTableCell>{question.answer_D}</StyledTableCell>
+                          <StyledTableCell>{question.content}</StyledTableCell>
+                          <StyledTableCell>{question.answer_a}</StyledTableCell>
+                          <StyledTableCell>{question.answer_b}</StyledTableCell>
+                          <StyledTableCell>{question.answer_c}</StyledTableCell>
+                          <StyledTableCell>{question.answer_d}</StyledTableCell>
                           <StyledTableCell
                             align="center"
                             sx={{
@@ -579,4 +595,22 @@ const LessonCard: React.FC<LessonCardProps> = ({
   );
 };
 
-export default LessonCard;
+export default memo(LessonCard, (prevProps, nextProps) => {
+  const prevType = prevProps.watch(
+    `modules.${prevProps.moduleIndex}.lessons.${prevProps.index}.type`
+  );
+  const nextType = nextProps.watch(
+    `modules.${nextProps.moduleIndex}.lessons.${nextProps.index}.type`
+  );
+
+  const positionEqual =
+    prevProps.moduleIndex === nextProps.moduleIndex &&
+    prevProps.index === nextProps.index;
+
+  const lessonEqual =
+    JSON.stringify(prevProps.lesson) === JSON.stringify(nextProps.lesson);
+
+  const typeEqual = prevType === nextType;
+
+  return positionEqual && lessonEqual && typeEqual;
+});
