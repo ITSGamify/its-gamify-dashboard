@@ -26,8 +26,8 @@ import { toast } from "react-toastify";
 
 const defaultSort = [
   {
-    column: "title",
-    direction: "ASC" as OrderDirection,
+    column: "created_date",
+    direction: "asc" as OrderDirection,
   },
 ];
 
