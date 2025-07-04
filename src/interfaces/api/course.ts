@@ -45,4 +45,5 @@ export interface StepFormProps {
   activeStep?: number;
   handleBack?: () => void;
   isLoading?: boolean;
+  isCreateMode?: boolean;
 }

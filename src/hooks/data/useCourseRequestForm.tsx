@@ -109,7 +109,7 @@ export const useCourseForm = (courseId?: string, editMode?: boolean) => {
             const route = getRoute(PATH.COURSES_EDIT, {
               courseId: !courseDetail ? newCourse.id : courseDetail.id,
             });
-            navigation(route + "?step=" + (activeStep + 1));
+            navigation(route + "?step=" + activeStep);
           },
         }
       );

@@ -3,7 +3,7 @@ import { Department } from "./department";
 // src/types/user.ts
 export enum RoleEnum {
   ADMIN = "ADMIN",
-  EMPLOYEE = "EMPOLYEE",
+  EMPLOYEE = "EMPLOYEE",
   LEADER = "LEADER",
   TRAINER = "TRAINING STAFF",
 }
