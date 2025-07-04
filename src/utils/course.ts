@@ -28,6 +28,7 @@ export const transformBasicCourseFormToCourse = (
     classify: form.classify,
     department_id: form.department_id || null,
     tags: form.tags,
+    is_update_module: false,
     ...(data && { id: data.id }),
   };
 };
@@ -49,6 +50,7 @@ export const transformCourseContentFormToCourse = (
   });
   return {
     ...(data && { id: data.id }),
+    is_update_module: true,
     modules: processedModules,
   };
 };
@@ -59,6 +61,7 @@ export const transformLearningMaterialsFormToCourse = (
   return {
     ...(data && { id: data.id }),
     targets: form.targets,
+    is_update_module: false,
     requirement: form.requirement,
   };
 };
@@ -69,6 +72,7 @@ export const transformConfirmFormToCourse = (
   return {
     ...(data && { id: data.id }),
     ...data,
+    is_update_module: false,
   };
 };
 

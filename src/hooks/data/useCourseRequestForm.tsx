@@ -116,16 +116,12 @@ export const useCourseForm = (courseId?: string, editMode?: boolean) => {
     }
     // f182d5cd-7c4d-469a-890a-212e93749abe
     const next_state = getStateTransition(courseDetail?.status || "");
-    const isUpdateModule = activeStep == 1;
     const isLastStep = activeStep === 3;
     await updateCourse(
       {
         ...(requestBody as RequestUpdateCourseParams),
         ...(courseId ? { id: courseId } : {}),
         ...(courseId ? { current_step: next_state } : {}),
-        ...(isUpdateModule
-          ? { current_step: next_state, is_update_module: true }
-          : { is_update_module: false }),
       },
       {
         onSuccess: (newCourse) => {
