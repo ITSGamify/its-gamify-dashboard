@@ -45,7 +45,11 @@ export const useCourseForm = (courseId?: string, editMode?: boolean) => {
     navigation(PATH.COURSES);
   };
 
-  const { data: courseDetail, refetch } = useGetCourseDetail(courseId || "");
+  const {
+    data: courseDetail,
+    refetch,
+    isFetching,
+  } = useGetCourseDetail(courseId || "");
 
   useEffect(() => {
     if (courseId) {
@@ -53,9 +57,13 @@ export const useCourseForm = (courseId?: string, editMode?: boolean) => {
     }
   }, [activeStep, courseId, refetch]);
 
-  const { mutateAsync: createCourse } = useCreateCourse();
+  const { mutateAsync: createCourse, isPending: isCreating } =
+    useCreateCourse();
 
-  const { mutateAsync: updateCourse } = useUpdateCourse();
+  const { mutateAsync: updateCourse, isPending: isUpdating } =
+    useUpdateCourse();
+
+  const isLoading = isCreating || isUpdating;
 
   const handleBack = () => {
     if (activeStep === INITIAL_CREATE_STEP) {
@@ -108,13 +116,16 @@ export const useCourseForm = (courseId?: string, editMode?: boolean) => {
     }
     // f182d5cd-7c4d-469a-890a-212e93749abe
     const next_state = getStateTransition(courseDetail?.status || "");
-
+    const isUpdateModule = activeStep == 1;
     const isLastStep = activeStep === 3;
     await updateCourse(
       {
         ...(requestBody as RequestUpdateCourseParams),
         ...(courseId ? { id: courseId } : {}),
         ...(courseId ? { current_step: next_state } : {}),
+        ...(isUpdateModule
+          ? { current_step: next_state, is_update_module: true }
+          : { is_update_module: false }),
       },
       {
         onSuccess: (newCourse) => {
@@ -153,5 +164,7 @@ export const useCourseForm = (courseId?: string, editMode?: boolean) => {
     handleBackToList,
     activeStep,
     handleBack,
+    isLoadingForm: isFetching,
+    isLoading,
   };
 };

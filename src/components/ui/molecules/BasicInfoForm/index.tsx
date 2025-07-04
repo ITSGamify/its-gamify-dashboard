@@ -14,6 +14,7 @@ import {
   Button,
   Paper,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import {
   Image as ImageIcon,
@@ -39,6 +40,7 @@ const BasicInfoForm = ({
   handleNextState,
   activeStep,
   handleBack,
+  isLoading,
 }: StepFormProps) => {
   const {
     control,
@@ -50,6 +52,7 @@ const BasicInfoForm = ({
   } = useBasicForm({
     data,
     handleNextState,
+    isLoading,
   });
 
   const {
@@ -271,20 +274,31 @@ const BasicInfoForm = ({
             <Controller
               name="thumbnail_image_id"
               control={control}
-              render={({ field: { onChange } }) => (
-                <UploadBox
-                  id="thumbnail"
-                  title="Tải lên ảnh thumbnail"
-                  description="Kích thước khuyến nghị: 1280x720 px (tỷ lệ 16:9)"
-                  icon={
-                    <ImageIcon
-                      sx={{ fontSize: 40, color: "text.secondary", mb: 1 }}
-                    />
-                  }
-                  defaultUrl={data?.thumbnail_image}
-                  onChange={onChange}
-                  accept="image/*"
-                />
+              render={({ field: { onChange }, fieldState: { error } }) => (
+                <>
+                  <UploadBox
+                    id="thumbnail"
+                    title="Tải lên ảnh thumbnail"
+                    description="Kích thước khuyến nghị: 1280x720 px (tỷ lệ 16:9)"
+                    icon={
+                      <ImageIcon
+                        sx={{ fontSize: 40, color: "text.secondary", mb: 1 }}
+                      />
+                    }
+                    defaultUrl={data?.thumbnail_image}
+                    onChange={onChange}
+                    accept="image/*"
+                  />
+                  {error && (
+                    <Typography
+                      color="error"
+                      variant="caption"
+                      sx={{ mt: 1, display: "block" }}
+                    >
+                      {error.message}
+                    </Typography>
+                  )}
+                </>
               )}
             />
           </Grid>
@@ -296,20 +310,31 @@ const BasicInfoForm = ({
             <Controller
               name="introduction_video_id"
               control={control}
-              render={({ field: { onChange } }) => (
-                <UploadBox
-                  id="video"
-                  title="Tải lên video giới thiệu"
-                  description="Kích thước khuyến nghị: 1280x720 px (tỷ lệ 16:9)"
-                  icon={
-                    <VideoLibraryIcon
-                      sx={{ fontSize: 40, color: "text.secondary", mb: 1 }}
-                    />
-                  }
-                  defaultUrl={data?.introduction_video}
-                  onChange={onChange}
-                  accept="video/*"
-                />
+              render={({ field: { onChange }, fieldState: { error } }) => (
+                <>
+                  <UploadBox
+                    id="video"
+                    title="Tải lên video giới thiệu"
+                    description="Kích thước khuyến nghị: 1280x720 px (tỷ lệ 16:9)"
+                    icon={
+                      <VideoLibraryIcon
+                        sx={{ fontSize: 40, color: "text.secondary", mb: 1 }}
+                      />
+                    }
+                    defaultUrl={data?.introduction_video}
+                    onChange={onChange}
+                    accept="video/*"
+                  />
+                  {error && (
+                    <Typography
+                      color="error"
+                      variant="caption"
+                      sx={{ mt: 1, display: "block" }}
+                    >
+                      {error.message}
+                    </Typography>
+                  )}
+                </>
               )}
             />
           </Grid>
@@ -351,8 +376,17 @@ const BasicInfoForm = ({
               Xuất bản khóa học
             </Button>
           ) : (
-            <Button variant="contained" type="submit">
-              Tiếp theo
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={isLoading}
+              startIcon={
+                isLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : null
+              }
+            >
+              {isLoading ? "Đang xử lý..." : "Tiếp theo"}
             </Button>
           )}
         </Box>

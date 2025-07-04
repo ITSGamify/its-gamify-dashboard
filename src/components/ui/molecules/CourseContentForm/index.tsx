@@ -1,5 +1,13 @@
 import React from "react";
-import { Box, Grid, Button, Typography, Paper, useTheme } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Button,
+  Typography,
+  Paper,
+  useTheme,
+  CircularProgress,
+} from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { SectionTitle } from "@components/ui/atoms/SectionTitle";
@@ -15,6 +23,7 @@ const CourseContentForm = ({
   handleNextState,
   handleBack,
   activeStep,
+  isLoading,
 }: StepFormProps) => {
   const {
     control,
@@ -199,8 +208,17 @@ const CourseContentForm = ({
               Xuất bản khóa học
             </Button>
           ) : (
-            <Button variant="contained" type="submit">
-              Tiếp theo
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={isLoading}
+              startIcon={
+                isLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : null
+              }
+            >
+              {isLoading ? "Đang xử lý..." : "Tiếp theo"}
             </Button>
           )}
         </Box>

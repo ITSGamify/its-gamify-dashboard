@@ -1,5 +1,5 @@
 import { DataTable } from "@components/ui/molecules/DataTable";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+// import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import {
@@ -58,11 +58,11 @@ const CoursePage: React.FC = () => {
   } = useCoursePage();
 
   const menuItems = (course: Course) => [
-    {
-      icon: <VisibilityIcon color="action" />,
-      label: "Xem chi tiết",
-      onClick: () => {},
-    },
+    // {
+    //   icon: <VisibilityIcon color="action" />,
+    //   label: "Xem chi tiết",
+    //   onClick: () => {},
+    // },
     {
       icon: <EditIcon color="action" />,
       label: "Chỉnh sửa",

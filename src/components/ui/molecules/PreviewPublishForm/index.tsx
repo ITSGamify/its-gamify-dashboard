@@ -21,6 +21,7 @@ import {
   Alert,
   Paper,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import {
   ExpandMore as ExpandMoreIcon,
@@ -41,6 +42,7 @@ const PreviewPublishForm = ({
   handleNextState,
   activeStep,
   handleBack,
+  isLoading,
 }: StepFormProps) => {
   const courseData: CourseDataProps = {
     title: "",
@@ -175,11 +177,11 @@ const PreviewPublishForm = ({
                   </Grid>
                 </Grid>
 
-                <Divider sx={{ my: 2 }} />
+                <Divider />
 
-                <Typography variant="h6" gutterBottom>
+                {/* <Typography variant="h6" gutterBottom>
                   Nội dung khóa học
-                </Typography>
+                </Typography> */}
 
                 {data?.modules &&
                   data?.modules.map((module, index) => (
@@ -278,13 +280,6 @@ const PreviewPublishForm = ({
                 </List>
 
                 <Divider sx={{ my: 2 }} />
-
-                {/* <FormControlLabel
-                  control={
-                    <Switch checked={courseData.isPublished} color="primary" />
-                  }
-                  label="Xuất bản khóa học"
-                /> */}
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -293,15 +288,6 @@ const PreviewPublishForm = ({
                   Khi xuất bản, khóa học sẽ hiển thị cho học viên và có thể được
                   tìm kiếm
                 </Typography>
-
-                {/* <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  disabled={!(isBasicInfoComplete && isContentComplete)}
-                >
-                  Xuất bản khóa học
-                </Button> */}
 
                 {!(isBasicInfoComplete && isContentComplete) && (
                   <Alert severity="warning" sx={{ mt: 2 }}>
@@ -331,8 +317,14 @@ const PreviewPublishForm = ({
               variant="contained"
               color="primary"
               onClick={() => handleNextState(data)}
+              startIcon={
+                isLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : null
+              }
+              disabled={isLoading}
             >
-              Xuất bản khóa học
+              {isLoading ? "Đang xử lý..." : " Xuất bản khóa học"}
             </Button>
           ) : (
             <Button variant="contained" onClick={handleNextState}>
