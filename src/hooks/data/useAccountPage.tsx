@@ -4,7 +4,7 @@ import {
   DEFAULT_TABLE_LIMIT,
   DEFAULT_TABLE_PAGE_NUMBER,
 } from "@constants/table";
-import { User } from "@interfaces/api/user";
+import { RoleEnum, User } from "@interfaces/api/user";
 import { FilterGroup, FilterValues } from "@interfaces/dom/filter";
 import { OrderDirection } from "@interfaces/dom/query";
 import { HeadCell, TableColumns } from "@interfaces/dom/table";
@@ -247,7 +247,9 @@ export const useAccountPage = () => {
     handleEdit,
     account,
     accountColumns,
-    roles: roles?.data || [],
+    roles: (roles?.data || []).filter(
+      (role) => role.name === RoleEnum.EMPLOYEE || role.name === RoleEnum.LEADER
+    ),
     isRoleLoading,
     total_page_count,
     page_index,

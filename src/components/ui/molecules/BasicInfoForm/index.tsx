@@ -41,6 +41,7 @@ const BasicInfoForm = ({
   activeStep,
   handleBack,
   isLoading,
+  isCreateMode,
 }: StepFormProps) => {
   const {
     control,
@@ -363,12 +364,17 @@ const BasicInfoForm = ({
         <Button
           variant="outlined"
           onClick={handleBack}
-          disabled={activeStep === 0}
+          disabled={activeStep === 0 || isLoading}
         >
           Quay lại
         </Button>
         <Box>
-          <Button variant="outlined" sx={{ mr: 1 }} startIcon={<SaveIcon />}>
+          <Button
+            variant="outlined"
+            sx={{ mr: 1 }}
+            startIcon={<SaveIcon />}
+            disabled={isLoading}
+          >
             Lưu nháp
           </Button>
           {activeStep === STEPS.length - 1 ? (
@@ -386,7 +392,11 @@ const BasicInfoForm = ({
                 ) : null
               }
             >
-              {isLoading ? "Đang xử lý..." : "Tiếp theo"}
+              {isLoading
+                ? "Đang xử lý..."
+                : isCreateMode
+                ? "Tạo khóa học"
+                : "Tiếp theo"}
             </Button>
           )}
         </Box>

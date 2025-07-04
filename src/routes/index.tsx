@@ -97,17 +97,17 @@ const router = createBrowserRouter(
     {
       path: PATH.LOGIN,
       element: (
-        // <AuthenticationValidate>
-        <LoginPage />
-        // </AuthenticationValidate>
+        <AuthenticationValidate>
+          <LoginPage />
+        </AuthenticationValidate>
       ),
     },
     {
       path: PATH.HOME,
       element: (
-        // <ProtectedRoute>
-        <MainLayout />
-        // </ProtectedRoute>
+        <ProtectedRoute>
+          <MainLayout />
+        </ProtectedRoute>
       ),
       children: [
         {

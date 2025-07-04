@@ -304,12 +304,17 @@ const PreviewPublishForm = ({
         <Button
           variant="outlined"
           onClick={handleBack}
-          disabled={activeStep === 0}
+          disabled={activeStep === 0 || isLoading}
         >
           Quay lại
         </Button>
         <Box>
-          <Button variant="outlined" sx={{ mr: 1 }} startIcon={<SaveIcon />}>
+          <Button
+            variant="outlined"
+            sx={{ mr: 1 }}
+            startIcon={<SaveIcon />}
+            disabled={isLoading}
+          >
             Lưu nháp
           </Button>
           {activeStep === STEPS.length - 1 ? (

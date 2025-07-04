@@ -54,6 +54,7 @@ const CreateCoursePage = () => {
           activeStep={activeStep}
           handleBack={handleBack}
           isLoading={isLoading}
+          isCreateMode={true}
         />
 
         {/* Navigation Buttons */}
