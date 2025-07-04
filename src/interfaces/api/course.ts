@@ -44,4 +44,5 @@ export interface StepFormProps {
   handleNextState: <T>(formData?: T) => Promise<void>;
   activeStep?: number;
   handleBack?: () => void;
+  isLoading?: boolean;
 }

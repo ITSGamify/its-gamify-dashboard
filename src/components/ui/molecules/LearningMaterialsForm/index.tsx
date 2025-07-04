@@ -17,6 +17,7 @@ import {
   TextField,
   Paper,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import {
   Description as DescriptionIcon,
@@ -38,6 +39,7 @@ const LearningMaterialsForm = ({
   handleNextState,
   activeStep,
   handleBack,
+  isLoading,
 }: StepFormProps) => {
   const {
     targets,
@@ -256,8 +258,17 @@ const LearningMaterialsForm = ({
               Xuất bản khóa học
             </Button>
           ) : (
-            <Button variant="contained" type="submit">
-              Tiếp theo
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={isLoading}
+              startIcon={
+                isLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : null
+              }
+            >
+              {isLoading ? "Đang xử lý..." : "Tiếp theo"}
             </Button>
           )}
         </Box>

@@ -425,9 +425,9 @@ const LessonCard: React.FC<LessonCardProps> = ({
                                     Tải lên file Excel
                                   </Button>
                                 </label>
-                                {fileName && (
-                                  <Typography variant="body2" sx={{ ml: 2 }}>
-                                    {fileName}
+                                {quizQuestions.length > 0 && (
+                                  <Typography variant="body1" sx={{ ml: 2 }}>
+                                    {`Tổng số câu hỏi: ${quizQuestions.length}`}
                                   </Typography>
                                 )}
                               </Box>

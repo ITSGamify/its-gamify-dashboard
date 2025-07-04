@@ -19,11 +19,11 @@ const CreateCoursePage = () => {
     handleNextStep,
     activeStep,
     handleBack,
+    isLoading,
   } = useCourseForm();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const theme = useTheme();
-
   return (
     <Box sx={{ bgcolor: "background.default" }}>
       <Container>
@@ -53,6 +53,7 @@ const CreateCoursePage = () => {
           handleNextState={handleNextStep}
           activeStep={activeStep}
           handleBack={handleBack}
+          isLoading={isLoading}
         />
 
         {/* Navigation Buttons */}

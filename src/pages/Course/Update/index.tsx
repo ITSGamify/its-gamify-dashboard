@@ -7,6 +7,7 @@ import {
   Step,
   StepLabel,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import { StepperWrapper } from "@components/ui/atoms/StepperWrapper";
 import { useCourseForm } from "@hooks/data/useCourseRequestForm";
@@ -22,6 +23,8 @@ const UpdateCoursePage = () => {
     handleNextStep,
     activeStep,
     handleBack,
+    isLoadingForm,
+    isLoading,
   } = useCourseForm(courseId!, true);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const theme = useTheme();
@@ -49,14 +52,19 @@ const UpdateCoursePage = () => {
             ))}
           </Stepper>
         </StepperWrapper>
-
-        <ActiveStepForm
-          data={courseDetail}
-          handleNextState={handleNextStep}
-          activeStep={activeStep}
-          handleBack={handleBack}
-        />
-
+        {isLoadingForm ? (
+          <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <ActiveStepForm
+            data={courseDetail}
+            handleNextState={handleNextStep}
+            activeStep={activeStep}
+            handleBack={handleBack}
+            isLoading={isLoading}
+          />
+        )}
         {/* Navigation Buttons */}
       </Container>
     </Box>

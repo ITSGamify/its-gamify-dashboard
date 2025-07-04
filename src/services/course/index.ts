@@ -34,6 +34,7 @@ export interface CourseRequestParams {
   file_ids?: string[];
   requirement?: string;
   targets?: string[];
+  is_update_module: boolean;
 }
 
 //update
