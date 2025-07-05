@@ -18,7 +18,9 @@ export interface Lesson {
   duration: number;
   content?: string;
   video_url?: string;
-  quiz?: QuizQuestion[] | Quizzes[];
+  quiz_id?: string | null;
+  quiz?: Quizzes;
+  questions?: QuizQuestion[];
   quizzes?: Quizzes[];
   index: number;
   module_id: string;
