@@ -129,7 +129,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
     getValues(`modules.${moduleIndex}.lessons.${index}.type`)
   );
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>(
-    (lesson.quiz as QuizQuestion[]) || []
+    lesson.questions || []
   );
 
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -399,7 +399,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
                     <Grid size={{ xs: 12 }}>
                       <Box sx={{ mb: 1 }}>
                         <Controller
-                          name={`modules.${moduleIndex}.lessons.${index}.quiz`}
+                          name={`modules.${moduleIndex}.lessons.${index}.questions`}
                           control={control}
                           render={({ field }) => (
                             <Box>

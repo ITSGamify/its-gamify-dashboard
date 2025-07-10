@@ -11,7 +11,7 @@ import { BasicForm } from "@hooks/data/useBasicForm";
 import { CourseContentForm } from "@hooks/data/useCourseContentForm";
 import { LearningMaterialsForm } from "@hooks/data/useLearningMaterialsForm";
 import { Course } from "@interfaces/api/course";
-import { Lesson, Quizzes, Module } from "@interfaces/dom/course";
+import { Lesson, Module } from "@interfaces/dom/course";
 import { CourseRequestParams } from "@services/course";
 
 export const transformBasicCourseFormToCourse = (
@@ -156,10 +156,8 @@ export const mapApiModulesToFormModules = (apiModules: Module[]): Module[] => {
             video_url: lesson.video_url || "",
             index: lesson.index,
             module_id: lesson.module_id,
-            quiz:
-              lesson.quiz && lesson.quiz.length > 0
-                ? (lesson.quiz[0] as Quizzes).questions || []
-                : [],
+            quiz_id: lesson.quiz_id || null,
+            questions: (lesson.quiz && lesson.quiz.questions) || [],
           }))
       : [],
   }));
