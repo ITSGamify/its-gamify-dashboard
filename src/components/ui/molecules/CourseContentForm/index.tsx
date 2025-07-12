@@ -145,7 +145,7 @@ const CourseContentForm = ({
                 onClick={handleAddModule}
                 disabled={isCreatePending}
               >
-                Thêm module
+                Thêm mới
               </CustomButton>
             </Box>
           </Grid>

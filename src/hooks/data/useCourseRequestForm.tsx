@@ -122,6 +122,7 @@ export const useCourseForm = (courseId?: string, editMode?: boolean) => {
         ...(requestBody as RequestUpdateCourseParams),
         ...(courseId ? { id: courseId } : {}),
         ...(courseId ? { current_step: next_state } : {}),
+        ...(isLastStep ? { drafted: false } : { drafted: true }),
       },
       {
         onSuccess: (newCourse) => {

@@ -6,6 +6,7 @@ import {
   deleteCourse,
   deleteRangeCourse,
   getCourseDetail,
+  getCourseModules,
   getCourses,
   updateCourse,
 } from "./request";
@@ -35,6 +36,7 @@ export interface CourseRequestParams {
   requirement?: string;
   targets?: string[];
   is_update_module: boolean;
+  drafted: boolean;
 }
 
 //update
@@ -84,5 +86,13 @@ export const useDeleteRangeCourses = (onSuccess?: () => void) => {
   return useMutation({
     mutationFn: deleteRangeCourse,
     onSuccess,
+  });
+};
+
+export const useGetCourseModules = (courseId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.COURSE.COURSE_SECTIONS, courseId],
+    queryFn: () => getCourseModules(courseId),
+    enabled: !!courseId,
   });
 };

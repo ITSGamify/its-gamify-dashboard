@@ -10,6 +10,7 @@ import { getRoute } from "@utils/route";
 import { HTTP_METHODS } from "@constants/request";
 import { END_POINTS } from "@constants/endpoint";
 import { Course } from "@interfaces/api/course";
+import { Module } from "@interfaces/dom/course";
 
 export const getCourses = async (
   params?: GetCourseParams
@@ -64,5 +65,14 @@ export const deleteRangeCourse = async (
     url: getRoute(END_POINTS.COURSE.DELETE_RANGE),
     method: HTTP_METHODS.PUT,
     data: params,
+  });
+};
+
+export const getCourseModules = async (
+  courseId: string
+): Promise<PaginatedResponse<Module>> => {
+  return request({
+    url: getRoute(END_POINTS.COURSE.COURSE_SECTIONS, { courseId }),
+    method: HTTP_METHODS.GET,
   });
 };

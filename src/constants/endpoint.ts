@@ -36,6 +36,7 @@ export const END_POINTS = {
     BASE: BASE_KEYS.COURSES,
     DETAIL: `${BASE_KEYS.COURSES}/:courseId`,
     DELETE_RANGE: `${BASE_KEYS.COURSES}/delete-range`,
+    COURSE_SECTIONS: `${BASE_KEYS.COURSES}/:courseId/course-sections`,
   },
   CATEGORIES: {
     BASE: BASE_KEYS.CATEGORIES,
