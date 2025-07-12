@@ -57,7 +57,7 @@ export const moduleSchema = (): yup.ObjectSchema<Module> =>
           duration: yup.number().required("Duration is required"),
           content: yup.string().required("Content is required"),
           module_id: yup.string().required("Content is required"),
-          image_files: yup.array().required(),
+          image_files: yup.array().optional().nullable(),
           video_url: yup.string().when("type", {
             is: "video",
             then: (schema) =>
