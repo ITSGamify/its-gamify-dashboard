@@ -36,7 +36,7 @@ export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
     tags: yup.array().of(yup.string().defined()).required(),
   });
 
-const moduleSchema = (): yup.ObjectSchema<Module> =>
+export const moduleSchema = (): yup.ObjectSchema<Module> =>
   yup.object().shape({
     id: yup.string().required(),
     title: yup.string().required("Title is required"),
@@ -57,6 +57,7 @@ const moduleSchema = (): yup.ObjectSchema<Module> =>
           duration: yup.number().required("Duration is required"),
           content: yup.string().required("Content is required"),
           module_id: yup.string().required("Content is required"),
+          image_files: yup.array().required(),
           video_url: yup.string().when("type", {
             is: "video",
             then: (schema) =>
@@ -77,3 +78,35 @@ export const learningMaterialsFormSchema: yup.ObjectSchema<LearningMaterialsForm
     requirement: yup.string().required("Title is required"),
     targets: yup.array().of(yup.string().defined()).required(),
   });
+
+export const moduleSchema2: yup.ObjectSchema<Module> = yup.object().shape({
+  id: yup.string().required(),
+  title: yup.string().required("Title is required"),
+  description: yup.string().required("Description is required"),
+  course_id: yup.string().required(),
+  ordered_number: yup.number().required(),
+  lessons: yup
+    .array()
+    .of(
+      yup.object().shape({
+        id: yup.string().required(),
+        title: yup.string().required("Lesson title is required"),
+        index: yup.number().required(),
+        type: yup
+          .string()
+          .oneOf(["video", "article", "quiz"])
+          .required("Lesson type is required"),
+        duration: yup.number().required("Duration is required"),
+        content: yup.string().required("Content is required"),
+        module_id: yup.string().required("Content is required"),
+        image_files: yup.array().required(),
+        video_url: yup.string().when("type", {
+          is: "video",
+          then: (schema) =>
+            schema.required("Video URL is required for video lessons"),
+          otherwise: (schema) => schema.optional(),
+        }),
+      })
+    )
+    .required("At least one lesson is required"),
+});

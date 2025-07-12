@@ -29,6 +29,7 @@ export const transformBasicCourseFormToCourse = (
     department_id: form.department_id || null,
     tags: form.tags,
     is_update_module: false,
+    drafted: data?.drafted || false,
     ...(data && { id: data.id }),
   };
 };
@@ -51,6 +52,7 @@ export const transformCourseContentFormToCourse = (
   return {
     ...(data && { id: data.id }),
     is_update_module: true,
+    drafted: data?.drafted || false,
     modules: processedModules,
   };
 };
@@ -62,6 +64,7 @@ export const transformLearningMaterialsFormToCourse = (
     ...(data && { id: data.id }),
     targets: form.targets,
     is_update_module: false,
+    drafted: data?.drafted || false,
     requirement: form.requirement,
   };
 };
@@ -72,6 +75,7 @@ export const transformConfirmFormToCourse = (
   return {
     ...(data && { id: data.id }),
     ...data,
+    drafted: data?.drafted || false,
     is_update_module: false,
   };
 };
@@ -157,8 +161,38 @@ export const mapApiModulesToFormModules = (apiModules: Module[]): Module[] => {
             index: lesson.index,
             module_id: lesson.module_id,
             quiz_id: lesson.quiz_id || null,
+            image_files: lesson.image_files,
             questions: (lesson.quiz && lesson.quiz.questions) || [],
           }))
       : [],
   }));
+};
+
+export const validateCourseContent = (
+  formData: CourseContentForm
+): { isValid: boolean; errorMessage?: string } => {
+  // Kiểm tra số lượng module
+  if (!formData.modules || formData.modules.length < 3) {
+    return {
+      isValid: false,
+      errorMessage: "Khóa học phải có tối thiểu 3 chương.",
+    };
+  }
+
+  // Kiểm tra mỗi module có ít nhất 1 bài học
+  const emptyModules = formData.modules.filter(
+    (module) => !module.lessons || module.lessons.length === 0
+  );
+
+  if (emptyModules.length > 0) {
+    const moduleNames = emptyModules
+      .map((module) => `"${module.title}"`)
+      .join(", ");
+    return {
+      isValid: false,
+      errorMessage: `Các chương sau chưa có bài học: ${moduleNames}. Mỗi chương phải có ít nhất 1 bài học.`,
+    };
+  }
+
+  return { isValid: true };
 };

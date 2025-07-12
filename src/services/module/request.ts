@@ -1,5 +1,5 @@
 import { Module } from "@interfaces/dom/course";
-import { RequestModuleParams } from ".";
+import { RequestModuleParams, RequestUpdateModuleParams } from ".";
 import { request } from "@config/axios";
 import { getRoute } from "@utils/route";
 import { END_POINTS } from "@constants/endpoint";
@@ -19,5 +19,16 @@ export const deleteModule = async (moduleId: string): Promise<void> => {
   return request({
     url: getRoute(END_POINTS.MODULES.DETAIL, { moduleId }),
     method: HTTP_METHODS.DELETE,
+  });
+};
+
+export const updateModule = async (
+  payload: RequestUpdateModuleParams
+): Promise<Module> => {
+  const { id: moduleId, ...data } = payload;
+  return request({
+    url: getRoute(END_POINTS.MODULES.DETAIL, { moduleId }),
+    method: HTTP_METHODS.PUT,
+    data,
   });
 };

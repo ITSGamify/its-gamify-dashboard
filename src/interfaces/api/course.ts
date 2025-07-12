@@ -8,6 +8,7 @@ export interface Course {
   sessions: number;
   department_id: string;
   deparment?: Department;
+  drafted: boolean;
   reviews: number;
   category_id?: string;
   category?: Category;

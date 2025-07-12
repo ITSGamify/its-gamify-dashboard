@@ -2,10 +2,16 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { StepFormProps } from "@interfaces/api/course";
 import { Module } from "@interfaces/dom/course";
 import { useCreateModule, useDeleteModule } from "@services/module";
-import { mapApiModulesToFormModules } from "@utils/course";
+import {
+  mapApiModulesToFormModules,
+  validateCourseContent,
+} from "@utils/course";
 import { useCallback, useEffect, useState } from "react";
 import { Resolver, useFieldArray, useForm } from "react-hook-form";
 import { courseContentSchema } from "src/form-schema/course";
+import { toast } from "react-toastify";
+import ToastContent from "@components/ui/atoms/Toast";
+import { useGetCourseModules } from "@services/course";
 
 export interface CourseContentForm {
   modules: Module[];
@@ -35,13 +41,17 @@ export const useCourseContentForm = ({
   } = useFieldArray({
     control,
     name: "modules",
-    keyName: "fieldId", // Use fieldId instead of the default 'id' to avoid conflicts
+    keyName: "fieldId",
   });
 
-  // Cập nhật localModules khi fieldModule thay đổi
   useEffect(() => {
     setLocalModules(fieldModule);
   }, [fieldModule]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data: moduleData, refetch: reFetchModule } = useGetCourseModules(
+    data?.id || ""
+  );
 
   useEffect(() => {
     if (data?.modules) {
@@ -60,8 +70,8 @@ export const useCourseContentForm = ({
     await createModule(
       {
         course_id: data?.id,
-        title: `Module ${fieldModule.length + 1}`,
-        description: `Module ${fieldModule.length + 1}`,
+        title: `Chương ${fieldModule.length + 1}`,
+        description: `Chương ${fieldModule.length + 1}`,
         ordered_number: fieldModule.length,
       },
       {
@@ -105,9 +115,28 @@ export const useCourseContentForm = ({
     replace(updatedModules);
   };
 
+  // Cập nhật lại hàm submit
+  const onSubmit = (formData: CourseContentForm) => {
+    const validation = validateCourseContent(formData);
+
+    if (!validation.isValid) {
+      toast.error(ToastContent, {
+        data: {
+          message:
+            validation.errorMessage ||
+            "Nội dung khóa học chưa đáp ứng yêu cầu!",
+        },
+      });
+      return;
+    }
+
+    // Nếu dữ liệu hợp lệ, chuyển sang bước tiếp theo
+    handleNextState(formData);
+  };
+
   return {
     control,
-    handleSubmit: handleSubmit(handleNextState),
+    handleSubmit: handleSubmit(onSubmit),
     handleAddModule,
     handleRemoveModule,
     modules: localModules,
