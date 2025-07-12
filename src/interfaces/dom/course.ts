@@ -26,7 +26,7 @@ export interface Lesson {
   quizzes?: Quizzes[];
   index: number;
   module_id: string;
-  image_files: StorageFile[] | null;
+  image_files?: StorageFile[] | null;
 }
 
 export interface Quizzes {
