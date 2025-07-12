@@ -11,8 +11,7 @@ import {
   styled,
 } from "@mui/material";
 import { Upload as UploadIcon, Image as ImageIcon } from "@mui/icons-material";
-import { CourseContentForm } from "@hooks/data/useCourseContentForm";
-import { Lesson } from "@interfaces/dom/course";
+import { Lesson, Module } from "@interfaces/dom/course";
 import { useFileUpload } from "@services/fileUpload";
 import { Control, useFieldArray } from "react-hook-form";
 import { StorageFile } from "@interfaces/api/file";
@@ -37,7 +36,7 @@ interface ArticleLessonContentProps {
   moduleIndex: number;
   lessonIndex: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<CourseContentForm, any, CourseContentForm>;
+  control: Control<Module, any, Module>;
   lesson: Lesson;
   isEditing?: boolean;
 }
@@ -50,7 +49,7 @@ const ArticleLessonContent = ({
 }: ArticleLessonContentProps) => {
   const { fields, append, remove } = useFieldArray({
     control,
-    name: `modules.${moduleIndex}.lessons.${lessonIndex}.image_files`,
+    name: `lessons.${lessonIndex}.image_files`,
   });
 
   const [uploadError, setUploadError] = useState<string | null>(null);

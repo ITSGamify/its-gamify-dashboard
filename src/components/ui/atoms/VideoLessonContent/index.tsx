@@ -13,7 +13,6 @@ import {
   IconButton,
 } from "@mui/material";
 import { Control, Controller, useWatch } from "react-hook-form";
-import { CourseContentForm } from "@hooks/data/useCourseContentForm";
 import { useFileUpload } from "@services/fileUpload";
 import { textFieldStyles } from "../LessonCard";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
@@ -21,17 +20,17 @@ import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import { Module } from "@interfaces/dom/course";
 
 interface VideoLessonContentProps {
   moduleIndex: number;
   lessonIndex: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<CourseContentForm, any, CourseContentForm>;
+  control: Control<Module, any, Module>;
   isEditing?: boolean;
 }
 
 const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
-  moduleIndex,
   lessonIndex,
   control,
   isEditing = false,
@@ -46,7 +45,7 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
   // Theo dõi giá trị hiện tại của video_url
   const videoUrl = useWatch({
     control,
-    name: `modules.${moduleIndex}.lessons.${lessonIndex}.video_url`,
+    name: `lessons.${lessonIndex}.video_url`,
     defaultValue: "",
   });
 
@@ -165,7 +164,7 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
   return (
     <Grid size={{ xs: 12 }}>
       <Controller
-        name={`modules.${moduleIndex}.lessons.${lessonIndex}.video_url`}
+        name={`lessons.${lessonIndex}.video_url`}
         control={control}
         rules={{ required: true }}
         render={({ field, fieldState: { error } }) => (
@@ -185,7 +184,7 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
                 endAdornment: (
                   <InputAdornment position="end">
                     <Controller
-                      name={`modules.${moduleIndex}.lessons.${lessonIndex}.duration`}
+                      name={`lessons.${lessonIndex}.duration`}
                       control={control}
                       render={({ field: durationField }) => (
                         <Button
@@ -307,7 +306,7 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
                 </Paper>
 
                 <Controller
-                  name={`modules.${moduleIndex}.lessons.${lessonIndex}.duration`}
+                  name={`lessons.${lessonIndex}.duration`}
                   control={control}
                   render={({ field }) => (
                     <Typography

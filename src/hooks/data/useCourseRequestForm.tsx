@@ -114,7 +114,6 @@ export const useCourseForm = (courseId?: string, editMode?: boolean) => {
         }
       );
     }
-    // f182d5cd-7c4d-469a-890a-212e93749abe
     const next_state = getStateTransition(courseDetail?.status || "");
     const isLastStep = activeStep === 3;
     await updateCourse(

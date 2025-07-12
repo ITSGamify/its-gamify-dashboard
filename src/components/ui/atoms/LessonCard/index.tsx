@@ -1,5 +1,5 @@
 // src/sections/course/components/LessonCard.tsx
-import React, { memo, useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import {
   Box,
   Card,
@@ -18,14 +18,13 @@ import {
   Visibility as VisibilityIcon,
 } from "@mui/icons-material";
 import { Draggable } from "react-beautiful-dnd";
-import { Lesson, LessonType } from "@interfaces/dom/course";
+import { Lesson, LessonType, Module } from "@interfaces/dom/course";
 import {
   Control,
   Controller,
   UseFormGetValues,
   UseFormWatch,
 } from "react-hook-form";
-import { CourseContentForm } from "@hooks/data/useCourseContentForm";
 import VideoLessonContent from "../VideoLessonContent";
 import QuizLessonContent from "../QuizLessonContent";
 import QuizPreviewModal from "../QuizPreviewModal";
@@ -61,9 +60,9 @@ interface LessonCardProps {
   moduleId: string;
   handleDeleteLesson: (index: number, lessonId: string) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<CourseContentForm, any, CourseContentForm>;
-  getValues: UseFormGetValues<CourseContentForm>;
-  watch: UseFormWatch<CourseContentForm>;
+  control: Control<Module, any, Module>;
+  getValues: UseFormGetValues<Module>;
+  watch: UseFormWatch<Module>;
   isEditing?: boolean;
 }
 
@@ -80,14 +79,12 @@ const LessonCard: React.FC<LessonCardProps> = ({
   const theme = useTheme();
 
   const [currentType, setCurrentType] = useState<LessonType>(
-    getValues(`modules.${moduleIndex}.lessons.${index}.type`) as LessonType
+    getValues(`lessons.${index}.type`) as LessonType
   );
   const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
-    const type = getValues(
-      `modules.${moduleIndex}.lessons.${index}.type`
-    ) as LessonType;
+    const type = getValues(`lessons.${index}.type`) as LessonType;
     if (type !== currentType) {
       setCurrentType(type);
     }
@@ -134,7 +131,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
                   {/* Lesson title */}
                   <Grid size={{ xs: 12, md: 5 }}>
                     <Controller
-                      name={`modules.${moduleIndex}.lessons.${index}.title`}
+                      name={`lessons.${index}.title`}
                       control={control}
                       rules={{ required: true }}
                       render={({ field, fieldState: { error } }) => (
@@ -156,7 +153,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
                   {/* Lesson type */}
                   <Grid size={{ xs: 6, md: 3 }}>
                     <Controller
-                      name={`modules.${moduleIndex}.lessons.${index}.type`}
+                      name={`lessons.${index}.type`}
                       control={control}
                       rules={{ required: true }}
                       render={({ field, fieldState: { error } }) => (
@@ -186,7 +183,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
                   {/* Lesson duration */}
                   <Grid size={{ xs: 6, md: currentType === "quiz" ? 2 : 3 }}>
                     <Controller
-                      name={`modules.${moduleIndex}.lessons.${index}.duration`}
+                      name={`lessons.${index}.duration`}
                       control={control}
                       rules={{ required: true }}
                       render={({ field, fieldState: { error } }) => (
@@ -224,16 +221,21 @@ const LessonCard: React.FC<LessonCardProps> = ({
                         </Tooltip>
                       )}
 
-                      <Tooltip title="Xóa bài học">
-                        <IconButton
-                          size="small"
-                          color="error"
-                          disabled={!isEditing}
-                          onClick={() => handleDeleteLesson(index, lesson.id)}
-                        >
+                      {isEditing ? (
+                        <Tooltip title="Xóa bài học">
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => handleDeleteLesson(index, lesson.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      ) : (
+                        <IconButton size="small" color="error" disabled={true}>
                           <DeleteIcon />
                         </IconButton>
-                      </Tooltip>
+                      )}
                     </Box>
                   </Grid>
 
@@ -269,7 +271,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
                   {/* Nội dung chung cho mọi loại bài học */}
                   <Grid size={{ xs: 12 }}>
                     <Controller
-                      name={`modules.${moduleIndex}.lessons.${index}.content`}
+                      name={`lessons.${index}.content`}
                       control={control}
                       rules={{ required: currentType !== "quiz" }}
                       render={({ field, fieldState: { error } }) => (
@@ -316,12 +318,8 @@ const LessonCard: React.FC<LessonCardProps> = ({
 };
 
 export default memo(LessonCard, (prevProps, nextProps) => {
-  const prevType = prevProps.watch(
-    `modules.${prevProps.moduleIndex}.lessons.${prevProps.index}.type`
-  );
-  const nextType = nextProps.watch(
-    `modules.${nextProps.moduleIndex}.lessons.${nextProps.index}.type`
-  );
+  const prevType = prevProps.watch(`lessons.${prevProps.index}.type`);
+  const nextType = nextProps.watch(`lessons.${nextProps.index}.type`);
 
   const positionEqual =
     prevProps.moduleIndex === nextProps.moduleIndex &&
