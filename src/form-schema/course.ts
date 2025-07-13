@@ -25,51 +25,75 @@ export interface LearningMaterialsFormData {
 export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
   .object()
   .shape({
-    title: yup.string().required("Title is required"),
-    short_description: yup.string().required("Short description is required"),
-    description: yup.string().required(),
-    thumbnail_image_id: yup.string().required(),
-    introduction_video_id: yup.string().required(),
-    classify: yup.string().required(),
+    title: yup.string().required("Tiêu đề là bắt buộc"),
+    short_description: yup.string().required("Mô tả ngắn là bắt buộc"),
+    description: yup.string().required("Mô tả là bắt buộc"),
+    thumbnail_image_id: yup.string().required("Ảnh thu nhỏ là bắt buộc"),
+    introduction_video_id: yup
+      .string()
+      .required("Video giới thiệu là bắt buộc"),
+    classify: yup.string().required("Phân loại là bắt buộc"),
     department_id: yup.string().nullable().optional(),
-    category_id: yup.string().required(),
-    tags: yup.array().of(yup.string().defined()).required(),
+    category_id: yup.string().required("Danh mục là bắt buộc"),
+    tags: yup.array().of(yup.string().defined()).required("Thẻ là bắt buộc"),
   });
 
 export const learningMaterialsFormSchema: yup.ObjectSchema<LearningMaterialsFormData> =
   yup.object().shape({
-    requirement: yup.string().required("Title is required"),
-    targets: yup.array().of(yup.string().defined()).required(),
+    requirement: yup.string().required("Yêu cầu là bắt buộc"),
+    targets: yup
+      .array()
+      .of(yup.string().defined())
+      .required("Mục tiêu là bắt buộc"),
   });
 
 export const moduleSchema: yup.ObjectSchema<Module> = yup.object().shape({
-  id: yup.string().required(),
-  title: yup.string().required("Title is required"),
-  description: yup.string().required("Description is required"),
-  course_id: yup.string().required(),
-  ordered_number: yup.number().required(),
+  id: yup.string().required("ID là bắt buộc"),
+  title: yup.string().required("Tiêu đề là bắt buộc"),
+  description: yup.string().required("Mô tả là bắt buộc"),
+  course_id: yup.string().required("ID khóa học là bắt buộc"),
+  ordered_number: yup.number().required("Số thứ tự là bắt buộc"),
   lessons: yup
     .array()
     .of(
       yup.object().shape({
-        id: yup.string().required(),
-        title: yup.string().required("Lesson title is required"),
-        index: yup.number().required(),
+        id: yup.string().required("ID là bắt buộc"),
+        title: yup.string().required("Tiêu đề bài học là bắt buộc"),
+        index: yup.number().required("Chỉ mục là bắt buộc"),
         type: yup
           .string()
           .oneOf(["video", "article", "quiz"])
-          .required("Lesson type is required"),
-        duration: yup.number().required("Duration is required"),
-        content: yup.string().required("Content is required"),
-        module_id: yup.string().required("Content is required"),
-        image_files: yup.array().required(),
+          .required("Loại bài học là bắt buộc"),
+        duration: yup
+          .number()
+          .typeError("Vui lòng nhập số phút")
+          .min(0, "Thời lượng phải lớn hơn không")
+          .required("Thời lượng là bắt buộc"),
+        content: yup.string().required("Nội dung là bắt buộc"),
+        module_id: yup.string().required("ID module là bắt buộc"),
+        image_files: yup.array().when("type", {
+          is: "article",
+          then: (schema) =>
+            schema
+              .min(1, "Cần ít nhất một hình ảnh cho dạng này")
+              .required("Tệp hình ảnh là bắt buộc cho bài học dạng bài viết"),
+          otherwise: (schema) => schema.optional(),
+        }),
         video_url: yup.string().when("type", {
           is: "video",
           then: (schema) =>
-            schema.required("Video URL is required for video lessons"),
+            schema.required("URL video là bắt buộc cho bài học dạng video"),
+          otherwise: (schema) => schema.optional(),
+        }),
+        questions: yup.array().when("type", {
+          is: "quiz",
+          then: (schema) =>
+            schema
+              .min(1, "Cần ít nhất một câu hỏi cho bài học dạng kiểm tra")
+              .required("Câu hỏi là bắt buộc cho bài học dạng kiểm tra"),
           otherwise: (schema) => schema.optional(),
         }),
       })
     )
-    .required("At least one lesson is required"),
+    .required("Cần ít nhất một bài học"),
 });

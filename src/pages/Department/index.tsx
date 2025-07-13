@@ -52,7 +52,7 @@ const DepartmentPage: React.FC = () => {
     },
     {
       icon: <DeleteOutlineIcon color="error" />,
-      label: "Tạm ngưng",
+      label: "Xóa phòng ban",
       onClick: () => {
         handleDelete(department.id);
       },
