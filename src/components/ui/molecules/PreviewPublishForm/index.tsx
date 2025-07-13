@@ -338,7 +338,7 @@ const PreviewPublishForm = ({
                   <CircularProgress size={20} color="inherit" />
                 ) : null
               }
-              disabled={isLoading || isValid}
+              disabled={isLoading || !isValid}
             >
               {isLoading ? "Đang xử lý..." : " Xuất bản khóa học"}
             </Button>
