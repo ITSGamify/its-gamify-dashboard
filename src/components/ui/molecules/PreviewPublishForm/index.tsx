@@ -107,10 +107,17 @@ const PreviewPublishForm = ({
           </Grid>
 
           <Grid size={{ xs: 12 }}>
-            <Alert severity="info" sx={{ mb: 0 }}>
-              Xem lại thông tin khóa học của bạn trước khi xuất bản. Bạn có thể
-              quay lại các bước trước để chỉnh sửa nếu cần.
-            </Alert>
+            {isValid ? (
+              <Alert severity="info" sx={{ mb: 0 }}>
+                Xem lại thông tin khóa học của bạn trước khi xuất bản. Bạn có
+                thể quay lại các bước trước để chỉnh sửa nếu cần.
+              </Alert>
+            ) : (
+              <Alert severity="error" sx={{ mb: 0 }}>
+                Mỗi khóa học cần tối thiểu 3 chương. Mỗi chương có ít nhất 1 bài
+                học.
+              </Alert>
+            )}
           </Grid>
 
           <Grid size={{ xs: 12, md: 8 }}>
