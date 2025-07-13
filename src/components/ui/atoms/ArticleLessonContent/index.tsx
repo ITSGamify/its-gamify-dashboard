@@ -13,7 +13,7 @@ import {
 import { Upload as UploadIcon, Image as ImageIcon } from "@mui/icons-material";
 import { Lesson, Module } from "@interfaces/dom/course";
 import { useFileUpload } from "@services/fileUpload";
-import { Control, useFieldArray } from "react-hook-form";
+import { Control, useFieldArray, Controller } from "react-hook-form";
 import { StorageFile } from "@interfaces/api/file";
 
 const FilePreview = styled(Box)(({ theme }) => ({
@@ -97,65 +97,89 @@ const ArticleLessonContent = ({
   return (
     <Grid size={{ xs: 12 }}>
       <Box sx={{ mb: 2, mt: 1 }}>
-        <input
-          accept="image/*"
-          id={`article-image-upload-${moduleIndex}-${lessonIndex}`}
-          type="file"
-          hidden
-          disabled={!isEditing || isLoading}
-          onChange={handleFileUpload}
+        <Controller
+          name={`lessons.${lessonIndex}.image_files`}
+          control={control}
+          render={({ fieldState: { error } }) => (
+            <>
+              <input
+                accept="image/*"
+                id={`article-image-upload-${moduleIndex}-${lessonIndex}`}
+                type="file"
+                hidden
+                disabled={!isEditing || isLoading}
+                onChange={handleFileUpload}
+              />
+
+              <Box display="flex" alignItems="center">
+                <label
+                  htmlFor={`article-image-upload-${moduleIndex}-${lessonIndex}`}
+                >
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    startIcon={
+                      isLoading ? (
+                        <CircularProgress size={16} />
+                      ) : (
+                        <UploadIcon />
+                      )
+                    }
+                    size="small"
+                    disabled={!isEditing || isLoading}
+                  >
+                    {isLoading ? "Đang tải lên..." : "Tải lên hình ảnh"}
+                  </Button>
+                </label>
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ ml: 2 }}
+                >
+                  Định dạng: JPG, PNG, GIF (tối đa 5MB)
+                </Typography>
+              </Box>
+
+              {uploadError && (
+                <Alert severity="error" sx={{ mt: 1 }}>
+                  {uploadError}
+                </Alert>
+              )}
+
+              {error && (
+                <Alert severity="error" sx={{ mt: 1 }}>
+                  {error.message}
+                </Alert>
+              )}
+
+              {/* Hiển thị danh sách các file đã tải lên */}
+              {fields.length > 0 && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Hình ảnh đã tải lên:
+                  </Typography>
+
+                  <FilePreview>
+                    {fields.map((file: StorageFile, index) => (
+                      <FileChip
+                        key={file.id}
+                        icon={<ImageIcon />}
+                        label={file.file_name}
+                        onDelete={
+                          isEditing ? () => handleRemoveFile(index) : undefined
+                        }
+                        variant="outlined"
+                        clickable
+                        onClick={() => window.open(file.url, "_blank")}
+                      />
+                    ))}
+                  </FilePreview>
+                </Box>
+              )}
+            </>
+          )}
         />
-
-        <Box display="flex" alignItems="center">
-          <label htmlFor={`article-image-upload-${moduleIndex}-${lessonIndex}`}>
-            <Button
-              variant="outlined"
-              component="span"
-              startIcon={
-                isLoading ? <CircularProgress size={16} /> : <UploadIcon />
-              }
-              size="small"
-              disabled={!isEditing || isLoading}
-            >
-              {isLoading ? "Đang tải lên..." : "Tải lên hình ảnh"}
-            </Button>
-          </label>
-
-          <Typography variant="caption" color="text.secondary" sx={{ ml: 2 }}>
-            Định dạng: JPG, PNG, GIF (tối đa 5MB)
-          </Typography>
-        </Box>
-
-        {uploadError && (
-          <Alert severity="error" sx={{ mt: 1 }}>
-            {uploadError}
-          </Alert>
-        )}
-
-        {/* Hiển thị danh sách các file đã tải lên */}
-        {fields.length > 0 && (
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Hình ảnh đã tải lên:
-            </Typography>
-
-            <FilePreview>
-              {fields.map((file: StorageFile, index) => (
-                <FileChip
-                  key={file.id}
-                  icon={<ImageIcon />}
-                  label={file.file_name}
-                  onDelete={
-                    isEditing ? () => handleRemoveFile(index) : undefined
-                  }
-                  variant="outlined"
-                  clickable
-                  onClick={() => window.open(file.url, "_blank")}
-                />
-              ))}
-            </FilePreview>
-          </Box>
-        )}
       </Box>
     </Grid>
   );

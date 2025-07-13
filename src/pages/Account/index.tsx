@@ -88,7 +88,7 @@ const AccountPage: React.FC = () => {
     },
     {
       icon: <DeleteOutlineIcon color="error" />,
-      label: "Tạm ngưng",
+      label: "Xóa tài khoản",
       onClick: () => {
         handleDelete(account.id);
       },

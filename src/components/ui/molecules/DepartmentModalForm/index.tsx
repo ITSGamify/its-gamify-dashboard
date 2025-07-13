@@ -66,12 +66,6 @@ const DepartmentModalForm: React.FC<DepartmentModalProps> = ({
     onActionSuccess: onSuccess,
   });
 
-  // const {
-  //   options: accountsOptions,
-  //   handleSearchOptions: handleSearchAccountsOptions,
-  //   isLoading: isLoadingAccounts,
-  // } = useGetOptions(useGetAccounts, accountOptionField);
-
   return (
     <StyledDialog
       open={open}
@@ -110,28 +104,6 @@ const DepartmentModalForm: React.FC<DepartmentModalProps> = ({
                 )}
               />
             </Grid>
-
-            {/* {data && (
-              <Grid container size={{ md: 12 }}>
-                <Controller
-                  name="leaderId"
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <FormControl fullWidth error={!!error} required>
-                      <AutocompleteAsync
-                        options={accountsOptions}
-                        label="Trưởng phòng"
-                        value={field.value}
-                        onChange={field.onChange}
-                        onSearch={handleSearchAccountsOptions}
-                        loading={isLoadingAccounts}
-                        required
-                      />
-                    </FormControl>
-                  )}
-                />
-              </Grid>
-            )} */}
           </Grid>
         </StyledDialogContent>
 

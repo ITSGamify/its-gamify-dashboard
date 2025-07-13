@@ -97,7 +97,7 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
         <Controller
           name={`lessons.${lessonIndex}.questions`}
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <Box>
               <input
                 accept=".xlsx,.xls"
@@ -132,6 +132,11 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
               {fileError && (
                 <Alert severity="error" sx={{ mt: 1 }}>
                   {fileError}
+                </Alert>
+              )}
+              {error && (
+                <Alert severity="error" sx={{ mt: 1 }}>
+                  {error.message}
                 </Alert>
               )}
             </Box>

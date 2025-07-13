@@ -67,11 +67,6 @@ const PreviewPublishForm = ({
       0
     ) || 0;
 
-  // Check for completeness
-  const isBasicInfoComplete =
-    data?.status === "CONFIRM" || data?.status === "PUBLISHED";
-  const isContentComplete = data?.modules && data.modules.length > 0;
-
   const { isValid, errorMessage } = validateCourseContent(data?.modules || []);
 
   const handleNext = () => {
@@ -86,6 +81,11 @@ const PreviewPublishForm = ({
 
     handleNextState(data);
   };
+
+  const isBasicInfoComplete =
+    data?.status === "CONFIRM" || data?.status === "PUBLISHED";
+
+  const isContentComplete = isValid;
 
   const theme = useTheme();
 
