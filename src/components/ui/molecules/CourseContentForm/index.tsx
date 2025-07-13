@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
   Box,
   Grid,
@@ -26,23 +26,20 @@ const CourseContentForm = ({
   isLoading,
 }: StepFormProps) => {
   const {
-    control,
-    handleSubmit,
     handleAddModule,
     handleRemoveModule,
     modules,
-    getValues,
-    watch,
-    updateModulesAfterDrag,
     isCreatePending,
+    updateModulesAfterDrag,
+    handleNext,
+    isLoadingModules,
   } = useCourseContentForm({
     data,
     handleNextState,
   });
-  // Sửa lại hàm handleDragEnd trong CourseContentForm
+
   const handleDragEnd = (result: DropResult) => {
     const { source, destination } = result;
-
     if (
       !destination ||
       (source.droppableId === destination.droppableId &&
@@ -50,19 +47,14 @@ const CourseContentForm = ({
     ) {
       return;
     }
-
     try {
       const sourceModuleIndex = parseInt(source.droppableId, 10);
       const destModuleIndex = parseInt(destination.droppableId, 10);
-
       if (isNaN(sourceModuleIndex) || isNaN(destModuleIndex)) {
         console.error("Invalid module index format");
         return;
       }
-
-      const currentValues = getValues();
-      const currentModules = [...currentValues.modules];
-
+      const currentModules = modules;
       if (
         sourceModuleIndex < 0 ||
         sourceModuleIndex >= currentModules.length ||
@@ -72,45 +64,32 @@ const CourseContentForm = ({
         console.error("Invalid module indexes or modules structure");
         return;
       }
-
       const updatedModules = JSON.parse(JSON.stringify(currentModules));
-
       if (sourceModuleIndex === destModuleIndex) {
-        // Di chuyển trong cùng một module
         const moduleToUpdate = updatedModules[sourceModuleIndex];
         const lessons = [...moduleToUpdate.lessons];
-
         const [movedLesson] = lessons.splice(source.index, 1);
         lessons.splice(destination.index, 0, movedLesson);
-
-        // Update index for all lessons in the module
         lessons.forEach((lesson, idx) => {
           lesson.index = idx;
         });
         moduleToUpdate.lessons = lessons;
       } else {
-        // Di chuyển giữa các module khác nhau
         const sourceModule = updatedModules[sourceModuleIndex];
         const destModule = updatedModules[destModuleIndex];
-
         const sourceLessons = [...sourceModule.lessons];
         const destLessons = [...destModule.lessons];
-
         const [movedLesson] = sourceLessons.splice(source.index, 1);
         destLessons.splice(destination.index, 0, movedLesson);
-
-        // Update index for all lessons in both modules
         sourceLessons.forEach((lesson, idx) => {
           lesson.index = idx;
         });
-
         destLessons.forEach((lesson, idx) => {
           lesson.index = idx;
         });
         sourceModule.lessons = sourceLessons;
         destModule.lessons = destLessons;
       }
-      // Cập nhật modules sau khi drag
       updateModulesAfterDrag(updatedModules);
     } catch (error) {
       console.error("Error in handleDragEnd:", error);
@@ -120,7 +99,7 @@ const CourseContentForm = ({
   const theme = useTheme();
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Fragment>
       <Paper
         sx={{
           p: 4,
@@ -151,46 +130,54 @@ const CourseContentForm = ({
           </Grid>
 
           <Grid size={{ xs: 12 }}>
-            <DragDropContext onDragEnd={handleDragEnd}>
-              {modules.map((module, index) => (
-                <ModuleCard
-                  index={index}
-                  key={module.id}
-                  module={module}
-                  control={control}
-                  handleDeleteModule={handleRemoveModule}
-                  isLast={modules.length === 1}
-                  getValues={getValues}
-                  watch={watch}
-                />
-              ))}
-            </DragDropContext>
-
-            {modules.length === 0 && (
-              <Box
-                sx={{
-                  p: 4,
-                  textAlign: "center",
-                  border: (theme) => `1px dashed ${theme.palette.divider}`,
-                  borderRadius: 1,
-                }}
-              >
-                <Typography variant="body1" color="text.secondary" gutterBottom>
-                  Chưa có module nào
-                </Typography>
-                <Button
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  onClick={handleAddModule}
-                >
-                  Thêm module đầu tiên
-                </Button>
+            {isLoadingModules ? (
+              <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+                <CircularProgress />
               </Box>
+            ) : (
+              <>
+                <DragDropContext onDragEnd={handleDragEnd}>
+                  {modules.map((module, index) => (
+                    <ModuleCard
+                      key={`module-${module.id}-${index}`}
+                      index={index}
+                      module={module}
+                      handleDeleteModule={handleRemoveModule}
+                      isLast={modules.length === 1}
+                    />
+                  ))}
+                </DragDropContext>
+
+                {modules.length === 0 && (
+                  <Box
+                    sx={{
+                      p: 4,
+                      textAlign: "center",
+                      border: (theme) => `1px dashed ${theme.palette.divider}`,
+                      borderRadius: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      Chưa có module nào
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      startIcon={<AddIcon />}
+                      onClick={handleAddModule}
+                    >
+                      Thêm module đầu tiên
+                    </Button>
+                  </Box>
+                )}
+              </>
             )}
           </Grid>
         </Grid>
       </Paper>
-
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Button
           variant="outlined"
@@ -215,7 +202,7 @@ const CourseContentForm = ({
           ) : (
             <Button
               variant="contained"
-              type="submit"
+              onClick={handleNext}
               disabled={isLoading}
               startIcon={
                 isLoading ? (
@@ -228,7 +215,7 @@ const CourseContentForm = ({
           )}
         </Box>
       </Box>
-    </form>
+    </Fragment>
   );
 };
 export default CourseContentForm;

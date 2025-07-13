@@ -38,22 +38,10 @@ export const transformCourseContentFormToCourse = (
   form: CourseContentForm,
   data?: Course
 ): CourseRequestParams => {
-  const processedModules = form.modules.map((module) => {
-    const moduleData = { ...module };
-
-    moduleData.lessons = module.lessons.map((lesson) => {
-      const lessonData = { ...lesson };
-
-      return lessonData;
-    });
-
-    return moduleData;
-  });
   return {
     ...(data && { id: data.id }),
     is_update_module: true,
     drafted: data?.drafted || false,
-    modules: processedModules,
   };
 };
 export const transformLearningMaterialsFormToCourse = (
@@ -138,18 +126,15 @@ export const getStateTransition = (stepName: string): string => {
   }
 };
 
-export const mapApiModulesToFormModules = (apiModules: Module[]): Module[] => {
-  const sortedModules = [...apiModules].sort(
-    (a, b) => (a.ordered_number || 0) - (b.ordered_number || 0)
-  );
-  return sortedModules.map((apiModule) => ({
-    id: apiModule.id,
-    title: apiModule.title || "",
-    description: apiModule.description || "",
-    course_id: apiModule.course_id,
-    ordered_number: apiModule.ordered_number,
-    lessons: apiModule.lessons
-      ? [...apiModule.lessons]
+export const mapApiModulesToFormModules = (module: Module): Module => {
+  return {
+    id: module.id,
+    title: module.title || "",
+    description: module.description || "",
+    course_id: module.course_id,
+    ordered_number: module.ordered_number,
+    lessons: module.lessons
+      ? [...module.lessons]
           .sort((a: Lesson, b: Lesson) => (a.index || 0) - (b.index || 0))
           .map((lesson: Lesson) => ({
             id: lesson.id,
@@ -165,14 +150,14 @@ export const mapApiModulesToFormModules = (apiModules: Module[]): Module[] => {
             questions: (lesson.quiz && lesson.quiz.questions) || [],
           }))
       : [],
-  }));
+  };
 };
 
 export const validateCourseContent = (
-  formData: CourseContentForm
+  modules: Module[]
 ): { isValid: boolean; errorMessage?: string } => {
   // Kiểm tra số lượng module
-  if (!formData.modules || formData.modules.length < 3) {
+  if (!modules || modules.length < 3) {
     return {
       isValid: false,
       errorMessage: "Khóa học phải có tối thiểu 3 chương.",
@@ -180,7 +165,7 @@ export const validateCourseContent = (
   }
 
   // Kiểm tra mỗi module có ít nhất 1 bài học
-  const emptyModules = formData.modules.filter(
+  const emptyModules = modules.filter(
     (module) => !module.lessons || module.lessons.length === 0
   );
 

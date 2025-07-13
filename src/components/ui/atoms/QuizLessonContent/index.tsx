@@ -3,15 +3,14 @@ import React, { useState } from "react";
 import { Box, Grid, Button, Typography, Alert } from "@mui/material";
 import { Upload as UploadIcon } from "@mui/icons-material";
 import { Control, Controller } from "react-hook-form";
-import { CourseContentForm } from "@hooks/data/useCourseContentForm";
 import * as XLSX from "xlsx";
-import { Lesson, QuizQuestion } from "@interfaces/dom/course";
+import { Lesson, Module, QuizQuestion } from "@interfaces/dom/course";
 
 interface QuizLessonContentProps {
   moduleIndex: number;
   lessonIndex: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<CourseContentForm, any, CourseContentForm>;
+  control: Control<Module, any, Module>;
   lesson: Lesson;
   isEditing?: boolean;
 }
@@ -46,15 +45,32 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
         const worksheet = workbook.Sheets[firstSheetName];
         const jsonData = XLSX.utils.sheet_to_json<QuizQuestion>(worksheet);
 
+        // **Convert tất cả fields thành string**
+        const normalizedData = jsonData.map((row: QuizQuestion) => ({
+          content: String(row.content || ""),
+          answer_a: String(row.answer_a || ""),
+          answer_b: String(row.answer_b || ""),
+          answer_c: String(row.answer_c || ""),
+          answer_d: String(row.answer_d || ""),
+          correct_answer: String(row.correct_answer || ""),
+          description: String(row.description || ""),
+        }));
+
         // Validate the data format
-        const isValid = jsonData.every(
+        const isValid = normalizedData.every(
           (row: QuizQuestion) =>
             "content" in row &&
             "answer_a" in row &&
             "answer_b" in row &&
             "answer_c" in row &&
             "answer_d" in row &&
-            "correct_answer" in row
+            "correct_answer" in row &&
+            row.content.trim() !== "" &&
+            row.answer_a.trim() !== "" &&
+            row.answer_b.trim() !== "" &&
+            row.answer_c.trim() !== "" &&
+            row.answer_d.trim() !== "" &&
+            row.correct_answer.trim() !== ""
         );
 
         if (!isValid) {
@@ -63,9 +79,8 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
           );
           return;
         }
-
-        setQuizQuestions(jsonData);
-        onChange(jsonData);
+        setQuizQuestions(normalizedData);
+        onChange(normalizedData);
       } catch (error) {
         console.error("Error parsing Excel file:", error);
         setFileError(
@@ -80,7 +95,7 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
     <Grid size={{ xs: 12 }}>
       <Box sx={{ mb: 1 }}>
         <Controller
-          name={`modules.${moduleIndex}.lessons.${lessonIndex}.questions`}
+          name={`lessons.${lessonIndex}.questions`}
           control={control}
           render={({ field }) => (
             <Box>
