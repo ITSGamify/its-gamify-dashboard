@@ -55,17 +55,3 @@ export interface DragEndResult {
     droppableId: string;
   };
 }
-
-export interface CourseDataProps {
-  title: string;
-  shortDescription: string;
-  description: string;
-  category: string;
-  level: "beginner" | "intermediate" | "advanced" | "all-levels";
-  language: "vietnamese" | "english";
-  thumbnail: File | null;
-  previewVideo: File | null;
-  tags: string[];
-  hasCertificate?: boolean;
-  isPublished?: boolean;
-}

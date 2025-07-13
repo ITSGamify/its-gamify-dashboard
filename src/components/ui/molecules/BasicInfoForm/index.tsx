@@ -238,17 +238,17 @@ const BasicInfoForm = ({
                     <FormControlLabel
                       value="LEADERONLY"
                       control={<Radio />}
-                      label="Leader Only"
+                      label="Chỉ dành cho Trưởng nhóm"
                     />
                     <FormControlLabel
                       value="DEPARTMENTONLY"
                       control={<Radio />}
-                      label="Department Only"
+                      label="Chỉ dành cho Phòng ban"
                     />
                     <FormControlLabel
                       value="ALL"
                       control={<Radio />}
-                      label="All Levels"
+                      label="Tất cả cấp độ"
                     />
                   </RadioGroup>
                 </FormControl>

@@ -170,12 +170,9 @@ export const validateCourseContent = (
   );
 
   if (emptyModules.length > 0) {
-    const moduleNames = emptyModules
-      .map((module) => `"${module.title}"`)
-      .join(", ");
     return {
       isValid: false,
-      errorMessage: `Các chương sau chưa có bài học: ${moduleNames}. Mỗi chương phải có ít nhất 1 bài học.`,
+      errorMessage: `Mỗi chương phải có ít nhất 1 bài học.`,
     };
   }
 

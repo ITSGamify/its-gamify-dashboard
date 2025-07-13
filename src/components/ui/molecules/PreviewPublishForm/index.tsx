@@ -32,10 +32,13 @@ import {
   Quiz as QuizIcon,
 } from "@mui/icons-material";
 import { SectionTitle } from "@components/ui/atoms/SectionTitle";
-import { Lesson, CourseDataProps } from "@interfaces/dom/course";
+import { Lesson } from "@interfaces/dom/course";
 import { StepFormProps } from "@interfaces/api/course";
 import { STEPS } from "@constants/course";
 import { Save as SaveIcon } from "@mui/icons-material";
+import { validateCourseContent } from "@utils/course";
+import { toast } from "react-toastify";
+import ToastContent from "@components/ui/atoms/Toast";
 
 const PreviewPublishForm = ({
   data,
@@ -44,20 +47,6 @@ const PreviewPublishForm = ({
   handleBack,
   isLoading,
 }: StepFormProps) => {
-  const courseData: CourseDataProps = {
-    title: "",
-    shortDescription: "",
-    description: "",
-    category: "",
-    level: "beginner",
-    language: "vietnamese",
-    thumbnail: null,
-    previewVideo: null,
-    tags: [] as string[],
-    hasCertificate: true,
-    isPublished: false,
-  };
-
   const totalVideos =
     data?.modules?.reduce(
       (acc, module) =>
@@ -82,6 +71,21 @@ const PreviewPublishForm = ({
   const isBasicInfoComplete =
     data?.status === "CONFIRM" || data?.status === "PUBLISHED";
   const isContentComplete = data?.modules && data.modules.length > 0;
+
+  const { isValid, errorMessage } = validateCourseContent(data?.modules || []);
+
+  const handleNext = () => {
+    if (!isValid) {
+      toast.error(ToastContent, {
+        data: {
+          message: errorMessage || "Nội dung khóa học chưa đáp ứng yêu cầu!",
+        },
+      });
+      return;
+    }
+
+    handleNextState(data);
+  };
 
   const theme = useTheme();
 
@@ -128,7 +132,7 @@ const PreviewPublishForm = ({
 
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
                   <Chip
-                    label={courseData.category || "Danh mục"}
+                    label={data?.category?.name || "Danh mục"}
                     color="primary"
                   />
                   <Chip label={"Tất cả cấp độ"} variant="outlined" />
@@ -321,13 +325,13 @@ const PreviewPublishForm = ({
             <Button
               variant="contained"
               color="primary"
-              onClick={() => handleNextState(data)}
+              onClick={handleNext}
               startIcon={
                 isLoading ? (
                   <CircularProgress size={20} color="inherit" />
                 ) : null
               }
-              disabled={isLoading}
+              disabled={isLoading || isValid}
             >
               {isLoading ? "Đang xử lý..." : " Xuất bản khóa học"}
             </Button>

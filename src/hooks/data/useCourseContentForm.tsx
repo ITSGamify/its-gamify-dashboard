@@ -1,10 +1,7 @@
 import { StepFormProps } from "@interfaces/api/course";
 import { Module } from "@interfaces/dom/course";
 import { useCreateModule } from "@services/module";
-import { validateCourseContent } from "@utils/course";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import ToastContent from "@components/ui/atoms/Toast";
 import { useGetCourseModules } from "@services/course";
 
 export interface CourseContentForm {
@@ -50,19 +47,6 @@ export const useCourseContentForm = ({
   }, []);
 
   const handleNext = () => {
-    const validation = validateCourseContent(localModules);
-
-    if (!validation.isValid) {
-      toast.error(ToastContent, {
-        data: {
-          message:
-            validation.errorMessage ||
-            "Nội dung khóa học chưa đáp ứng yêu cầu!",
-        },
-      });
-      return;
-    }
-
     handleNextState({
       modules: localModules,
     });
