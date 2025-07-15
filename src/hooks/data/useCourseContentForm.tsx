@@ -61,7 +61,7 @@ export const useCourseContentForm = ({
     handleAddModule,
     handleRemoveModule,
     isCreatePending,
-    modules: localModules,
+    modules: localModules.sort((a, b) => a.ordered_number - b.ordered_number),
     updateModulesAfterDrag,
     isLoadingModules,
   };
