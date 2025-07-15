@@ -87,6 +87,12 @@ const PreviewPublishForm = ({
 
   const isContentComplete = isValid;
 
+  const modules =
+    data?.modules && data.modules.length > 0
+      ? [...data.modules].sort(
+          (a, b) => (a.ordered_number || 0) - (b.ordered_number || 0)
+        )
+      : [];
   const theme = useTheme();
 
   return (
@@ -194,42 +200,41 @@ const PreviewPublishForm = ({
                   Nội dung khóa học
                 </Typography> */}
 
-                {data?.modules &&
-                  data?.modules.map((module, index) => (
-                    <Accordion key={module.id} defaultExpanded={index === 0}>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography fontWeight={600}>{module.title}</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          paragraph
-                        >
-                          {module.description}
-                        </Typography>
-                        <List dense disablePadding>
-                          {module.lessons.map((lesson: Lesson) => (
-                            <ListItem key={lesson.id}>
-                              <ListItemIcon>
-                                {lesson.type === "video" ? (
-                                  <PlayArrowIcon color="primary" />
-                                ) : lesson.type === "article" ? (
-                                  <ArticleIcon color="info" />
-                                ) : (
-                                  <QuizIcon color="warning" />
-                                )}
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={lesson.title}
-                                secondary={`${lesson.duration} phút`}
-                              />
-                            </ListItem>
-                          ))}
-                        </List>
-                      </AccordionDetails>
-                    </Accordion>
-                  ))}
+                {modules.map((module, index) => (
+                  <Accordion key={module.id} defaultExpanded={index === 0}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography fontWeight={600}>{module.title}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        paragraph
+                      >
+                        {module.description}
+                      </Typography>
+                      <List dense disablePadding>
+                        {module.lessons.map((lesson: Lesson) => (
+                          <ListItem key={lesson.id}>
+                            <ListItemIcon>
+                              {lesson.type === "video" ? (
+                                <PlayArrowIcon color="primary" />
+                              ) : lesson.type === "article" ? (
+                                <ArticleIcon color="info" />
+                              ) : (
+                                <QuizIcon color="warning" />
+                              )}
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={lesson.title}
+                              secondary={`${lesson.duration} phút`}
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
 
                 {data?.modules?.length === 0 && (
                   <Typography
