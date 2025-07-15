@@ -18,7 +18,12 @@ import {
   Visibility as VisibilityIcon,
 } from "@mui/icons-material";
 import { Draggable } from "react-beautiful-dnd";
-import { Lesson, LessonType, Module } from "@interfaces/dom/course";
+import {
+  Lesson,
+  LessonType,
+  Module,
+  QuizQuestion,
+} from "@interfaces/dom/course";
 import {
   Control,
   Controller,
@@ -73,6 +78,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
   handleDeleteLesson,
   control,
   getValues,
+  watch,
   isEditing = false,
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -82,6 +88,13 @@ const LessonCard: React.FC<LessonCardProps> = ({
     getValues(`lessons.${index}.type`) as LessonType
   );
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  const [previewQuestion, setPreviewQuestion] = useState<QuizQuestion[]>([]);
+
+  useEffect(() => {
+    setPreviewQuestion(getValues(`lessons.${index}.questions`) || []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getValues, index, watch(`lessons.${index}.questions`)]);
 
   useEffect(() => {
     const type = getValues(`lessons.${index}.type`) as LessonType;
@@ -308,7 +321,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
             <QuizPreviewModal
               open={previewOpen}
               onClose={() => setPreviewOpen(false)}
-              questions={lesson.questions || []}
+              questions={previewQuestion}
             />
           )}
         </StyledCard>
@@ -329,10 +342,13 @@ export default memo(LessonCard, (prevProps, nextProps) => {
     JSON.stringify(prevProps.lesson) === JSON.stringify(nextProps.lesson);
 
   const typeEqual = prevType === nextType;
+  const quizEqual =
+    prevProps.lesson.questions ===
+    nextProps.getValues(`lessons.${nextProps.index}.questions`);
 
   // So sánh isEditing
   const editingEqual = prevProps.isEditing === nextProps.isEditing;
 
   // Trả về true nếu không có thay đổi (không cần render lại)
-  return positionEqual && lessonEqual && typeEqual && editingEqual;
+  return positionEqual && lessonEqual && typeEqual && editingEqual && quizEqual;
 });
