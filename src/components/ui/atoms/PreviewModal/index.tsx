@@ -1,5 +1,5 @@
 // src/sections/course/components/modals/QuizPreviewModal.tsx
-import React from "react";
+import React, { Fragment } from "react";
 import {
   Box,
   Typography,
@@ -18,7 +18,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
-import { QuizQuestion } from "@interfaces/dom/course";
+import { PreviewHeadCell } from "@interfaces/dom/preview";
 
 const ModalContent = styled(Paper)(({ theme }) => ({
   position: "absolute",
@@ -53,7 +53,7 @@ const ModalFooter = styled(Box)(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   padding: theme.spacing(1.5),
   "&.question-cell": {
     minWidth: 250,
@@ -71,23 +71,24 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-interface QuizPreviewModalProps {
+interface PreviewModalProps {
   open: boolean;
   onClose: () => void;
-  questions: QuizQuestion[];
+  data: React.ReactNode[][];
+  headCells: PreviewHeadCell[];
 }
 
-const QuizPreviewModal: React.FC<QuizPreviewModalProps> = ({
+const PreviewModal: React.FC<PreviewModalProps> = ({
   open,
   onClose,
-  questions,
+  data,
+  headCells,
 }) => {
   const theme = useTheme();
 
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="quiz-preview-modal">
       <ModalContent>
-        {/* Modal Header */}
         <ModalHeader>
           <Box>
             <Typography variant="h6" component="h2">
@@ -110,7 +111,7 @@ const QuizPreviewModal: React.FC<QuizPreviewModalProps> = ({
         <ModalBody>
           <Box sx={{ mb: 2 }}>
             <Alert severity="info" sx={{ mb: 2 }}>
-              Tổng số câu hỏi: <strong>{questions?.length}</strong>
+              Tổng số: <strong>{data.length}</strong>
             </Alert>
           </Box>
 
@@ -121,50 +122,19 @@ const QuizPreviewModal: React.FC<QuizPreviewModalProps> = ({
                   <StyledTableCell align="center" sx={{ width: 60 }}>
                     STT
                   </StyledTableCell>
-                  <StyledTableCell className="question-cell">
-                    Câu hỏi
-                  </StyledTableCell>
-                  <StyledTableCell className="answer-cell">
-                    Đáp án A
-                  </StyledTableCell>
-                  <StyledTableCell className="answer-cell">
-                    Đáp án B
-                  </StyledTableCell>
-                  <StyledTableCell className="answer-cell">
-                    Đáp án C
-                  </StyledTableCell>
-                  <StyledTableCell className="answer-cell">
-                    Đáp án D
-                  </StyledTableCell>
-                  <StyledTableCell className="correct-cell" align="center">
-                    Đáp án đúng
-                  </StyledTableCell>
-                  <StyledTableCell className="description-cell">
-                    Giải thích
-                  </StyledTableCell>
+                  {headCells.map((head, index) => (
+                    <StyledTableCell key={index} className={head.type}>
+                      {head.label}
+                    </StyledTableCell>
+                  ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {questions.map((question, idx) => (
-                  <TableRow key={idx} hover>
-                    <StyledTableCell align="center">{idx + 1}</StyledTableCell>
-                    <StyledTableCell>{question.content}</StyledTableCell>
-                    <StyledTableCell>{question.answer_a}</StyledTableCell>
-                    <StyledTableCell>{question.answer_b}</StyledTableCell>
-                    <StyledTableCell>{question.answer_c}</StyledTableCell>
-                    <StyledTableCell>{question.answer_d}</StyledTableCell>
-                    <StyledTableCell
-                      align="center"
-                      sx={{
-                        fontWeight: "bold",
-                        color: theme.palette.primary.main,
-                      }}
-                    >
-                      {question.correct_answer}
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      {question.description || "-"}
-                    </StyledTableCell>
+                {data.map((row, index) => (
+                  <TableRow key={index} hover>
+                    {row.map((cell, cellIndex) => (
+                      <Fragment key={cellIndex}>{cell}</Fragment>
+                    ))}
                   </TableRow>
                 ))}
               </TableBody>
@@ -183,4 +153,4 @@ const QuizPreviewModal: React.FC<QuizPreviewModalProps> = ({
   );
 };
 
-export default QuizPreviewModal;
+export default PreviewModal;

@@ -147,6 +147,7 @@ export const mapApiModulesToFormModules = (module: Module): Module => {
             module_id: lesson.module_id,
             quiz_id: lesson.quiz_id || null,
             image_files: lesson.image_files,
+            practices: lesson.practices,
             questions: (lesson.quiz && lesson.quiz.questions) || [],
           }))
       : [],

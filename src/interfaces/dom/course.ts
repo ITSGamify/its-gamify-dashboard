@@ -1,6 +1,6 @@
 import { StorageFile } from "@interfaces/api/file";
 
-export type LessonType = "video" | "article" | "quiz";
+export type LessonType = "video" | "article" | "quiz" | "practice";
 
 export interface QuizQuestion {
   // index: number;
@@ -27,6 +27,7 @@ export interface Lesson {
   index: number;
   module_id: string;
   image_files?: StorageFile[] | null;
+  practices?: Practice[] | null;
 }
 
 export interface Quizzes {
@@ -43,6 +44,10 @@ export interface Module {
   lessons: Lesson[];
 }
 
+export interface Practice {
+  question: string;
+  answer: string;
+}
 export interface DragEndResult {
   draggableId: string;
   type: string;
