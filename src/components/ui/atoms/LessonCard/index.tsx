@@ -1,5 +1,5 @@
 // src/sections/course/components/LessonCard.tsx
-import React, { useState, useEffect, memo } from "react";
+import React, { useState, useEffect, memo, useMemo } from "react";
 import {
   Box,
   Card,
@@ -22,6 +22,7 @@ import {
   Lesson,
   LessonType,
   Module,
+  Practice,
   QuizQuestion,
 } from "@interfaces/dom/course";
 import {
@@ -32,8 +33,11 @@ import {
 } from "react-hook-form";
 import VideoLessonContent from "../VideoLessonContent";
 import QuizLessonContent from "../QuizLessonContent";
-import QuizPreviewModal from "../QuizPreviewModal";
+import { StyledTableCell } from "../PreviewModal";
 import ArticleLessonContent from "../ArticleLessonContent";
+import { PRACTICE_REVIEW_HEAD, QESTION_REVIEW_HEAD } from "@constants/preview";
+import PracticeLessonContent from "../PracticeLessonContent";
+import PreviewModal from "../PreviewModal";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const textFieldStyles = {
@@ -89,19 +93,52 @@ const LessonCard: React.FC<LessonCardProps> = ({
   );
   const [previewOpen, setPreviewOpen] = useState(false);
 
-  const [previewQuestion, setPreviewQuestion] = useState<QuizQuestion[]>([]);
-
-  useEffect(() => {
-    setPreviewQuestion(getValues(`lessons.${index}.questions`) || []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getValues, index, watch(`lessons.${index}.questions`)]);
-
   useEffect(() => {
     const type = getValues(`lessons.${index}.type`) as LessonType;
     if (type !== currentType) {
       setCurrentType(type);
     }
   }, [getValues, moduleIndex, index, currentType]);
+
+  const [previewQuestion, setPreviewQuestion] = useState<QuizQuestion[]>([]);
+  const [tags, setTags] = useState<Practice[]>([]);
+
+  useEffect(() => {
+    setPreviewQuestion(getValues(`lessons.${index}.questions`) || []);
+    setTags(getValues(`lessons.${index}.practices`) || []);
+  }, [
+    getValues,
+    index,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    watch(`lessons.${index}.questions`),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    watch(`lessons.${index}.practices`),
+  ]);
+
+  const getPreviewData = useMemo(() => {
+    if (currentType === "quiz") {
+      return previewQuestion.map((row: QuizQuestion, idx) => {
+        return [
+          <StyledTableCell>{idx + 1}</StyledTableCell>,
+          <StyledTableCell>{row.content}</StyledTableCell>,
+          <StyledTableCell>{row.answer_a}</StyledTableCell>,
+          <StyledTableCell>{row.answer_b}</StyledTableCell>,
+          <StyledTableCell>{row.answer_c}</StyledTableCell>,
+          <StyledTableCell>{row.answer_d}</StyledTableCell>,
+          <StyledTableCell>{row.correct_answer}</StyledTableCell>,
+          <StyledTableCell>{row.description}</StyledTableCell>,
+        ];
+      });
+    }
+
+    return tags.map((row: Practice, idx) => {
+      return [
+        <StyledTableCell>{idx + 1}</StyledTableCell>,
+        <StyledTableCell>{row.question}</StyledTableCell>,
+        <StyledTableCell>{row.answer}</StyledTableCell>,
+      ];
+    });
+  }, [currentType, previewQuestion, tags]);
 
   const handleTypeChange = (type: LessonType) => {
     setCurrentType(type);
@@ -111,6 +148,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
     setPreviewOpen(true);
   };
 
+  const isPreview = currentType === "quiz" || currentType === "practice";
   return (
     <Draggable draggableId={lesson.id || `lesson-${index}`} index={index}>
       {(provided, snapshot) => (
@@ -188,13 +226,14 @@ const LessonCard: React.FC<LessonCardProps> = ({
                           <MenuItem value="video">Video</MenuItem>
                           <MenuItem value="article">Bài viết</MenuItem>
                           <MenuItem value="quiz">Bài kiểm tra</MenuItem>
+                          <MenuItem value="practice">Ôn tập</MenuItem>
                         </TextField>
                       )}
                     />
                   </Grid>
 
                   {/* Lesson duration */}
-                  <Grid size={{ xs: 6, md: currentType === "quiz" ? 2 : 3 }}>
+                  <Grid size={{ xs: 6, md: isPreview ? 2 : 3 }}>
                     <Controller
                       name={`lessons.${index}.duration`}
                       control={control}
@@ -220,9 +259,14 @@ const LessonCard: React.FC<LessonCardProps> = ({
                   </Grid>
 
                   {/* Action buttons */}
-                  <Grid size={{ xs: 12, md: currentType === "quiz" ? 2 : 1 }}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: isPreview ? 2 : 1,
+                    }}
+                  >
                     <Box display="flex" justifyContent="flex-end">
-                      {currentType === "quiz" && (
+                      {isPreview && (
                         <Tooltip title="Xem trước">
                           <IconButton
                             size="small"
@@ -264,6 +308,16 @@ const LessonCard: React.FC<LessonCardProps> = ({
 
                   {currentType === "quiz" && (
                     <QuizLessonContent
+                      moduleIndex={moduleIndex}
+                      lessonIndex={index}
+                      control={control}
+                      lesson={lesson}
+                      isEditing={isEditing}
+                    />
+                  )}
+
+                  {currentType === "practice" && (
+                    <PracticeLessonContent
                       moduleIndex={moduleIndex}
                       lessonIndex={index}
                       control={control}
@@ -317,11 +371,16 @@ const LessonCard: React.FC<LessonCardProps> = ({
           </CardContent>
 
           {/* Modal xem trước bài kiểm tra */}
-          {currentType === "quiz" && (
-            <QuizPreviewModal
+          {isPreview && (
+            <PreviewModal
               open={previewOpen}
               onClose={() => setPreviewOpen(false)}
-              questions={previewQuestion}
+              data={getPreviewData}
+              headCells={
+                currentType === "quiz"
+                  ? QESTION_REVIEW_HEAD
+                  : PRACTICE_REVIEW_HEAD
+              }
             />
           )}
         </StyledCard>
@@ -346,9 +405,19 @@ export default memo(LessonCard, (prevProps, nextProps) => {
     prevProps.lesson.questions ===
     nextProps.getValues(`lessons.${nextProps.index}.questions`);
 
-  // So sánh isEditing
+  const practiceEqual =
+    prevProps.lesson.practices ===
+    nextProps.getValues(`lessons.${nextProps.index}.practices`);
+
   const editingEqual = prevProps.isEditing === nextProps.isEditing;
 
   // Trả về true nếu không có thay đổi (không cần render lại)
-  return positionEqual && lessonEqual && typeEqual && editingEqual && quizEqual;
+  return (
+    positionEqual &&
+    lessonEqual &&
+    typeEqual &&
+    editingEqual &&
+    quizEqual &&
+    practiceEqual
+  );
 });

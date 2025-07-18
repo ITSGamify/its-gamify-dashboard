@@ -62,7 +62,7 @@ export const moduleSchema: yup.ObjectSchema<Module> = yup.object().shape({
         index: yup.number().required("Chỉ mục là bắt buộc"),
         type: yup
           .string()
-          .oneOf(["video", "article", "quiz"])
+          .oneOf(["video", "article", "quiz", "practice"])
           .required("Loại bài học là bắt buộc"),
         duration: yup
           .number()
@@ -77,6 +77,14 @@ export const moduleSchema: yup.ObjectSchema<Module> = yup.object().shape({
             schema
               .min(1, "Cần ít nhất một hình ảnh cho dạng này")
               .required("Tệp hình ảnh là bắt buộc cho bài học dạng bài viết"),
+          otherwise: (schema) => schema.optional(),
+        }),
+        practices: yup.array().when("type", {
+          is: "practice",
+          then: (schema) =>
+            schema
+              .min(1, "Cần ít nhất một thuật ngữ cho dạng này")
+              .required("Thuật ngữ là bắt buộc cho bài học dạng bài viết"),
           otherwise: (schema) => schema.optional(),
         }),
         video_url: yup.string().when("type", {
