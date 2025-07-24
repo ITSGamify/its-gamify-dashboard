@@ -15,6 +15,7 @@ import {
   Paper,
   useTheme,
   CircularProgress,
+  Checkbox,
 } from "@mui/material";
 import {
   Image as ImageIcon,
@@ -34,6 +35,8 @@ import { useGetDeparments } from "@services/department";
 import { deparmentOptionField } from "@constants/departments";
 import { useGetCategories } from "@services/category";
 import { categoryOptionField } from "@constants/category";
+import { useGetQuaters } from "@services/quater";
+import { quaterOptionField } from "@constants/quater";
 
 const BasicInfoForm = ({
   data,
@@ -68,11 +71,17 @@ const BasicInfoForm = ({
     isLoading: isLoadingCategories,
   } = useGetOptions(useGetCategories, categoryOptionField);
 
+  const {
+    options: quaterOptions,
+    handleSearchOptions: handleSearchQuaterOptions,
+    isLoading: isLoadingQuaters,
+  } = useGetOptions(useGetQuaters, quaterOptionField);
+
   const [currentTag, setCurrentTag] = useState("");
 
   const theme = useTheme();
 
-  const renderDepartment = useMemo(() => {
+  const renderCourseType = useMemo(() => {
     if (classify === "DEPARTMENTONLY") {
       return (
         <Grid container size={{ xs: 12, md: 12 }}>
@@ -102,6 +111,30 @@ const BasicInfoForm = ({
         </Grid>
       );
     }
+
+    if(classify === "ALL"){
+       return (
+      <Grid container size={{ xs: 12, md: 12 }}>
+        <Controller
+          name="is_optional"
+          control={control}
+          render={({ field }) => (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="Khóa học tùy chọn"
+            />
+          )}
+        />
+      </Grid>
+    );
+    }
+
     return null;
   }, [
     classify,
@@ -228,6 +261,32 @@ const BasicInfoForm = ({
 
           <Grid size={{ xs: 12, md: 12 }}>
             <Controller
+              name="quarter_id"
+              control={control}
+              rules={{ required: true }}
+              render={({ field, fieldState: { error } }) => (
+                <FormControl fullWidth error={!!error} required>
+                  <AutocompleteAsync
+                    options={quaterOptions}
+                    label="Thời gian áp dụng khóa học"
+                    value={
+                      field.value
+                        ? quaterOptions.find((x) => x.id === field.value) ||
+                          null
+                        : null
+                    }
+                    onChange={field.onChange}
+                    onSearch={handleSearchQuaterOptions}
+                    loading={isLoadingQuaters}
+                    required
+                  />
+                </FormControl>
+              )}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 12 }}>
+            <Controller
               name="classify"
               control={control}
               rules={{ required: true }}
@@ -256,7 +315,7 @@ const BasicInfoForm = ({
             />
           </Grid>
 
-          {renderDepartment}
+          {renderCourseType}
 
           <Grid size={{ xs: 12 }}>
             <Divider sx={{ my: 0 }} />

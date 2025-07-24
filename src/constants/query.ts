@@ -16,6 +16,9 @@ export const QUERY_KEYS = {
   CATEGORIES: {
     BASE: BASE_KEYS.CATEGORIES,
   },
+  QUATER: {
+    BASE: BASE_KEYS.QUATER,
+  },
 };
 
 export const DEFAULT_LIMIT_OPTIONS_PARAMS = 50;

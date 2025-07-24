@@ -30,6 +30,8 @@ export const transformBasicCourseFormToCourse = (
     tags: form.tags,
     is_update_module: false,
     drafted: data?.drafted || false,
+    is_optional: form.is_optional || false,
+    quarter_id: form.quarter_id || "",
     ...(data && { id: data.id }),
   };
 };

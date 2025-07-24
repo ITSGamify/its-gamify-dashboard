@@ -8,6 +8,7 @@ export const BASE_KEYS = {
   MODULES: "course-sections",
   LESSONS: "lessons",
   MATERIALS: "learning-materials",
+  QUATER: "quarters",
 };
 
 export const END_POINTS = {
@@ -41,8 +42,14 @@ export const END_POINTS = {
   CATEGORIES: {
     BASE: BASE_KEYS.CATEGORIES,
   },
+  QUATER: {
+    BASE: BASE_KEYS.QUATER,
+  },
   STORAGE_FILES: {
     UPLOAD: `${BASE_KEYS.STORAGE_FILES}`,
+    INITIAL_UPLOAD: `${BASE_KEYS.STORAGE_FILES}/s3/initiate-upload`,
+    GENERATE_PRESIGNED_URL: `${BASE_KEYS.STORAGE_FILES}/s3/generate-presigned-url`,
+    COMPLETED_UPLOAD: `${BASE_KEYS.STORAGE_FILES}/s3/complete-upload`,
   },
   MODULES: {
     BASE: BASE_KEYS.MODULES,

@@ -37,6 +37,8 @@ export interface CourseRequestParams {
   targets?: string[];
   is_update_module: boolean;
   drafted: boolean;
+  is_optional?: boolean;
+  quarter_id?: string;
 }
 
 //update

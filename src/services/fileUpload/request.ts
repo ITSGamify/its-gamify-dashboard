@@ -3,7 +3,12 @@ import { request } from "@config/axios";
 import { getRoute } from "@utils/route";
 import { END_POINTS } from "@constants/endpoint";
 import { HTTP_METHODS } from "@constants/request";
-import { FileUploadParams } from ".";
+import {
+  CompleteMultipartUploadModel,
+  FileUploadParams,
+  GeneratePresignedUrlParam,
+  InitiateMultipartUploadParam,
+} from ".";
 import { StorageFile } from "@interfaces/api/file";
 
 export const fileUpload = async (
@@ -30,5 +35,33 @@ export const fileUpload = async (
     method: HTTP_METHODS.POST,
     headers: { "Content-Type": "multipart/form-data" },
     data: formData,
+  });
+};
+
+export const initialUpload = async (
+  params: InitiateMultipartUploadParam
+): Promise<string> => {
+  return request({
+    url: getRoute(END_POINTS.STORAGE_FILES.INITIAL_UPLOAD),
+    method: HTTP_METHODS.POST,
+    data: params,
+  });
+};
+export const getPresignUrlUpload = async (
+  params: GeneratePresignedUrlParam
+): Promise<string> => {
+  return request({
+    url: getRoute(END_POINTS.STORAGE_FILES.GENERATE_PRESIGNED_URL),
+    method: HTTP_METHODS.POST,
+    data: params,
+  });
+};
+export const completedUpload = async (
+  params: CompleteMultipartUploadModel
+): Promise<string> => {
+  return request({
+    url: getRoute(END_POINTS.STORAGE_FILES.COMPLETED_UPLOAD),
+    method: HTTP_METHODS.POST,
+    data: params,
   });
 };
