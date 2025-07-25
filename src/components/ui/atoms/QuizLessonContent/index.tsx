@@ -5,6 +5,7 @@ import { Upload as UploadIcon } from "@mui/icons-material";
 import { Control, Controller } from "react-hook-form";
 import * as XLSX from "xlsx";
 import { Lesson, Module, QuizQuestion } from "@interfaces/dom/course";
+import { useParams } from "react-router-dom";
 
 interface QuizLessonContentProps {
   moduleIndex: number;
@@ -22,6 +23,8 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
   lesson,
   isEditing = false,
 }) => {
+
+  const { courseId } = useParams();
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>(
     lesson.questions || []
   );
@@ -54,6 +57,7 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
           answer_d: String(row.answer_d || ""),
           correct_answer: String(row.correct_answer || ""),
           description: String(row.description || ""),
+          course_id: courseId || "",
         }));
 
         // Validate the data format

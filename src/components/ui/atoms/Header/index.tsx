@@ -1,5 +1,5 @@
 // src/components/layout/Header/index.tsx
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -13,27 +13,21 @@ import {
   ListItemText,
   Divider,
   Badge,
-  // InputBase,
   useMediaQuery,
   useTheme,
   Tooltip,
-  // alpha,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
-  // Search as SearchIcon,
   Notifications as NotificationsIcon,
-  AccountCircle,
-  // Dashboard as DashboardIcon,
-  // Book as BookIcon,
-  // People as PeopleIcon,
-  Settings as SettingsIcon,
   Logout as LogoutIcon,
-  // ChevronLeft as ChevronLeftIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import Logo from "../Logo";
+import userSession from "@utils/user-session";
+import { PATH } from "@constants/path";
+import { getHeaderTitle } from "@utils/header";
 // Styled components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
@@ -41,46 +35,6 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.05)",
   zIndex: theme.zIndex.drawer + 1,
 }));
-
-// const SearchWrapper = styled("div")(({ theme }) => ({
-//   position: "relative",
-//   borderRadius: theme.shape.borderRadius,
-//   backgroundColor: alpha(theme.palette.common.black, 0.04),
-//   "&:hover": {
-//     backgroundColor: alpha(theme.palette.common.black, 0.08),
-//   },
-//   marginRight: theme.spacing(2),
-//   marginLeft: 0,
-//   width: "100%",
-//   [theme.breakpoints.up("sm")]: {
-//     marginLeft: theme.spacing(3),
-//     width: "auto",
-//   },
-// }));
-
-// const SearchIconWrapper = styled("div")(({ theme }) => ({
-//   padding: theme.spacing(0, 2),
-//   height: "100%",
-//   position: "absolute",
-//   pointerEvents: "none",
-//   display: "flex",
-//   alignItems: "center",
-//   justifyContent: "center",
-//   color: alpha(theme.palette.common.black, 0.4),
-// }));
-
-// const StyledInputBase = styled(InputBase)(({ theme }) => ({
-//   color: "inherit",
-//   "& .MuiInputBase-input": {
-//     padding: theme.spacing(1, 1, 1, 0),
-//     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-//     transition: theme.transitions.create("width"),
-//     width: "100%",
-//     [theme.breakpoints.up("md")]: {
-//       width: "30ch",
-//     },
-//   },
-// }));
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -102,6 +56,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer, isDrawerOpen }) => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
+  const profile = userSession.getUserProfile();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [notificationAnchorEl, setNotificationAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -125,77 +80,60 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer, isDrawerOpen }) => {
     setNotificationAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    // Xử lý đăng xuất
+  const handleLogout = useCallback(() => {
     handleMenuClose();
-    navigate("/login");
-  };
+    navigate(PATH.LOGIN);
+    userSession.clearUserProfile();
+  }, [navigate]);
 
-  // Menu ID
   const menuId = "primary-account-menu";
   const notificationMenuId = "notification-menu";
 
-  // Profile Menu
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      id={menuId}
-      keepMounted
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-      PaperProps={{
-        elevation: 2,
-        sx: {
-          minWidth: 200,
-          borderRadius: 2,
-          mt: 1.5,
-        },
-      }}
-      transformOrigin={{ horizontal: "right", vertical: "top" }}
-      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-    >
-      <Box sx={{ px: 2, py: 1.5 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-          Nguyễn Văn A
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          admin@example.com
-        </Typography>
-      </Box>
-      <Divider />
-      <MenuItem
-        onClick={() => {
-          handleMenuClose();
-          navigate("/profile");
+  const renderMenu = useMemo(
+    () => (
+      <Menu
+        anchorEl={anchorEl}
+        id={menuId}
+        keepMounted
+        open={isMenuOpen}
+        onClose={handleMenuClose}
+        PaperProps={{
+          elevation: 2,
+          sx: {
+            minWidth: 200,
+            borderRadius: 2,
+            mt: 1.5,
+          },
         }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <ListItemIcon>
-          <AccountCircle fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>Hồ sơ cá nhân</ListItemText>
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          handleMenuClose();
-          navigate("/settings");
-        }}
-      >
-        <ListItemIcon>
-          <SettingsIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>Cài đặt</ListItemText>
-      </MenuItem>
-      <Divider />
-      <MenuItem onClick={handleLogout}>
-        <ListItemIcon>
-          <LogoutIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>Đăng xuất</ListItemText>
-      </MenuItem>
-    </Menu>
+        <Box sx={{ px: 2, py: 1.5 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+            {profile?.user.full_name.toUpperCase() || "Người dùng"}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {profile?.user.email || "Người dùng"}
+          </Typography>
+        </Box>
+        <Divider />
+        <MenuItem onClick={handleLogout}>
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Đăng xuất</ListItemText>
+        </MenuItem>
+      </Menu>
+    ),
+    [
+      anchorEl,
+      handleLogout,
+      isMenuOpen,
+      profile?.user.email,
+      profile?.user.full_name,
+    ]
   );
 
-  // Notification Menu
   const renderNotificationMenu = (
     <Menu
       anchorEl={notificationAnchorEl}
@@ -297,28 +235,16 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer, isDrawerOpen }) => {
             {!isDrawerOpen || (!isMobile && <Logo />)}
           </Box>
 
-          {/* {!isMobile && (
-            <SearchWrapper>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Tìm kiếm..."
-                inputProps={{ "aria-label": "search" }}
-              />
-            </SearchWrapper>
-          )} */}
           <Typography
             variant="h3"
             noWrap
             component="div"
             sx={{
               fontWeight: 600,
-              // color: theme.palette.primary.main,
               ml: isMobile ? 0 : 3,
             }}
           >
-            Quản lý tài khoản
+            {getHeaderTitle(window.location.pathname)}
           </Typography>
 
           <Box sx={{ flexGrow: 1 }} />

@@ -13,6 +13,8 @@ export interface BasicForm {
   classify?: string;
   department_id?: string | null;
   category_id?: string;
+  is_optional:boolean; 
+  quarter_id:string;
   tags: string[];
 }
 
@@ -29,6 +31,8 @@ export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
       classify: data?.classify || "ALL",
       department_id: data?.department_id || "",
       category_id: data?.category_id || "",
+      is_optional: data?.is_optional || false,
+      quarter_id: data?.quarter_id || "",
       tags: data?.tags || [],
     },
     resolver: yupResolver(basicFormSchema) as Resolver<BasicForm>,
@@ -46,6 +50,8 @@ export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
         department_id: data.department_id || null,
         category_id: data.category_id || "",
         tags: data.tags || [],
+        quarter_id: data.quarter_id || "",
+        is_optional: data.is_optional || false,
       });
     }
   }, [data, reset]);

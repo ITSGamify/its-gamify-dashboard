@@ -13,7 +13,6 @@ import {
   IconButton,
 } from "@mui/material";
 import { Control, Controller, useWatch } from "react-hook-form";
-import { useFileUpload } from "@services/fileUpload";
 import { textFieldStyles } from "../LessonCard";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
@@ -21,6 +20,17 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import { Module } from "@interfaces/dom/course";
+import {
+  useS3InitialUpload,
+  useS3GetPresignUrlUpload,
+  useS3CompletedUpload,
+  InitiateMultipartUploadParam,
+  GeneratePresignedUrlParam,
+  CompleteMultipartUploadModel,
+  PartETag,
+} from "@services/fileUpload";
+import axios from "axios"; // Import axios để upload part
+import { CHUNK_SIZE } from "@constants/file";
 
 interface VideoLessonContentProps {
   moduleIndex: number;
@@ -40,16 +50,17 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
-  const upload = useFileUpload();
 
-  // Theo dõi giá trị hiện tại của video_url
+  const initialUploadMutation = useS3InitialUpload();
+  const getPresignUrlMutation = useS3GetPresignUrlUpload();
+  const completeUploadMutation = useS3CompletedUpload();
+
   const videoUrl = useWatch({
     control,
     name: `lessons.${lessonIndex}.video_url`,
     defaultValue: "",
   });
 
-  // Hàm để lấy thời lượng của video
   const getVideoDuration = (file: File): Promise<number> => {
     return new Promise((resolve, reject) => {
       const video = document.createElement("video");
@@ -81,24 +92,19 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
       setUploadError(null);
 
       try {
-        // Kiểm tra định dạng file
         if (!file.type.startsWith("video/")) {
           setUploadError("Chỉ chấp nhận file video");
-          setIsUploading(false);
           return;
         }
 
-        // Lấy thời lượng video
         let duration: number;
         try {
           duration = await getVideoDuration(file);
 
-          // Kiểm tra thời lượng video có nằm trong khoảng 1-5 phút không
           if (duration < 1 || duration > 5) {
             setUploadError(
               `Thời lượng video phải từ 1-5 phút. Video của bạn dài ${duration} phút.`
             );
-            setIsUploading(false);
             return;
           }
         } catch (error) {
@@ -106,20 +112,66 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
           setUploadError(
             "Không thể xác định thời lượng video. Vui lòng thử lại."
           );
-          setIsUploading(false);
           return;
         }
 
-        // Upload file lên server
-        const result = await upload.mutateAsync({ file });
+        // Bắt đầu multipart upload
+        const fileName = file.name; // Hoặc generate unique name nếu cần
+        const initParams: InitiateMultipartUploadParam = {
+          file_name: fileName,
+        };
+        const uploadId = await initialUploadMutation.mutateAsync(initParams);
+
+        // Chia file thành các parts
+        const totalParts = Math.ceil(file.size / CHUNK_SIZE);
+        const partETags: PartETag[] = [];
+
+        for (let partNumber = 1; partNumber <= totalParts; partNumber++) {
+          const start = (partNumber - 1) * CHUNK_SIZE;
+          const end = Math.min(start + CHUNK_SIZE, file.size);
+          const chunk = file.slice(start, end);
+
+          // Lấy presigned URL cho part
+          const presignParams: GeneratePresignedUrlParam = {
+            file_name: fileName,
+            upload_id: uploadId,
+            part_number: partNumber,
+          };
+          const presignedUrl = await getPresignUrlMutation.mutateAsync(
+            presignParams
+          );
+
+          // Upload part lên S3 bằng presigned URL
+          const response = await axios.put(presignedUrl, chunk, {
+            headers: {
+              "Content-Type": file.type,
+            },
+          });
+
+          // Lấy ETag từ response headers
+          const eTag = response.headers.etag;
+          if (!eTag) {
+            throw new Error(`Không lấy được ETag cho part ${partNumber}`);
+          }
+          partETags.push({ part_number: partNumber, e_tag: eTag });
+        }
+
+        // Hoàn tất upload
+        const completeParams: CompleteMultipartUploadModel = {
+          file_name: fileName,
+          upload_id: uploadId,
+          part_e_tags: partETags,
+        };
+        const finalUrl = await completeUploadMutation.mutateAsync(
+          completeParams
+        );
 
         // Cập nhật URL video
-        onChange(result.url);
+        onChange(finalUrl);
 
-        // Cập nhật thời lượng bài học
         setDuration(duration);
       } catch (error) {
-        console.error("Lỗi khi tải lên video:", error);
+        console.error("Lỗi khi tải lên video multipart:", error);
         setUploadError("Đã xảy ra lỗi khi tải lên video. Vui lòng thử lại.");
       } finally {
         setIsUploading(false);

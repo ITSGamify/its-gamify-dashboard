@@ -26,6 +26,8 @@ export interface Course {
   duration_in_hours: number;
   classify: string;
   status: string;
+  is_optional:boolean;
+  quarter_id:string;
   introduction_video?: string;
   learning_materials?: Material[];
 }
@@ -36,8 +38,16 @@ export interface Material {
   name: string;
   file_id: string;
   type: string;
-  size: string;
+  size: number;
   course_id: string;
+}
+
+export interface Quater {
+  id: string;
+  name: string;
+  year: number;
+  start_date: string;
+  end_date: string;
 }
 
 export interface StepFormProps {

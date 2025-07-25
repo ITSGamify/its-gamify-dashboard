@@ -31,6 +31,7 @@ import { StepFormProps } from "@interfaces/api/course";
 import { Controller } from "react-hook-form";
 import { STEPS } from "@constants/course";
 import { Save as SaveIcon } from "@mui/icons-material";
+import { formatToMB } from "@utils/file";
 
 export const MAX_TARGET_COUNTS = 10;
 
@@ -132,7 +133,7 @@ const LearningMaterialsForm = ({
                         </ListItemIcon>
                         <ListItemText
                           primary={file.name}
-                          secondary={file.size}
+                          secondary={formatToMB(file.size as number)}
                         />
                         <ListItemSecondaryAction>
                           <IconButton

@@ -8,7 +8,7 @@ import {
   TablePagination,
 } from "@mui/material";
 import React from "react";
-import StatusBadge from "@components/ui/atoms/TableBadge";
+// import StatusBadge from "@components/ui/atoms/TableBadge";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import TableActionButton from "@components/ui/atoms/TableActionButton";
@@ -92,6 +92,7 @@ const AccountPage: React.FC = () => {
       onClick: () => {
         handleDelete(account.id);
       },
+      disabled: account.role === "ADMIN" || account.role === "TRAININGSTAFF" ,
       sx: { color: "red" },
     },
   ];
@@ -119,9 +120,9 @@ const AccountPage: React.FC = () => {
       <TableCell key="role" align="left">
         {row.role}
       </TableCell>,
-      <TableCell key="status" align="left">
-        <StatusBadge status={row.status as StatusType} label={row.status} />
-      </TableCell>,
+      // <TableCell key="status" align="left">
+      //   <StatusBadge status={row.status as StatusType} label={row.status} />
+      // </TableCell>,
       <TableCell key="action" align="right">
         <TableActionButton menuItems={menuItems(row)} />
       </TableCell>,

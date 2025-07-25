@@ -11,6 +11,9 @@ export interface BasicsFormData {
   department_id?: string | null;
   category_id: string;
   tags: string[];
+  is_optional:boolean; 
+  quarter_id:string;
+
 }
 
 export interface CourseContentFormData {
@@ -36,6 +39,15 @@ export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
     department_id: yup.string().nullable().optional(),
     category_id: yup.string().required("Danh mục là bắt buộc"),
     tags: yup.array().of(yup.string().defined()).required("Thẻ là bắt buộc"),
+    quarter_id: yup.string().required("Thời gian áp dụng khóa học là bắt buộc"),
+    is_optional: yup
+      .boolean()
+      .required("Trạng thái tùy chọn là bắt buộc")
+      .when("type", {
+        is: (type: string) => type === "Leader" || type === "Department",
+        then: (schema) => 
+          schema.oneOf([false], "Trạng thái tùy chọn phải là bắt buộc cho loại Leader và Department"),
+      }),
   });
 
 export const learningMaterialsFormSchema: yup.ObjectSchema<LearningMaterialsFormData> =

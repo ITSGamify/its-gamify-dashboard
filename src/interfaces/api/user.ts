@@ -5,12 +5,11 @@ export enum RoleEnum {
   ADMIN = "ADMIN",
   EMPLOYEE = "EMPLOYEE",
   LEADER = "LEADER",
-  TRAINER = "TRAINING STAFF",
+  TRAINER = "TRAININGSTAFF",
 }
 
 export interface User {
   id: string;
-  employee_code?: string;
   dept_name: string;
   email: string;
   full_name: string;
