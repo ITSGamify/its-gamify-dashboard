@@ -38,7 +38,7 @@ export interface Material {
   name: string;
   file_id: string;
   type: string;
-  size: string;
+  size: number;
   course_id: string;
 }
 

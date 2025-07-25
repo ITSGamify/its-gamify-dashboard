@@ -72,14 +72,14 @@ export const ACCOUNT_TABLE_HEAD = [
     disableSort: false,
     label: "Chức vụ",
   },
-  {
-    id: "status",
-    numeric: false,
-    align: "left",
-    disablePadding: true,
-    disableSort: false,
-    label: "Trạng thái",
-  },
+  // {
+  //   id: "status",
+  //   numeric: false,
+  //   align: "left",
+  //   disablePadding: true,
+  //   disableSort: false,
+  //   label: "Trạng thái",
+  // },
   {
     id: "action",
     numeric: true,

@@ -8,6 +8,7 @@ interface MenuItemProps {
   label: string;
   onClick?: () => void;
   sx?: object;
+  disabled?: boolean;
 }
 
 interface TableActionButtonProp {
@@ -36,6 +37,7 @@ const TableActionButton = ({ menuItems }: TableActionButtonProp) => {
         {menuItems.map((item, index) => (
           <MenuItem
             key={index}
+            disabled={item.disabled}
             onClick={(event) => {
               event.stopPropagation();
               if (item.onClick) {

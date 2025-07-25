@@ -11,6 +11,7 @@ export interface QuizQuestion {
   answer_d: string;
   correct_answer: string;
   description: string;
+  course_id: string;
 }
 
 export interface Lesson {
