@@ -9,6 +9,7 @@ export const BASE_KEYS = {
   LESSONS: "lessons",
   MATERIALS: "learning-materials",
   QUATER: "quarters",
+  CHALLENGE: "challenges",
 };
 
 export const END_POINTS = {
@@ -62,5 +63,10 @@ export const END_POINTS = {
   MATERIALS: {
     BASE: BASE_KEYS.MATERIALS,
     DETAIL: `${BASE_KEYS.MATERIALS}/:materialId`,
+  },
+  CHALLENGE: {
+    BASE: BASE_KEYS.CHALLENGE,
+    DETAIL: `${BASE_KEYS.CHALLENGE}/:challengeId`,
+    DELETE_RANGE: `${BASE_KEYS.CHALLENGE}/delete-range`,
   },
 };

@@ -140,3 +140,46 @@ export const COURSE_TABLE_HEAD = [
     label: "",
   },
 ];
+
+export const CHALLENGE_TABLE_HEAD = [
+  {
+    id: "title",
+    numeric: false,
+    align: "left",
+    disablePadding: true,
+    disableSort: true,
+    label: "Tên thử thách",
+  },
+  {
+    id: "description",
+    numeric: true,
+    align: "left",
+    disablePadding: true,
+    disableSort: true,
+    label: "Mô tả",
+  },
+  {
+    id: "course",
+    numeric: true,
+    align: "left",
+    disablePadding: true,
+    disableSort: true,
+    label: "Khóa học",
+  },
+  {
+    id: "num_of_room",
+    numeric: false,
+    align: "left",
+    disablePadding: true,
+    disableSort: true,
+    label: "Số phòng tối da",
+  },
+  {
+    id: "action",
+    numeric: false,
+    align: "right",
+    disablePadding: true,
+    disableSort: true,
+    label: "",
+  },
+];

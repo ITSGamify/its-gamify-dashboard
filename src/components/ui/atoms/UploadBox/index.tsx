@@ -59,6 +59,7 @@ interface UploadBoxProps {
   onChange: (id: string) => void;
   accept: string;
   defaultUrl?: string;
+  onChangeUrl?: (url: string) => void;
 }
 
 const UploadBox: React.FC<UploadBoxProps> = ({
@@ -69,6 +70,7 @@ const UploadBox: React.FC<UploadBoxProps> = ({
   onChange,
   accept,
   defaultUrl,
+  onChangeUrl,
 }) => {
   const isImage = accept.includes("image");
   const isVideo = accept.includes("video");
@@ -90,6 +92,7 @@ const UploadBox: React.FC<UploadBoxProps> = ({
         const result = await uploadFile({ file: files[0] });
         onChange(result.id);
         setPreviewUrl(result.url);
+        if (onChangeUrl) onChangeUrl(result.url);
       } catch (error) {
         console.error("Error reading file:", error);
       }

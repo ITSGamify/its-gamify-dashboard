@@ -20,7 +20,6 @@ import {
 import {
   Image as ImageIcon,
   VideoLibrary as VideoLibraryIcon,
-  Save as SaveIcon,
 } from "@mui/icons-material";
 import { SectionTitle } from "@components/ui/atoms/SectionTitle";
 import UploadBox from "@components/ui/atoms/UploadBox";
@@ -112,27 +111,27 @@ const BasicInfoForm = ({
       );
     }
 
-    if(classify === "ALL"){
-       return (
-      <Grid container size={{ xs: 12, md: 12 }}>
-        <Controller
-          name="is_optional"
-          control={control}
-          render={({ field }) => (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                  color="primary"
-                />
-              }
-              label="Khóa học tùy chọn"
-            />
-          )}
-        />
-      </Grid>
-    );
+    if (classify === "ALL") {
+      return (
+        <Grid container size={{ xs: 12, md: 12 }}>
+          <Controller
+            name="is_optional"
+            control={control}
+            render={({ field }) => (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label="Khóa học tùy chọn"
+              />
+            )}
+          />
+        </Grid>
+      );
     }
 
     return null;
@@ -428,14 +427,6 @@ const BasicInfoForm = ({
           Quay lại
         </Button>
         <Box>
-          <Button
-            variant="outlined"
-            sx={{ mr: 1 }}
-            startIcon={<SaveIcon />}
-            disabled={isLoading}
-          >
-            Lưu nháp
-          </Button>
           {activeStep === STEPS.length - 1 ? (
             <Button variant="contained" color="primary">
               Xuất bản khóa học
