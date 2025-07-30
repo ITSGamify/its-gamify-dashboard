@@ -18,6 +18,9 @@ import { ErrorBoundary } from "react-error-boundary";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router-dom";
 import { JSX } from "react";
 import UpdateCoursePage from "@pages/Course/Update";
+import TournamentPage from "@pages/Tournament";
+import ChallengeUpdatePage from "@pages/Tournament/Update";
+import ChallengeCreatePage from "@pages/Tournament/Create";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => {
@@ -124,7 +127,15 @@ const router = createBrowserRouter(
         },
         {
           path: PATH.TOURNAMENT,
-          element: <HomePage />,
+          element: <TournamentPage />,
+        },
+        {
+          path: PATH.TOURNAMENT_EDIT,
+          element: <ChallengeUpdatePage />,
+        },
+        {
+          path: PATH.TOURNAMENT_CREATE,
+          element: <ChallengeCreatePage />,
         },
         {
           path: PATH.COURSES,

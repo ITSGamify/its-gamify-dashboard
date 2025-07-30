@@ -19,7 +19,9 @@ import {
   ExpandMore,
   Apartment as ApartmentIcon,
   School as SchoolIcon,
+  SportsEsports as SportsEsportsIcon,
 } from "@mui/icons-material";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import useCustomTranslation from "@hooks/shared/useTranslation";
@@ -121,21 +123,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       icon: <SchoolIcon />,
       path: PATH.COURSES,
     },
-    // {
-    //   text: "Giảng viên",
-    //   icon: <SchoolIcon />,
-    //   path: "/teachers",
-    // },
-    // {
-    //   text: "Bài tập",
-    //   icon: <AssignmentIcon />,
-    //   path: "/assignments",
-    // },
-    // {
-    //   text: "Cài đặt",
-    //   icon: <SettingsIcon />,
-    //   path: "/settings",
-    // },
+    {
+      text: "Giải đấu",
+      icon: <SportsEsportsIcon />,
+      path: PATH.TOURNAMENT,
+    },
   ];
 
   return (

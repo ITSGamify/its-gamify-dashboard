@@ -7,5 +7,7 @@ export const getHeaderTitle = (path: string): string => {
 
   if (path.includes(PATH.DEPARTMENTS)) return "Quản lý phòng ban";
 
+  if (path.includes(PATH.TOURNAMENT)) return "Quản lý giải đấu";
+
   return "Thống kê";
 };

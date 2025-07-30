@@ -19,6 +19,10 @@ export const QUERY_KEYS = {
   QUATER: {
     BASE: BASE_KEYS.QUATER,
   },
+  CHALLENGE: {
+    BASE: BASE_KEYS.CHALLENGE,
+    DETAIL: `${BASE_KEYS.CHALLENGE}/:challengeId`,
+  },
 };
 
 export const DEFAULT_LIMIT_OPTIONS_PARAMS = 50;
