@@ -111,7 +111,7 @@ const TournamentPage: React.FC = () => {
         {truncateText(row.description, 60)}
       </TableCell>,
       <TableCell key="course" align="left">
-        {row.course.title}
+        {row.course?.title || ""}
       </TableCell>,
       <TableCell key="num_of_room" align="left">
         {row.num_of_room || ""}
