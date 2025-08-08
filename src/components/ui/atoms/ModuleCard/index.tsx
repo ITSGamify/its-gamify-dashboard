@@ -44,12 +44,14 @@ interface ModuleCardProps {
   index: number;
   handleDeleteModule: (moduleId: string) => void;
   isLast: boolean;
+  handleSetEditing: (id: string) => void;
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({
   module,
   index: moduleIndex,
   handleDeleteModule,
+  handleSetEditing,
 }) => {
   const {
     handleRemoveModule,
@@ -69,6 +71,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   } = useModuleForm({
     data: module,
     handleDeleteModule,
+    handleSetEditing,
   });
 
   return (
@@ -87,7 +90,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
                 size="small"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleToggleEdit();
+                  handleToggleEdit(module.id);
                 }}
               >
                 <EditIcon />

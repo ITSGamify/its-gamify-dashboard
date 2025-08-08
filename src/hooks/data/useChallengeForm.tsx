@@ -1,3 +1,4 @@
+import { TOURNAMENT_KEY } from "@constants/challenge";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ChallengeStepFormProps } from "@interfaces/api/challenge";
 import { useGetCourseDetail } from "@services/course";
@@ -16,7 +17,6 @@ export interface ChallengeInforForm {
 }
 
 export const useChallengeForm = ({
-  data,
   handleNextState,
   formData,
 }: ChallengeStepFormProps) => {
@@ -25,15 +25,13 @@ export const useChallengeForm = ({
       mode: "onChange",
       reValidateMode: "onChange",
       defaultValues: {
-        title: data?.title || formData?.title || "",
-        description: data?.description || formData?.description || "",
-        thumbnail_image:
-          data?.thumbnail_image || formData?.thumbnail_image || "",
-        thumbnail_image_id:
-          data?.thumbnail_image_id || formData?.thumbnail_image_id || "",
-        course_id: data?.course_id || formData?.course_id || "",
-        category_id: data?.category_id || formData?.category_id || "",
-        num_of_room: data?.num_of_room || formData?.num_of_room || 0,
+        title: formData?.title || "",
+        description: formData?.description || "",
+        thumbnail_image: formData?.thumbnail_image || "",
+        thumbnail_image_id: formData?.thumbnail_image_id || "",
+        course_id: formData?.course_id || "",
+        category_id: formData?.category_id || "",
+        num_of_room: formData?.num_of_room || 0,
       },
       resolver: yupResolver(
         basicChallengeFormSchema
@@ -58,6 +56,7 @@ export const useChallengeForm = ({
         thumbnail_image: courseDetail.thumbnail_image || "",
         course_id: courseId,
       });
+      sessionStorage.setItem(TOURNAMENT_KEY, JSON.stringify(getValues()));
       prevCourseIdRef.current = courseId;
     }
   }, [courseId, courseDetail, reset, getValues]);
