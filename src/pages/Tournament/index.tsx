@@ -18,6 +18,7 @@ import defaultCourseImage from "@assets/images/its_gamify_course_default.png";
 import { useChallengePage } from "@hooks/data/useChallengePage";
 import { Challenge } from "@interfaces/api/challenge";
 import { truncateText } from "@utils/string";
+import { TOURNAMENT_KEY } from "@constants/challenge";
 
 const departments = [
   { id: "it", name: "Công nghệ thông tin" },
@@ -64,6 +65,7 @@ const TournamentPage: React.FC = () => {
       label: "Chỉnh sửa",
       onClick: () => {
         handleUpdateChallange(challenge.id);
+        sessionStorage.removeItem(TOURNAMENT_KEY);
       },
     },
     {
@@ -112,9 +114,6 @@ const TournamentPage: React.FC = () => {
       </TableCell>,
       <TableCell key="course" align="left">
         {row.course?.title || ""}
-      </TableCell>,
-      <TableCell key="num_of_room" align="left">
-        {row.num_of_room || ""}
       </TableCell>,
       <TableCell key="action" align="right">
         <TableActionButton menuItems={menuItems(row)} />

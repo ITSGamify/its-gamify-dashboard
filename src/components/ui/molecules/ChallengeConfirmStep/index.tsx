@@ -77,15 +77,6 @@ const ChallengeConfirmStep = ({
 
           <Grid size={{ xs: 12 }}>
             <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-              Số Lượng Phòng
-            </Typography>
-            <Typography variant="body1">
-              {formData?.num_of_room || 0}
-            </Typography>
-          </Grid>
-
-          <Grid size={{ xs: 12 }}>
-            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
               Ảnh Thumbnail
             </Typography>
             {formData?.thumbnail_image ? (

@@ -30,7 +30,6 @@ import { useLearningMaterialsForm } from "@hooks/data/useLearningMaterialsForm";
 import { StepFormProps } from "@interfaces/api/course";
 import { Controller } from "react-hook-form";
 import { STEPS } from "@constants/course";
-import { Save as SaveIcon } from "@mui/icons-material";
 import { formatToMB } from "@utils/file";
 
 export const MAX_TARGET_COUNTS = 10;
@@ -251,14 +250,6 @@ const LearningMaterialsForm = ({
           Quay lại
         </Button>
         <Box>
-          <Button
-            variant="outlined"
-            sx={{ mr: 1 }}
-            startIcon={<SaveIcon />}
-            disabled={isLoading}
-          >
-            Lưu nháp
-          </Button>
           {activeStep === STEPS.length - 1 ? (
             <Button variant="contained" color="primary">
               Xuất bản khóa học

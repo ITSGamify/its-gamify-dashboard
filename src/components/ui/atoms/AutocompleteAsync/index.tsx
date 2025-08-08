@@ -42,32 +42,37 @@ const AutocompleteAsync = <T extends Option>({
   loadingText = "Đang tải...",
 }: AutocompleteAsyncProps<T>) => {
   const [inputValue, setInputValue] = useState("");
-  const [debouncedInputValue, setDebouncedInputValue] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedInputValue(inputValue);
+      if (inputValue.length > 0) {
+        onSearch(inputValue);
+      }
     }, 500);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [inputValue]);
+  }, [inputValue, onSearch]);
 
-  useEffect(() => {
-    if (debouncedInputValue.length > 0) {
-      onSearch(debouncedInputValue);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleInputChange = (_: any, newInputValue: string) => {
+    setInputValue(newInputValue);
+    // Clear value nếu input thay đổi và không khớp với label hiện tại
+    if (!newInputValue) {
+      onSearch("");
     }
-  }, [debouncedInputValue, onSearch]);
+  };
 
   return (
     <Autocomplete
       options={options}
       value={value}
-      onChange={(_, newValue) => onChange(newValue?.id as string)}
-      onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
+      onChange={(_, newValue) => {
+        onChange(newValue ? newValue.id : "");
+      }}
+      onInputChange={handleInputChange}
       getOptionLabel={(option) => {
-        // Xử lý trường hợp option là null hoặc undefined
         if (!option) return "";
         return getOptionLabel(option);
       }}
@@ -81,6 +86,7 @@ const AutocompleteAsync = <T extends Option>({
       disabled={disabled}
       noOptionsText={noOptionsText}
       loadingText={loadingText}
+      clearOnBlur // Đảm bảo clear input onBlur nếu chưa chọn (mặc định true)
       renderInput={(params) => (
         <TextField
           {...params}
@@ -99,6 +105,10 @@ const AutocompleteAsync = <T extends Option>({
                 {params.InputProps.endAdornment}
               </React.Fragment>
             ),
+          }}
+          inputProps={{
+            ...params.inputProps,
+            autoComplete: "off", // Ngăn browser auto-fill
           }}
         />
       )}

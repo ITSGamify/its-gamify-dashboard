@@ -34,7 +34,7 @@ const ChallengeInforForm = ({
   isCreateMode,
   formData,
 }: ChallengeStepFormProps) => {
-  const { control, handleSubmit, isLoadingCourse, courseId, setValue } =
+  const { control, handleSubmit, isLoadingCourse, courseId, setValue, watch } =
     useChallengeForm({
       data,
       handleNextState,
@@ -124,29 +124,6 @@ const ChallengeInforForm = ({
             />
           </Grid>
 
-          <Grid size={{ xs: 12 }}>
-            <Controller
-              name="num_of_room"
-              control={control}
-              rules={{ required: true }}
-              render={({ field, fieldState: { error } }) => (
-                <TextField
-                  label="Số lượng phòng thi đấu"
-                  name="num_of_room"
-                  fullWidth
-                  type="number"
-                  required
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={!!error}
-                  disabled={!courseId}
-                  helperText={error?.message}
-                  placeholder="Giới hạn số phòng tối đa cho thử thách"
-                />
-              )}
-            />
-          </Grid>
-
           <Grid size={{ xs: 12, md: 12 }}>
             <Controller
               name="category_id"
@@ -230,7 +207,9 @@ const ChallengeInforForm = ({
                       />
                     }
                     defaultUrl={
-                      data?.thumbnail_image || formData?.thumbnail_image
+                      watch("thumbnail_image") ||
+                      formData?.thumbnail_image ||
+                      data?.thumbnail_image
                     }
                     onChange={onChange}
                     onChangeUrl={(url) => setValue("thumbnail_image", url)}

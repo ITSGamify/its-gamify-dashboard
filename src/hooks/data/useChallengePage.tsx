@@ -1,4 +1,5 @@
 import ToastContent from "@components/ui/atoms/Toast";
+import { TOURNAMENT_KEY } from "@constants/challenge";
 import { PATH } from "@constants/path";
 import {
   CHALLENGE_TABLE_HEAD,
@@ -46,6 +47,7 @@ export const useChallengePage = () => {
   const setParam = createParamSetter(searchParams);
 
   const handleCreateChallenge = () => {
+    sessionStorage.removeItem(TOURNAMENT_KEY);
     navigate(PATH.TOURNAMENT_CREATE);
   };
 

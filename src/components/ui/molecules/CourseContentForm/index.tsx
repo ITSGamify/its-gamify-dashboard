@@ -14,7 +14,6 @@ import { SectionTitle } from "@components/ui/atoms/SectionTitle";
 import ModuleCard from "@components/ui/atoms/ModuleCard";
 import { useCourseContentForm } from "@hooks/data/useCourseContentForm";
 import { StepFormProps } from "@interfaces/api/course";
-import { Save as SaveIcon } from "@mui/icons-material";
 import { STEPS } from "@constants/course";
 import CustomButton from "@components/ui/atoms/CustomButton";
 
@@ -33,6 +32,7 @@ const CourseContentForm = ({
     updateModulesAfterDrag,
     handleNext,
     isLoadingModules,
+    handleSetEditing,
   } = useCourseContentForm({
     data,
     handleNextState,
@@ -144,6 +144,7 @@ const CourseContentForm = ({
                       module={module}
                       handleDeleteModule={handleRemoveModule}
                       isLast={modules.length === 1}
+                      handleSetEditing={handleSetEditing}
                     />
                   ))}
                 </DragDropContext>
@@ -187,14 +188,6 @@ const CourseContentForm = ({
           Quay lại
         </Button>
         <Box>
-          <Button
-            variant="outlined"
-            sx={{ mr: 1 }}
-            startIcon={<SaveIcon />}
-            disabled={isLoading}
-          >
-            Lưu nháp
-          </Button>
           {activeStep === STEPS.length - 1 ? (
             <Button variant="contained" color="primary">
               Xuất bản khóa học

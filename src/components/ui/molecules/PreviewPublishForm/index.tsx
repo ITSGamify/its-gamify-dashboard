@@ -35,7 +35,6 @@ import { SectionTitle } from "@components/ui/atoms/SectionTitle";
 import { Lesson } from "@interfaces/dom/course";
 import { StepFormProps } from "@interfaces/api/course";
 import { STEPS } from "@constants/course";
-import { Save as SaveIcon } from "@mui/icons-material";
 import { validateCourseContent } from "@utils/course";
 import { toast } from "react-toastify";
 import ToastContent from "@components/ui/atoms/Toast";
@@ -325,14 +324,6 @@ const PreviewPublishForm = ({
           Quay lại
         </Button>
         <Box>
-          <Button
-            variant="outlined"
-            sx={{ mr: 1 }}
-            startIcon={<SaveIcon />}
-            disabled={isLoading}
-          >
-            Lưu nháp
-          </Button>
           {activeStep === STEPS.length - 1 ? (
             <Button
               variant="contained"

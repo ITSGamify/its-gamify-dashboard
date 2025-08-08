@@ -167,14 +167,6 @@ export const CHALLENGE_TABLE_HEAD = [
     label: "Khóa học",
   },
   {
-    id: "num_of_room",
-    numeric: false,
-    align: "left",
-    disablePadding: true,
-    disableSort: true,
-    label: "Số phòng tối da",
-  },
-  {
     id: "action",
     numeric: false,
     align: "right",

@@ -3,6 +3,8 @@ import { Module } from "@interfaces/dom/course";
 import { useCreateModule } from "@services/module";
 import { useCallback, useEffect, useState } from "react";
 import { useGetCourseModules } from "@services/course";
+import { toast } from "react-toastify";
+import ToastContent from "@components/ui/atoms/Toast";
 
 export interface CourseContentForm {
   modules: Module[];
@@ -46,16 +48,34 @@ export const useCourseContentForm = ({
     );
   }, []);
 
-  const handleNext = () => {
-    handleNextState({
-      modules: localModules,
-    });
-  };
-
   const updateModulesAfterDrag = (updatedModules: Module[]) => {
     setLocalModules([...updatedModules]);
   };
 
+  const [editingModules, setEditingModules] = useState<string[]>([]);
+
+  const handleSetEditing = (id: string) => {
+    setEditingModules((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((moduleId) => moduleId !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  };
+
+  const handleNext = () => {
+    if (editingModules.length > 0) {
+      toast.warning(ToastContent, {
+        data: { message: "Vui lòng xác nhận chỉnh sửa!" },
+      });
+      return;
+    }
+
+    handleNextState({
+      modules: localModules,
+    });
+  };
   return {
     handleNext,
     handleAddModule,
@@ -64,5 +84,6 @@ export const useCourseContentForm = ({
     modules: localModules.sort((a, b) => a.ordered_number - b.ordered_number),
     updateModulesAfterDrag,
     isLoadingModules,
+    handleSetEditing,
   };
 };

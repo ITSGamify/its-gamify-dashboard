@@ -1,6 +1,7 @@
 import ToastContent from "@components/ui/atoms/Toast";
 import ChallengeConfirmStep from "@components/ui/molecules/ChallengeConfirmStep";
 import ChallengeInforForm from "@components/ui/molecules/ChallengeInforForm";
+import { TOURNAMENT_KEY } from "@constants/challenge";
 import { PATH } from "@constants/path";
 import {
   CONFIRMING_DETAILS_STEP,
@@ -19,8 +20,6 @@ import { JSX, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export const TOURNAMENT_KEY = "TOURNAMENT_KEY";
-
 export const useChallengeRequestForm = (
   challengeId?: string,
   editMode?: boolean
@@ -37,12 +36,16 @@ export const useChallengeRequestForm = (
     });
 
   useEffect(() => {
-    if (tempData) {
-      sessionStorage.setItem(TOURNAMENT_KEY, JSON.stringify(tempData));
-    } else {
-      sessionStorage.removeItem(TOURNAMENT_KEY);
+    const storedData = sessionStorage.getItem(TOURNAMENT_KEY);
+
+    if (storedData) {
+      setTempData(storedData ? JSON.parse(storedData) : null);
+      // sessionStorage.setItem(TOURNAMENT_KEY, JSON.stringify(tempData));
     }
-  }, [tempData]);
+    // else {
+    //   sessionStorage.removeItem(TOURNAMENT_KEY);
+    // }
+  }, []);
 
   useEffect(() => {
     setActiveStep(+paramsCurrentStep);
@@ -78,6 +81,8 @@ export const useChallengeRequestForm = (
 
   const handleBack = () => {
     if (activeStep === INITIAL_CREATE_STEP) {
+      sessionStorage.removeItem(TOURNAMENT_KEY);
+
       return handleBackToList();
     }
 
