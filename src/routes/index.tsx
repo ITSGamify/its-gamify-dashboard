@@ -21,6 +21,7 @@ import UpdateCoursePage from "@pages/Course/Update";
 import TournamentPage from "@pages/Tournament";
 import ChallengeUpdatePage from "@pages/Tournament/Update";
 import ChallengeCreatePage from "@pages/Tournament/Create";
+import StatisticPage from "@pages/Statistic";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => {
@@ -115,7 +116,7 @@ const router = createBrowserRouter(
       children: [
         {
           path: PATH.HOME,
-          element: <HomePage />,
+          element: <StatisticPage />,
         },
         {
           path: PATH.ACCOUNTS,
@@ -152,6 +153,10 @@ const router = createBrowserRouter(
         {
           path: PATH.DEPARTMENTS,
           element: <DepartmentPage />,
+        },
+        {
+          path: PATH.STATISTIC,
+          element: <StatisticPage />,
         },
       ],
     },
