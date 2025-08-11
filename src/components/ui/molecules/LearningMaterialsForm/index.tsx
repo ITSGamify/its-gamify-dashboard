@@ -33,6 +33,25 @@ import { STEPS } from "@constants/course";
 import { formatToMB } from "@utils/file";
 
 export const MAX_TARGET_COUNTS = 10;
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+  "image/bmp",
+  "image/webp",
+  "image/svg+xml",
+];
+
+const ACCEPTED_IMAGE_EXTENSIONS = [
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".gif",
+  ".bmp",
+  ".webp",
+  ".svg",
+];
 
 const LearningMaterialsForm = ({
   data,
@@ -97,6 +116,7 @@ const LearningMaterialsForm = ({
                     type="file"
                     multiple
                     hidden
+                    accept={ACCEPTED_IMAGE_TYPES.join(",")}
                     onChange={handleFileUpload}
                   />
                   <DescriptionIcon
@@ -107,6 +127,14 @@ const LearningMaterialsForm = ({
                   </Typography>
                   <Typography variant="body2" color="text.secondary" paragraph>
                     Kéo và thả tệp vào đây hoặc nhấp để chọn tệp
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    paragraph
+                  >
+                    Chỉ chấp nhận các định dạng:{" "}
+                    {ACCEPTED_IMAGE_EXTENSIONS.join(", ")}
                   </Typography>
                   <Button
                     variant="contained"

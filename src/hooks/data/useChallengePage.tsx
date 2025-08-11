@@ -212,6 +212,13 @@ export const useChallengePage = () => {
     refetch();
   }, [refetch]);
 
+  const handleViewDetail = (id: string) => {
+    const route = getRoute(PATH.TOURNAMENT_DETAIL, {
+      tournamentId: id,
+    });
+    navigate(route);
+  };
+
   return {
     isLoading,
     challenges,
@@ -237,5 +244,6 @@ export const useChallengePage = () => {
     page_index,
     page_size,
     total_items_count,
+    handleViewDetail,
   };
 };

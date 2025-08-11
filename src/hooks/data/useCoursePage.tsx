@@ -215,6 +215,13 @@ export const useCoursePage = () => {
     refetch();
   }, [refetch]);
 
+  const handleViewDetail = (id: string) => {
+    const route = getRoute(PATH.COURSES_DETAIL, {
+      courseId: id,
+    });
+    navigate(route);
+  };
+
   return {
     isLoading,
     courses,
@@ -240,5 +247,6 @@ export const useCoursePage = () => {
     page_index,
     page_size,
     total_items_count,
+    handleViewDetail,
   };
 };

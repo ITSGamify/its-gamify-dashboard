@@ -6,6 +6,7 @@ export enum RoleEnum {
   EMPLOYEE = "EMPLOYEE",
   LEADER = "LEADER",
   TRAINER = "TRAININGSTAFF",
+  MANAGER = "MANAGER",
 }
 
 export interface User {

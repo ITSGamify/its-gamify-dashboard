@@ -2,6 +2,7 @@ import { DataTable } from "@components/ui/molecules/DataTable";
 // import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Box,
   Checkbox,
@@ -55,14 +56,18 @@ const CoursePage: React.FC = () => {
     page_size,
     total_items_count,
     handleUpdateCourse,
+    handleViewDetail,
   } = useCoursePage();
 
   const menuItems = (course: Course) => [
-    // {
-    //   icon: <VisibilityIcon color="action" />,
-    //   label: "Xem chi tiết",
-    //   onClick: () => {},
-    // },
+    {
+      icon: <VisibilityIcon color="action" />,
+      label: "Xem chi tiết",
+      onClick: () => {
+        handleViewDetail(course.id);
+      },
+    },
+
     {
       icon: <EditIcon color="action" />,
       label: "Chỉnh sửa",

@@ -147,7 +147,6 @@ const PreviewPublishForm = ({
                     label={data?.category?.name || "Danh mục"}
                     color="primary"
                   />
-                  <Chip label={"Tất cả cấp độ"} variant="outlined" />
                   <Chip label={"Tiếng Việt"} variant="outlined" />
                   <Chip
                     label="Có chứng chỉ"

@@ -26,8 +26,9 @@ export interface Course {
   duration_in_hours: number;
   classify: string;
   status: string;
-  is_optional:boolean;
-  quarter_id:string;
+  is_optional: boolean;
+  quarter_id: string;
+  quarter: Quater;
   introduction_video?: string;
   learning_materials?: Material[];
 }

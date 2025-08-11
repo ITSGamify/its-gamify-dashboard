@@ -1,13 +1,12 @@
 import { PATH } from "@constants/path";
 // import { USER_ROLES } from "@constants/user-role";
-// import { RoleEnum } from "@interfaces/shared/user";
 import userSession from "@utils/user-session";
 
 import DepartmentPage from "@pages/Department";
 import CoursePage from "@pages/Course";
 import CourseCreatePage from "@pages/Course/Create";
 import LoginPage from "@pages/Login";
-import HomePage from "@pages/Home";
+// import HomePage from "@pages/Home";
 import NotFound404 from "@pages/NotFound404";
 import ServerError500 from "@pages/ServerError500";
 import Forbidden403 from "@pages/Forbidden403";
@@ -22,6 +21,8 @@ import TournamentPage from "@pages/Tournament";
 import ChallengeUpdatePage from "@pages/Tournament/Update";
 import ChallengeCreatePage from "@pages/Tournament/Create";
 import StatisticPage from "@pages/Statistic";
+import { RoleEnum } from "@interfaces/api/user";
+import CourseDetailPage from "@pages/Course/Detail";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => {
@@ -107,9 +108,38 @@ const router = createBrowserRouter(
       ),
     },
     {
-      path: PATH.HOME,
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute
+        // allowedRoles={[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]}
+        >
+          <MainLayout />
+        </ProtectedRoute>
+      ),
+      children: [
+        {
+          path: PATH.TOURNAMENT,
+          element: <TournamentPage />,
+        },
+
+        {
+          path: PATH.COURSES,
+          element: <CoursePage />,
+        },
+        {
+          path: PATH.DEPARTMENTS,
+          element: <DepartmentPage />,
+        },
+        {
+          path: PATH.COURSES_DETAIL,
+          element: <CourseDetailPage />,
+        },
+      ],
+    },
+    {
+      element: (
+        <ProtectedRoute
+        // allowedRoles={[RoleEnum.ADMIN, RoleEnum.MANAGER]}
+        >
           <MainLayout />
         </ProtectedRoute>
       ),
@@ -118,30 +148,17 @@ const router = createBrowserRouter(
           path: PATH.HOME,
           element: <StatisticPage />,
         },
-        {
-          path: PATH.ACCOUNTS,
-          element: <AccountPage />,
-        },
-        {
-          path: PATH.QUIZ,
-          element: <HomePage />,
-        },
-        {
-          path: PATH.TOURNAMENT,
-          element: <TournamentPage />,
-        },
-        {
-          path: PATH.TOURNAMENT_EDIT,
-          element: <ChallengeUpdatePage />,
-        },
-        {
-          path: PATH.TOURNAMENT_CREATE,
-          element: <ChallengeCreatePage />,
-        },
-        {
-          path: PATH.COURSES,
-          element: <CoursePage />,
-        },
+      ],
+    },
+    {
+      element: (
+        <ProtectedRoute
+        // allowedRoles={[RoleEnum.TRAINER]}
+        >
+          <MainLayout />
+        </ProtectedRoute>
+      ),
+      children: [
         {
           path: PATH.COURSES_CREATE,
           element: <CourseCreatePage />,
@@ -151,12 +168,27 @@ const router = createBrowserRouter(
           element: <UpdateCoursePage />,
         },
         {
-          path: PATH.DEPARTMENTS,
-          element: <DepartmentPage />,
+          path: PATH.TOURNAMENT_EDIT,
+          element: <ChallengeUpdatePage />,
         },
         {
-          path: PATH.STATISTIC,
-          element: <StatisticPage />,
+          path: PATH.TOURNAMENT_CREATE,
+          element: <ChallengeCreatePage />,
+        },
+      ],
+    },
+    {
+      element: (
+        <ProtectedRoute
+        // allowedRoles={[RoleEnum.ADMIN]}
+        >
+          <MainLayout />
+        </ProtectedRoute>
+      ),
+      children: [
+        {
+          path: PATH.ACCOUNTS,
+          element: <AccountPage />,
         },
       ],
     },

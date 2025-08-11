@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import TableActionButton from "@components/ui/atoms/TableActionButton";
 import TableToolbar from "@components/ui/atoms/TableToolbar";
+// import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import FilterButton from "@components/ui/molecules/FilterButton";
 import { FilterGroup } from "@interfaces/dom/filter";
@@ -57,9 +58,17 @@ const TournamentPage: React.FC = () => {
     handleUpdateChallange,
     page_size,
     total_items_count,
+    // handleViewDetail,
   } = useChallengePage();
 
   const menuItems = (challenge: Challenge) => [
+    // {
+    //   icon: <VisibilityIcon color="action" />,
+    //   label: "Xem chi tiết",
+    //   onClick: () => {
+    //     handleViewDetail(challenge.id);
+    //   },
+    // },
     {
       icon: <EditIcon color="action" />,
       label: "Chỉnh sửa",

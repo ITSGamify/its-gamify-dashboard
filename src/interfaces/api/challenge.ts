@@ -1,5 +1,6 @@
 import { RequestChallengeParams } from "@services/challenge";
 import { Course } from "./course";
+import { Category } from "./category";
 
 export interface Challenge {
   id: string;
@@ -9,6 +10,7 @@ export interface Challenge {
   thumbnail_image: string;
   course_id: string;
   category_id: string;
+  category: Category;
   thumbnail_image_id: string;
   course: Course;
 }
