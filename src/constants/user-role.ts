@@ -9,4 +9,5 @@ export const USER_ROLES: RoleObject = {
   [RoleEnum.EMPLOYEE]: "employee",
   [RoleEnum.LEADER]: "leader",
   [RoleEnum.TRAINER]: "trainer",
+  [RoleEnum.MANAGER]: "manager",
 };
