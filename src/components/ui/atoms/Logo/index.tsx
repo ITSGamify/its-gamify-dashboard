@@ -34,7 +34,7 @@ const Logo: React.FC = () => {
           color: theme.palette.primary.main,
         }}
       >
-        Its-Gamify
+        FCP IT Company
       </Typography>
     </Box>
   );
