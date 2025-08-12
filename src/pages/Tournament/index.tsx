@@ -20,6 +20,7 @@ import { useChallengePage } from "@hooks/data/useChallengePage";
 import { Challenge } from "@interfaces/api/challenge";
 import { truncateText } from "@utils/string";
 import { TOURNAMENT_KEY } from "@constants/challenge";
+import { RoleEnum } from "@interfaces/api/user";
 
 const departments = [
   { id: "it", name: "Công nghệ thông tin" },
@@ -58,34 +59,29 @@ const TournamentPage: React.FC = () => {
     handleUpdateChallange,
     page_size,
     total_items_count,
-    // handleViewDetail,
+    profile,
   } = useChallengePage();
-
-  const menuItems = (challenge: Challenge) => [
-    // {
-    //   icon: <VisibilityIcon color="action" />,
-    //   label: "Xem chi tiết",
-    //   onClick: () => {
-    //     handleViewDetail(challenge.id);
-    //   },
-    // },
-    {
-      icon: <EditIcon color="action" />,
-      label: "Chỉnh sửa",
-      onClick: () => {
-        handleUpdateChallange(challenge.id);
-        sessionStorage.removeItem(TOURNAMENT_KEY);
+  const menuItems = (challenge: Challenge) => {
+    if (profile?.user.role !== RoleEnum.TRAINER) return [];
+    return [
+      {
+        icon: <EditIcon color="action" />,
+        label: "Chỉnh sửa",
+        onClick: () => {
+          handleUpdateChallange(challenge.id);
+          sessionStorage.removeItem(TOURNAMENT_KEY);
+        },
       },
-    },
-    {
-      icon: <DeleteOutlineIcon color="error" />,
-      label: "Tạm ngưng",
-      onClick: () => {
-        handleDelete(challenge.id);
+      {
+        icon: <DeleteOutlineIcon color="error" />,
+        label: "Tạm ngưng",
+        onClick: () => {
+          handleDelete(challenge.id);
+        },
+        sx: { color: "red" },
       },
-      sx: { color: "red" },
-    },
-  ];
+    ];
+  };
 
   const dataTable = challenges.map((row: Challenge, index) => {
     return [
@@ -142,6 +138,7 @@ const TournamentPage: React.FC = () => {
             onInputChange={handleSearch}
             onEnter={handleSearchResults}
             onDelete={handleDeleteAll}
+            isHiddenCreateButton={profile?.user.role !== RoleEnum.TRAINER}
             filterButton={
               <FilterButton
                 filterGroups={filterGroups}

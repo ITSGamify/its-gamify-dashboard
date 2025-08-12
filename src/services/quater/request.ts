@@ -4,11 +4,11 @@ import { HTTP_METHODS } from "@constants/request";
 import { PaginatedResponse } from "@interfaces/dom/query";
 import { getRoute } from "@utils/route";
 import { GetQuaterParams } from ".";
-import { Quater } from "@interfaces/api/course";
+import { Quarter } from "@interfaces/api/course";
 
 export const getQuaters = async (
   params?: GetQuaterParams
-): Promise<PaginatedResponse<Quater>> => {
+): Promise<PaginatedResponse<Quarter>> => {
   return request({
     url: getRoute(END_POINTS.QUATER.BASE),
     method: HTTP_METHODS.GET,

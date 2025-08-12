@@ -26,7 +26,7 @@ const Logo: React.FC = () => {
         }}
       />
       <Typography
-        variant="h4"
+        variant="h3"
         noWrap
         component="div"
         sx={{
@@ -34,7 +34,7 @@ const Logo: React.FC = () => {
           color: theme.palette.primary.main,
         }}
       >
-        FCP IT Company
+        F-Study
       </Typography>
     </Box>
   );

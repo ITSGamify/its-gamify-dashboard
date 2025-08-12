@@ -14,6 +14,8 @@ import TableToolbar from "@components/ui/atoms/TableToolbar";
 import { Department } from "@interfaces/api/department";
 import DepartmentModalForm from "@components/ui/molecules/DepartmentModalForm";
 import { useDepartmentPage } from "@hooks/data/useDepartmentPage";
+import userSession from "@utils/user-session";
+import { RoleEnum } from "@interfaces/api/user";
 
 const DepartmentPage: React.FC = () => {
   const {
@@ -89,7 +91,7 @@ const DepartmentPage: React.FC = () => {
         })
       : [];
   //#endregion
-
+  const profile = userSession.getUserProfile();
   return (
     <>
       <Box sx={{ width: "100%" }}>
@@ -103,6 +105,7 @@ const DepartmentPage: React.FC = () => {
             onInputChange={handleSearch}
             onEnter={handleSearchResults}
             onDelete={handleDeleteAll}
+            isHiddenCreateButton={profile?.user.role !== RoleEnum.ADMIN}
           />
           <DataTable
             headCells={departmentColumns}

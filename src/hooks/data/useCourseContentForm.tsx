@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useGetCourseModules } from "@services/course";
 import { toast } from "react-toastify";
 import ToastContent from "@components/ui/atoms/Toast";
+import { validateCourseContent } from "@utils/course";
 
 export interface CourseContentForm {
   modules: Module[];
@@ -15,9 +16,11 @@ export const useCourseContentForm = ({
   handleNextState,
 }: StepFormProps) => {
   const [localModules, setLocalModules] = useState<Module[]>([]);
-  const { data: moduleData, isPending: isLoadingModules } = useGetCourseModules(
-    data?.id || ""
-  );
+  const {
+    data: moduleData,
+    isPending: isLoadingModules,
+    refetch,
+  } = useGetCourseModules(data?.id || "");
 
   useEffect(() => {
     setLocalModules(moduleData?.data || []);
@@ -64,14 +67,25 @@ export const useCourseContentForm = ({
     });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    const { data: refreshedData } = await refetch();
+
     if (editingModules.length > 0) {
       toast.warning(ToastContent, {
         data: { message: "Vui lòng xác nhận chỉnh sửa!" },
       });
       return;
     }
-
+    const { isValid, errorMessage } = validateCourseContent(
+      refreshedData?.data.sort((a, b) => a.ordered_number - b.ordered_number) ||
+        []
+    );
+    if (!isValid) {
+      toast.warning(ToastContent, {
+        data: { message: errorMessage || "Nội dung không hợp lệ!" },
+      });
+      return;
+    }
     handleNextState({
       modules: localModules,
     });

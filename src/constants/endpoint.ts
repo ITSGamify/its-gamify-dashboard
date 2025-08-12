@@ -28,6 +28,7 @@ export const END_POINTS = {
     BASE: BASE_KEYS.DEPARTMENTS,
     DETAIL: `${BASE_KEYS.DEPARTMENTS}/:departmentId`,
     DELETE_RANGE: `${BASE_KEYS.DEPARTMENTS}/delete-range`,
+    STATISTIC: BASE_KEYS.DEPARTMENTS + "/statistics",
   },
   ACCOUNT: {
     BASE: BASE_KEYS.ACCOUNTS,

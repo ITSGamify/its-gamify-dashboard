@@ -5,6 +5,7 @@ import {
   DEFAULT_TABLE_LIMIT,
   DEFAULT_TABLE_PAGE_NUMBER,
 } from "@constants/table";
+import { RoleEnum } from "@interfaces/api/user";
 import { FilterGroup, FilterValues } from "@interfaces/dom/filter";
 import { OrderDirection } from "@interfaces/dom/query";
 import { HeadCell, TableColumns } from "@interfaces/dom/table";
@@ -20,6 +21,7 @@ import {
   createParamSetter,
   getInitialSorted,
 } from "@utils/url";
+import userSession from "@utils/user-session";
 import { useCallback, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -183,7 +185,16 @@ export const useCoursePage = () => {
 
   const { mutateAsync: deleteRangeAccount } = useDeleteRangeCourses();
 
+  const profile = userSession.getUserProfile();
   const handleDeleteAll = async () => {
+    if (profile?.user.role !== RoleEnum.TRAINER) {
+      toast.error(ToastContent, {
+        data: {
+          message: "Không có quyền truy cập!",
+        },
+      });
+      return;
+    }
     await deleteRangeAccount(
       { ids: selected },
       {
@@ -248,5 +259,6 @@ export const useCoursePage = () => {
     page_size,
     total_items_count,
     handleViewDetail,
+    profile,
   };
 };

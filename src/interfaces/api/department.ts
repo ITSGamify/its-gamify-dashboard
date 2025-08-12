@@ -8,3 +8,11 @@ export interface Department {
   leader: User;
   employee_count: number;
 }
+
+export interface DepartmentStat {
+  id: string;
+  name: string;
+  description: string;
+  location: string;
+  users: User[];
+}

@@ -7,6 +7,7 @@ import {
   deleteRangeDepartment,
   getDepartments,
   updateDepartment,
+  getStatistics,
 } from "./request";
 
 export interface GetDepartmentParams extends PaginationParams {
@@ -28,6 +29,17 @@ export interface RequestUpdateDepartmentsParams
   id: string;
 }
 
+export interface GetStatisticParams extends PaginationParams {
+  quarterId?: string;
+}
+
+export const useGetStatistics = (params?: GetStatisticParams) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.DEPARTMENT.STATISTIC, params],
+    queryFn: () => getStatistics(params),
+    enabled: !!params && !!params.quarterId,
+  });
+};
 export const useGetDeparments = (params?: GetDepartmentParams) => {
   return useQuery({
     queryKey: [QUERY_KEYS.DEPARTMENT.BASE, params],

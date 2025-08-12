@@ -18,6 +18,7 @@ import { Course } from "@interfaces/api/course";
 import FilterButton from "@components/ui/molecules/FilterButton";
 import { FilterGroup } from "@interfaces/dom/filter";
 import defaultCourseImage from "@assets/images/its_gamify_course_default.png";
+import { RoleEnum } from "@interfaces/api/user";
 
 const departments = [
   { id: "it", name: "Công nghệ thông tin" },
@@ -57,33 +58,44 @@ const CoursePage: React.FC = () => {
     total_items_count,
     handleUpdateCourse,
     handleViewDetail,
+    profile,
   } = useCoursePage();
 
-  const menuItems = (course: Course) => [
-    {
-      icon: <VisibilityIcon color="action" />,
-      label: "Xem chi tiết",
-      onClick: () => {
-        handleViewDetail(course.id);
+  const menuItems = (course: Course) => {
+    const items = [
+      {
+        icon: <VisibilityIcon color="action" />,
+        label: "Xem chi tiết",
+        onClick: () => {
+          handleViewDetail(course.id);
+        },
+        sx: {},
       },
-    },
+    ];
 
-    {
-      icon: <EditIcon color="action" />,
-      label: "Chỉnh sửa",
-      onClick: () => {
-        handleUpdateCourse(course.id, course.status);
-      },
-    },
-    {
-      icon: <DeleteOutlineIcon color="error" />,
-      label: "Tạm ngưng",
-      onClick: () => {
-        handleDelete(course.id);
-      },
-      sx: { color: "red" },
-    },
-  ];
+    if (profile?.user.role === RoleEnum.TRAINER) {
+      items.push(
+        {
+          icon: <EditIcon color="action" />,
+          label: "Chỉnh sửa",
+          onClick: () => {
+            handleUpdateCourse(course.id, course.status);
+          },
+          sx: {},
+        },
+        {
+          icon: <DeleteOutlineIcon color="error" />,
+          label: "Tạm ngưng",
+          onClick: () => {
+            handleDelete(course.id);
+          },
+          sx: { color: "red" },
+        }
+      );
+    }
+
+    return items;
+  };
 
   const dataTable = courses.map((row: Course, index) => {
     return [
@@ -127,7 +139,7 @@ const CoursePage: React.FC = () => {
         {row.deparment?.name || ""}
       </TableCell>,
       <TableCell key="status" align="left">
-        {row.status}
+        {row.drafted ? "Đang chỉnh sửa" : row.status}
       </TableCell>,
       <TableCell key="sessions" align="center">
         {row.modules?.length}
@@ -150,6 +162,7 @@ const CoursePage: React.FC = () => {
             onInputChange={handleSearch}
             onEnter={handleSearchResults}
             onDelete={handleDeleteAll}
+            isHiddenCreateButton={profile?.user.role !== RoleEnum.TRAINER}
             filterButton={
               <FilterButton
                 filterGroups={filterGroups}

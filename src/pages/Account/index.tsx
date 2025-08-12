@@ -17,7 +17,8 @@ import TableToolbar from "@components/ui/atoms/TableToolbar";
 import FilterButton from "@components/ui/molecules/FilterButton";
 import { FilterGroup } from "@interfaces/dom/filter";
 import { useAccountPage } from "@hooks/data/useAccountPage";
-import { User } from "@interfaces/api/user";
+import { RoleEnum, User } from "@interfaces/api/user";
+import userSession from "@utils/user-session";
 
 export type StatusType =
   | "ACTIVE"
@@ -92,7 +93,7 @@ const AccountPage: React.FC = () => {
       onClick: () => {
         handleDelete(account.id);
       },
-      disabled: account.role === "ADMIN" || account.role === "TRAININGSTAFF" ,
+      disabled: account.role === "ADMIN" || account.role === "TRAININGSTAFF",
       sx: { color: "red" },
     },
   ];
@@ -120,14 +121,13 @@ const AccountPage: React.FC = () => {
       <TableCell key="role" align="left">
         {row.role}
       </TableCell>,
-      // <TableCell key="status" align="left">
-      //   <StatusBadge status={row.status as StatusType} label={row.status} />
-      // </TableCell>,
       <TableCell key="action" align="right">
         <TableActionButton menuItems={menuItems(row)} />
       </TableCell>,
     ];
   });
+  const profile = userSession.getUserProfile();
+
   return (
     <>
       <Box sx={{ width: "100%" }}>
@@ -141,6 +141,7 @@ const AccountPage: React.FC = () => {
             onInputChange={handleSearch}
             onEnter={handleSearchResults}
             onDelete={handleDeleteAll}
+            isHiddenCreateButton={profile?.user.role !== RoleEnum.ADMIN}
             filterButton={
               <FilterButton
                 filterGroups={filterGroups}

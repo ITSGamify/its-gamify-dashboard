@@ -179,5 +179,25 @@ export const validateCourseContent = (
     };
   }
 
+  const lastModule = modules[modules.length - 1];
+
+  if (lastModule.lessons && lastModule.lessons.length > 0) {
+    const lastLesson = lastModule.lessons[lastModule.lessons.length - 1];
+    if (!lastLesson.type || lastLesson.type !== "quiz") {
+      return {
+        isValid: false,
+        errorMessage:
+          "Bài học cuối cùng trong chương cuối cùng phải là bài kiểm tra.",
+      };
+    }
+  } else {
+    // Trường hợp này không nên xảy ra vì đã kiểm tra module rỗng ở trên
+    // Nhưng thêm vào để đảm bảo tính toàn vẹn
+    return {
+      isValid: false,
+      errorMessage: "Chương cuối cùng không có bài học nào.",
+    };
+  }
+
   return { isValid: true };
 };

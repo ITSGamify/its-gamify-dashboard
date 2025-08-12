@@ -66,7 +66,11 @@ const PreviewPublishForm = ({
       0
     ) || 0;
 
-  const { isValid, errorMessage } = validateCourseContent(data?.modules || []);
+  const modulesSort = data?.modules || [];
+
+  const { isValid, errorMessage } = validateCourseContent(
+    modulesSort.sort((a, b) => a.ordered_number - b.ordered_number) || []
+  );
 
   const handleNext = () => {
     if (!isValid) {

@@ -28,7 +28,7 @@ export interface Course {
   status: string;
   is_optional: boolean;
   quarter_id: string;
-  quarter: Quater;
+  quarter: Quarter;
   introduction_video?: string;
   learning_materials?: Material[];
 }
@@ -43,7 +43,7 @@ export interface Material {
   course_id: string;
 }
 
-export interface Quater {
+export interface Quarter {
   id: string;
   name: string;
   year: number;

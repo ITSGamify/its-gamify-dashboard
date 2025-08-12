@@ -31,6 +31,7 @@ interface TableToolbarProps {
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEnter?: () => void;
   onDelete?: () => void;
+  isHiddenCreateButton?: boolean;
 }
 
 const SearchWrapper = styled("div")(({ theme }) => ({
@@ -85,6 +86,7 @@ function TableToolbar(props: TableToolbarProps) {
     onInputChange,
     onEnter,
     onDelete,
+    isHiddenCreateButton = false,
   } = props;
 
   return (
@@ -153,9 +155,11 @@ function TableToolbar(props: TableToolbarProps) {
                 />
               </SearchWrapper>
             </Box>
-            <Button variant="contained" onClick={onCreate}>
-              <AddIcon /> {createLabel}
-            </Button>
+            {!isHiddenCreateButton && (
+              <Button variant="contained" onClick={onCreate}>
+                <AddIcon /> {createLabel}
+              </Button>
+            )}
           </Box>
         )}
         {numSelected > 0 && (

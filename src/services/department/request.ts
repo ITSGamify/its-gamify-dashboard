@@ -1,6 +1,7 @@
 import { request } from "@config/axios";
 import {
   GetDepartmentParams,
+  GetStatisticParams,
   RequestDeleteParams,
   RequestDepartmentsParams,
   RequestUpdateDepartmentsParams,
@@ -9,7 +10,17 @@ import { getRoute } from "@utils/route";
 import { END_POINTS } from "@constants/endpoint";
 import { HTTP_METHODS } from "@constants/request";
 import { PaginatedResponse } from "@interfaces/dom/query";
-import { Department } from "@interfaces/api/department";
+import { Department, DepartmentStat } from "@interfaces/api/department";
+
+export const getStatistics = async (
+  params?: GetStatisticParams
+): Promise<PaginatedResponse<DepartmentStat>> => {
+  return request({
+    url: getRoute(END_POINTS.DEPARTMENT.STATISTIC),
+    method: HTTP_METHODS.GET,
+    params,
+  });
+};
 
 export const getDepartments = async (
   params?: GetDepartmentParams

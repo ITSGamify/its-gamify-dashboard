@@ -134,13 +134,9 @@ const LoginPage: React.FC = () => {
                   width: "100%",
                 }}
               >
-                <img src={logoImage} alt="Its-Gamify Logo" height={60} />
+                <img src={logoImage} alt="Its-Gamify Logo" height={100} />
               </Box>
-              <Typography
-                variant="h5"
-                component="h1"
-                sx={{ mt: 2, fontWeight: 600 }}
-              >
+              <Typography variant="h5" component="h1" sx={{ fontWeight: 600 }}>
                 {t("title")}
               </Typography>
               <Typography variant="body2" color="text.secondary">
