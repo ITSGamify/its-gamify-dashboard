@@ -12,6 +12,8 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { getRoute } from "@utils/route";
 import { PATH } from "@constants/path";
+import { LoginResponse } from "@interfaces/api/auth";
+import { RoleEnum } from "@interfaces/api/user";
 
 export interface AuthenticationFormValues {
   email: string;
@@ -90,10 +92,21 @@ export const useLoginPage = () => {
 
       await login(formData, {
         onSuccess: (data) => {
+          const user = data as LoginResponse;
+          if (
+            user.user.role == RoleEnum.EMPLOYEE ||
+            user.user.role == RoleEnum.LEADER
+          )
+            return;
           userSession.storeUserProfile(data);
           reset();
-          const route = getRoute(PATH.HOME);
-          navigate(route);
+          if (user.user.role === RoleEnum.TRAINER) {
+            const route = getRoute(PATH.COURSES);
+            navigate(route);
+          } else {
+            const route = getRoute(PATH.HOME);
+            navigate(route);
+          }
         },
       });
     },
