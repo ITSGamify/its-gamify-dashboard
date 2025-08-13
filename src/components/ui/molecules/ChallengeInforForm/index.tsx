@@ -114,9 +114,12 @@ const ChallengeInforForm = ({
                   onChange={field.onChange}
                   error={!!error}
                   disabled={!courseId}
+                  inputProps={{ maxLength: 100 }}
                   helperText={
                     error?.message ||
-                    "Tiêu đề rõ ràng và hấp dẫn sẽ thu hút nhiều học viên hơn"
+                    `${
+                      field.value?.length || 0
+                    }/100 - Tiêu đề rõ ràng và hấp dẫn sẽ thu hút nhiều học viên hơn`
                   }
                   placeholder="Ví dụ: Thiết kế UI/UX với Figma từ cơ bản đến nâng cao"
                 />
@@ -155,7 +158,7 @@ const ChallengeInforForm = ({
             <Controller
               name="description"
               control={control}
-              rules={{ required: true }}
+              rules={{ required: true, maxLength: 500 }}
               render={({ field, fieldState: { error } }) => (
                 <TextField
                   name="description"
@@ -168,9 +171,12 @@ const ChallengeInforForm = ({
                   value={field.value}
                   onChange={field.onChange}
                   error={!!error}
+                  inputProps={{ maxLength: 500 }}
                   helperText={
                     error?.message ||
-                    "Sử dụng định dạng văn bản phong phú để làm nổi bật các điểm quan trọng"
+                    `${
+                      field.value?.length || 0
+                    }/500 - Sử dụng định dạng văn bản phong phú để làm nổi bật các điểm quan trọng`
                   }
                   placeholder="Mô tả chi tiết về khóa học, những gì học viên sẽ học được, yêu cầu tiên quyết, v.v."
                 />
