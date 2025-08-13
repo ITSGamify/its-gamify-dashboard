@@ -110,7 +110,7 @@ const router = createBrowserRouter(
     {
       element: (
         <ProtectedRoute
-        // allowedRoles={[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]}
+        allowedRoles={[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]}
         >
           <MainLayout />
         </ProtectedRoute>
@@ -138,7 +138,7 @@ const router = createBrowserRouter(
     {
       element: (
         <ProtectedRoute
-        // allowedRoles={[RoleEnum.ADMIN, RoleEnum.MANAGER]}
+        allowedRoles={[RoleEnum.ADMIN, RoleEnum.MANAGER]}
         >
           <MainLayout />
         </ProtectedRoute>
@@ -153,7 +153,7 @@ const router = createBrowserRouter(
     {
       element: (
         <ProtectedRoute
-        // allowedRoles={[RoleEnum.TRAINER]}
+        allowedRoles={[RoleEnum.TRAINER]}
         >
           <MainLayout />
         </ProtectedRoute>
@@ -180,7 +180,7 @@ const router = createBrowserRouter(
     {
       element: (
         <ProtectedRoute
-        // allowedRoles={[RoleEnum.ADMIN]}
+        allowedRoles={[RoleEnum.ADMIN]}
         >
           <MainLayout />
         </ProtectedRoute>
