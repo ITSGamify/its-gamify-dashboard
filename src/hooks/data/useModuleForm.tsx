@@ -94,17 +94,6 @@ export const useModuleForm = ({
       duration: 15,
       content: `Nội dung bài học ${lessons.length + 1}`,
       index: lessons.length,
-      image_files: [
-        {
-          id: "04032068-3fd2-4aee-a995-348d7393d9f6",
-          file_name: "4f389524-35e5-43ea-b674-fc5c0db1b826.",
-          content_type: "image/jpeg",
-          size: 214962,
-          extension: "",
-          url: "https://its-gamify-eygvdsahhfbha5gg.southeastasia-01.azurewebsites.net/api/files/presigned?fileName=4f389524-35e5-43ea-b674-fc5c0db1b826.&expiryMinutes=60",
-          created_at: "2025-08-08T18:33:39.6327081Z",
-        },
-      ],
     };
     await createLesson(param, {
       onSuccess: (new_lesson) => {

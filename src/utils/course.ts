@@ -178,7 +178,21 @@ export const validateCourseContent = (
       errorMessage: `Mỗi chương phải có ít nhất 1 bài học.`,
     };
   }
-
+  for (const module of modules) {
+    if (module.lessons) {
+      for (const lesson of module.lessons) {
+        if (
+          lesson.type === "article" &&
+          (!lesson.image_files || lesson.image_files.length === 0)
+        ) {
+          return {
+            isValid: false,
+            errorMessage: `Mỗi bài viết phải có ít nhất 1 hình ảnh.`,
+          };
+        }
+      }
+    }
+  }
   const lastModule = modules[modules.length - 1];
 
   if (lastModule.lessons && lastModule.lessons.length > 0) {
