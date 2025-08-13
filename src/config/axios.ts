@@ -43,6 +43,13 @@ axiosInstance.interceptors.response.use(
       console.log(error, "error on blob");
     }
     switch (status) {
+      case 400:
+        toast.error(ToastContent, {
+          data: {
+            message: error.message,
+          },
+        });
+        break;
       case 401:
         userSession.clearUserProfile();
         window.location.href = PATH.LOGIN;
