@@ -6,7 +6,7 @@ import {
   Paper,
   Checkbox,
   FormControlLabel,
-  Link,
+  // Link,
   IconButton,
   InputAdornment,
   Alert,
@@ -222,9 +222,9 @@ const LoginPage: React.FC = () => {
                     </Typography>
                   }
                 />
-                <Link href="/forgot-password" variant="body2" underline="hover">
+                {/* <Link href="/forgot-password" variant="body2" underline="hover">
                   {t("form.forgotPassword")}
-                </Link>
+                </Link> */}
               </Box>
 
               <LoginButton
