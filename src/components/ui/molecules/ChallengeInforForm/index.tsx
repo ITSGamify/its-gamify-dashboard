@@ -140,7 +140,7 @@ const ChallengeInforForm = ({
                           null
                         : null
                     }
-                    disabled={!courseId}
+                    disabled={true}
                     onChange={field.onChange}
                     onSearch={handleSearchCategoryOptions}
                     loading={isLoadingCategories}
