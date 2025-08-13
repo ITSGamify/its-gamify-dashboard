@@ -20,6 +20,7 @@ import {
 import { BarChart } from "@mui/x-charts/BarChart";
 import { useGetQuaters } from "@services/quater";
 import { useGetStatistics } from "@services/department";
+import { formatUtcToLocal } from "@utils/date";
 
 const StatisticPage: React.FC = () => {
   const [selectedQuarterId, setSelectedQuarterId] = useState<string>("");
@@ -158,8 +159,9 @@ const StatisticPage: React.FC = () => {
             >
               {quarters.map((quarter) => (
                 <MenuItem key={quarter.id} value={quarter.id}>
-                  {quarter.name} - Năm {quarter.year} ({quarter.start_date} đến{" "}
-                  {quarter.end_date})
+                  {quarter.name} - Năm {quarter.year} (
+                  {formatUtcToLocal(quarter.start_date)} đến{" "}
+                  {formatUtcToLocal(quarter.end_date)})
                 </MenuItem>
               ))}
             </Select>
