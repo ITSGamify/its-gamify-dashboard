@@ -19,6 +19,7 @@ import { FilterGroup } from "@interfaces/dom/filter";
 import { useAccountPage } from "@hooks/data/useAccountPage";
 import { RoleEnum, User } from "@interfaces/api/user";
 import userSession from "@utils/user-session";
+import { getRoleInVietnamese } from "@utils/user";
 
 export type StatusType =
   | "ACTIVE"
@@ -86,6 +87,10 @@ const AccountPage: React.FC = () => {
       onClick: () => {
         handleEdit(account);
       },
+      disabled:
+        account.role === "ADMIN" ||
+        account.role === "TRAININGSTAFF" ||
+        account.role === "MANAGER",
     },
     {
       icon: <DeleteOutlineIcon color="error" />,
@@ -93,7 +98,10 @@ const AccountPage: React.FC = () => {
       onClick: () => {
         handleDelete(account.id);
       },
-      disabled: account.role === "ADMIN" || account.role === "TRAININGSTAFF",
+      disabled:
+        account.role === "ADMIN" ||
+        account.role === "TRAININGSTAFF" ||
+        account.role === "MANAGER",
       sx: { color: "red" },
     },
   ];
@@ -119,7 +127,7 @@ const AccountPage: React.FC = () => {
         {row.dept_name}
       </TableCell>,
       <TableCell key="role" align="left">
-        {row.role}
+        {getRoleInVietnamese(row.role)}
       </TableCell>,
       <TableCell key="action" align="right">
         <TableActionButton menuItems={menuItems(row)} />

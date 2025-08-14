@@ -39,6 +39,7 @@ axiosInstance.interceptors.response.use(
       });
 
       errData = JSON.parse(errorText);
+      console.log(errData);
     } else {
       console.log(error, "error on blob");
     }
@@ -46,7 +47,7 @@ axiosInstance.interceptors.response.use(
       case 400:
         toast.error(ToastContent, {
           data: {
-            message: error.message,
+            message: error.response?.data,
           },
         });
         break;
@@ -63,7 +64,6 @@ axiosInstance.interceptors.response.use(
         break;
       default:
         if (!shouldNotShowError) {
-          console.log("show error", errData);
           toast.error(ToastContent, {
             data: {
               // message: i18next.t(`${i18ErrNamespace}:${errData.message}`),
@@ -80,11 +80,12 @@ axiosInstance.interceptors.response.use(
 export const request = async (
   options: AxiosRequestConfig & { shouldNotShowError?: boolean }
 ) => {
+  // eslint-disable-next-line no-useless-catch
   try {
     const res = await axiosInstance(options);
     return res?.data;
   } catch (error) {
-    console.log("request error: ", error);
+    // console.log("request error: ", error);
     throw error;
   }
 };

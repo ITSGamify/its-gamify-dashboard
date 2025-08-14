@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -148,13 +148,17 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
   const handleClose = () => {
     reset();
     onClose();
+    setAvatarPreview(null);
   };
   const upload = useFileUpload();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(
-    data?.avatar || null
+    data?.avatar_url || null
   );
   const [isUploading, setIsUploading] = useState(false);
 
+  useEffect(() => {
+    setAvatarPreview(data?.avatar_url || null);
+  }, [data]);
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     onChange: (id?: string | null) => void
