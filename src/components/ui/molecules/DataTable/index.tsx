@@ -40,13 +40,15 @@ function CustomTableHead(props: EnhancedTableProps) {
           >
             <TableSortLabel
               active={!headCell.disableSort}
+              hideSortIcon={headCell.disableSort}
               direction={headCell.sortDirection || undefined}
-              onClick={() =>
+              onClick={() => {
+                if (headCell.disableSort) return;
                 onRequestSort(
                   headCell.id,
                   headCell.sortDirection == "asc" ? "desc" : "asc"
-                )
-              }
+                );
+              }}
             >
               {headCell.label}
               {headCell.isSorted ? (

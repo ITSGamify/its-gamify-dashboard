@@ -9,7 +9,7 @@ export const DEPARTMENT_TABLE_HEAD = [
     numeric: false,
     align: "left",
     disablePadding: true,
-    disableSort: false,
+    disableSort: true,
     label: "Phòng ban",
   },
   {
@@ -17,7 +17,7 @@ export const DEPARTMENT_TABLE_HEAD = [
     numeric: false,
     align: "left",
     disablePadding: true,
-    disableSort: false,
+    disableSort: true,
     label: "Trưởng phòng",
   },
   {
@@ -25,7 +25,7 @@ export const DEPARTMENT_TABLE_HEAD = [
     numeric: false,
     align: "center",
     disablePadding: true,
-    disableSort: false,
+    disableSort: true,
     label: "Nhân viên",
   },
 
@@ -45,7 +45,7 @@ export const ACCOUNT_TABLE_HEAD = [
     numeric: false,
     align: "left",
     disablePadding: true,
-    disableSort: false,
+    disableSort: true,
     label: "Họ và tên",
   },
   {
@@ -53,7 +53,7 @@ export const ACCOUNT_TABLE_HEAD = [
     numeric: false,
     align: "left",
     disablePadding: true,
-    disableSort: false,
+    disableSort: true,
     label: "Địa chỉ email",
   },
   {
@@ -61,7 +61,7 @@ export const ACCOUNT_TABLE_HEAD = [
     numeric: false,
     align: "left",
     disablePadding: true,
-    disableSort: false,
+    disableSort: true,
     label: "Phòng ban",
   },
   {
@@ -69,7 +69,7 @@ export const ACCOUNT_TABLE_HEAD = [
     numeric: false,
     align: "left",
     disablePadding: true,
-    disableSort: false,
+    disableSort: true,
     label: "Chức vụ",
   },
   // {
@@ -129,7 +129,7 @@ export const COURSE_TABLE_HEAD = [
     align: "left",
     disablePadding: true,
     disableSort: true,
-    label: "Phân loại",
+    label: "Danh mục",
   },
   {
     id: "sessions",
@@ -188,7 +188,7 @@ export const CHALLENGE_TABLE_HEAD = [
     align: "left",
     disablePadding: true,
     disableSort: true,
-    label: "Phân loại",
+    label: "Danh mục",
   },
   {
     id: "status",
@@ -215,7 +215,7 @@ export const CATEGORIES_TABLE_HEAD = [
     align: "left",
     disablePadding: true,
     disableSort: true,
-    label: "Phân loại",
+    label: "Tên danh mục",
   },
   {
     id: "description",

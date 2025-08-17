@@ -67,7 +67,7 @@ const CoursePage: React.FC = () => {
     // },
     {
       id: "category",
-      title: "Phân loại",
+      title: "Danh mục",
       options: categories.map((category) => ({
         id: category.id,
         name: category.name,

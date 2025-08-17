@@ -105,7 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       isDisabled: profile?.user.role !== RoleEnum.ADMIN,
     },
     {
-      text: "Phân loại",
+      text: "Danh mục",
       icon: <CategoryIcon />,
       path: PATH.CATEGORIES,
       isDisabled: profile?.user.role === RoleEnum.TRAINER,
