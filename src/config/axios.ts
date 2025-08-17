@@ -45,9 +45,10 @@ axiosInstance.interceptors.response.use(
     }
     switch (status) {
       case 400:
+        console.log(error.response?.data);
         toast.error(ToastContent, {
           data: {
-            message: error.response?.data,
+            message: error.response?.data.error || "Tài khoản không hợp lệ",
           },
         });
         break;
