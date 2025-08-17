@@ -19,7 +19,14 @@ export interface BasicForm {
 }
 
 export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
-  const { control, handleSubmit, watch, setValue, reset } = useForm<BasicForm>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<BasicForm>({
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
@@ -30,7 +37,7 @@ export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
       introduction_video_id: data?.introduction_video_id || "",
       classify: data?.classify || "ALL",
       department_ids:
-        data?.course_departments?.map((dept) => dept.department_id) || null,
+        data?.course_departments?.map((dept) => dept.department_id) || [],
       category_id: data?.category_id || "",
       is_optional: data?.is_optional || false,
       quarter_id: data?.quarter_id || "",
@@ -39,6 +46,7 @@ export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
     resolver: yupResolver(basicFormSchema) as Resolver<BasicForm>,
   });
 
+  console.log(errors);
   useEffect(() => {
     if (data) {
       reset({
@@ -49,7 +57,7 @@ export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
         introduction_video_id: data.introduction_video_id || "",
         classify: data.classify || "ALL",
         department_ids:
-          data.course_departments?.map((dept) => dept.department_id) || null,
+          data.course_departments?.map((dept) => dept.department_id) || [],
         category_id: data.category_id || "",
         tags: data.tags || [],
         quarter_id: data.quarter_id || "",

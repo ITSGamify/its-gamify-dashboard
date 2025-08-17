@@ -35,7 +35,18 @@ export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
       .string()
       .required("Video giới thiệu là bắt buộc"),
     classify: yup.string().required("Phân loại là bắt buộc"),
-    department_ids: yup.array().of(yup.string().defined()).optional(),
+    department_ids: yup
+      .array()
+      .of(yup.string().defined())
+      .nullable()
+      .when("classify", {
+        is: "DEPARTMENTONLY",
+        then: (schema) =>
+          schema.required(
+            "Phòng ban là bắt buộc khi phân loại là DEPARTMENTONLY"
+          ),
+        otherwise: (schema) => schema.nullable().optional(),
+      }),
     category_id: yup.string().required("Danh mục là bắt buộc"),
     tags: yup.array().of(yup.string().defined()).required("Thẻ là bắt buộc"),
     quarter_id: yup.string().required("Thời gian áp dụng khóa học là bắt buộc"),

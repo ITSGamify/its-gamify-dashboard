@@ -179,7 +179,7 @@ const StatisticPage: React.FC = () => {
           <Card sx={{ mt: 4, boxShadow: 3 }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Biểu Đồ So Sánh Metrics Giữa Các Phòng Ban
+                Biểu Đồ So Sánh Giữa Các Phòng Ban
               </Typography>
               <BarChart
                 xAxis={[{ scaleType: "band", data: chartData.deptNames }]}

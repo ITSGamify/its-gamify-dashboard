@@ -26,7 +26,7 @@ export const transformBasicCourseFormToCourse = (
     introduction_video_id: form.introduction_video_id,
     short_description: form.short_description,
     classify: form.classify,
-    department_ids: form.department_ids || null,
+    department_ids: form.department_ids || [],
     tags: form.tags,
     is_update_module: false,
     drafted: data?.drafted || false,
