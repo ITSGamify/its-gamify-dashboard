@@ -36,6 +36,7 @@ import { useGetCategories } from "@services/category";
 import { categoryOptionField } from "@constants/category";
 import { useGetQuaters } from "@services/quater";
 import { quaterOptionField } from "@constants/quater";
+import AutocompleteAsyncMulti from "@components/ui/atoms/AutocompleteMultiAsync/indedx";
 
 const BasicInfoForm = ({
   data,
@@ -52,6 +53,8 @@ const BasicInfoForm = ({
     handleSubmit,
     handleRemoveTag,
     classify,
+    departmentIds,
+    handleDepartmentIdsChange,
   } = useBasicForm({
     data,
     handleNextState,
@@ -84,29 +87,16 @@ const BasicInfoForm = ({
     if (classify === "DEPARTMENTONLY") {
       return (
         <Grid container size={{ xs: 12, md: 12 }}>
-          <Controller
-            name="department_id"
-            control={control}
-            rules={{ required: true }}
-            render={({ field, fieldState: { error } }) => (
-              <FormControl fullWidth error={!!error} required>
-                <AutocompleteAsync
-                  options={departmentsOptions}
-                  label="Phòng ban"
-                  value={
-                    field.value
-                      ? departmentsOptions.find((x) => x.id === field.value) ||
-                        null
-                      : null
-                  }
-                  onChange={field.onChange}
-                  onSearch={handleSearchDepartmentsOptions}
-                  loading={isLoadingDepartments}
-                  required
-                />
-              </FormControl>
-            )}
-          />
+          <FormControl fullWidth required>
+            <AutocompleteAsyncMulti
+              options={departmentsOptions}
+              label="Phòng ban"
+              selectedIds={departmentIds || []}
+              onChange={handleDepartmentIdsChange}
+              onSearch={handleSearchDepartmentsOptions}
+              loading={isLoadingDepartments}
+            />
+          </FormControl>
         </Grid>
       );
     }
@@ -138,7 +128,9 @@ const BasicInfoForm = ({
   }, [
     classify,
     control,
+    departmentIds,
     departmentsOptions,
+    handleDepartmentIdsChange,
     handleSearchDepartmentsOptions,
     isLoadingDepartments,
   ]);

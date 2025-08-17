@@ -13,13 +13,16 @@ interface TagInputProps {
 }
 
 const TagInput: React.FC<TagInputProps> = ({
-  tags,
+  tags = [], // Cung cấp giá trị mặc định là mảng rỗng
   currentTag,
   setCurrentTag,
   handleAddTag,
   handleDeleteTag,
   maxTags = 5,
 }) => {
+  // Đảm bảo tags luôn là một mảng
+  const tagArray = Array.isArray(tags) ? tags : [];
+
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -37,7 +40,7 @@ const TagInput: React.FC<TagInputProps> = ({
             }
           }}
           sx={{ mr: 1 }}
-          disabled={tags.length >= maxTags}
+          disabled={tagArray.length >= maxTags}
         />
         <Button
           variant="contained"
@@ -46,13 +49,13 @@ const TagInput: React.FC<TagInputProps> = ({
             handleAddTag(currentTag.trim());
             setCurrentTag("");
           }}
-          disabled={!currentTag.trim() || tags.length >= maxTags}
+          disabled={!currentTag.trim() || tagArray.length >= maxTags}
         >
           <AddIcon />
         </Button>
       </Box>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-        {tags.map((tag) => (
+        {tagArray.map((tag) => (
           <Chip
             key={tag}
             label={tag}

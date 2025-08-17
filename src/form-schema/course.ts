@@ -8,12 +8,11 @@ export interface BasicsFormData {
   thumbnail_image_id: string;
   introduction_video_id: string;
   classify: string;
-  department_id?: string | null;
+  department_ids?: string[] | null;
   category_id: string;
   tags: string[];
-  is_optional:boolean; 
-  quarter_id:string;
-
+  is_optional: boolean;
+  quarter_id: string;
 }
 
 export interface CourseContentFormData {
@@ -36,7 +35,7 @@ export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
       .string()
       .required("Video giới thiệu là bắt buộc"),
     classify: yup.string().required("Phân loại là bắt buộc"),
-    department_id: yup.string().nullable().optional(),
+    department_ids: yup.array().of(yup.string().defined()).optional(),
     category_id: yup.string().required("Danh mục là bắt buộc"),
     tags: yup.array().of(yup.string().defined()).required("Thẻ là bắt buộc"),
     quarter_id: yup.string().required("Thời gian áp dụng khóa học là bắt buộc"),
@@ -45,8 +44,11 @@ export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
       .required("Trạng thái tùy chọn là bắt buộc")
       .when("type", {
         is: (type: string) => type === "Leader" || type === "Department",
-        then: (schema) => 
-          schema.oneOf([false], "Trạng thái tùy chọn phải là bắt buộc cho loại Leader và Department"),
+        then: (schema) =>
+          schema.oneOf(
+            [false],
+            "Trạng thái tùy chọn phải là bắt buộc cho loại Leader và Department"
+          ),
       }),
   });
 

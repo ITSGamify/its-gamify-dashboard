@@ -32,7 +32,7 @@ export interface CourseRequestParams {
   thumbnail_image_id?: string;
   introduction_video_id?: string;
   classify?: string;
-  department_id?: string | null;
+  department_ids?: string[] | null;
   category_id?: string;
   tags?: string[];
   modules?: Module[];

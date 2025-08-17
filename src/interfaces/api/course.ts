@@ -1,13 +1,14 @@
 import { Module } from "@interfaces/dom/course";
 import { Category } from "./category";
-import { Department } from "./department";
+// import { Department } from "./department";
 
 export interface Course {
   id: string;
   title: string;
   sessions: number;
-  department_id: string;
-  deparment?: Department;
+  // department_id: string;
+  // deparment?: Department;
+  course_departments: CourseDepartment[];
   drafted: boolean;
   reviews: number;
   category_id?: string;
@@ -32,6 +33,11 @@ export interface Course {
   introduction_video?: string;
   learning_materials?: Material[];
   is_deleted: boolean;
+}
+
+export interface CourseDepartment {
+  course_id: string;
+  department_id: string;
 }
 
 export interface Material {

@@ -6,6 +6,7 @@ import { Control, Controller } from "react-hook-form";
 import * as XLSX from "xlsx";
 import { Lesson, Module, QuizQuestion } from "@interfaces/dom/course";
 import { useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 interface QuizLessonContentProps {
   moduleIndex: number;
@@ -23,7 +24,6 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
   lesson,
   isEditing = false,
 }) => {
-
   const { courseId } = useParams();
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>(
     lesson.questions || []
@@ -50,6 +50,7 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
 
         // **Convert tất cả fields thành string**
         const normalizedData = jsonData.map((row: QuizQuestion) => ({
+          id: uuidv4(),
           content: String(row.content || ""),
           answer_a: String(row.answer_a || ""),
           answer_b: String(row.answer_b || ""),
@@ -58,6 +59,7 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
           correct_answer: String(row.correct_answer || ""),
           description: String(row.description || ""),
           course_id: courseId || "",
+          is_hidden: false,
         }));
 
         // Validate the data format

@@ -171,9 +171,9 @@ const CoursePage: React.FC = () => {
       <TableCell key="classify" align="left">
         {getClassifyInVietnamese(row.classify)}
       </TableCell>,
-      <TableCell key="department" align="left">
-        {truncateText(row.deparment?.name || "", 40)}
-      </TableCell>,
+      // <TableCell key="department" align="left">
+      //   {truncateText(row.deparment?.name || "", 40)}
+      // </TableCell>,
       <TableCell key="step" align="left">
         {row.drafted
           ? "Đang chỉnh sửa"

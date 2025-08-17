@@ -107,14 +107,14 @@ export const COURSE_TABLE_HEAD = [
     disableSort: true,
     label: "Phân loại",
   },
-  {
-    id: "department",
-    numeric: false,
-    align: "left",
-    disablePadding: true,
-    disableSort: true,
-    label: "Phòng ban",
-  },
+  // {
+  //   id: "department",
+  //   numeric: false,
+  //   align: "left",
+  //   disablePadding: true,
+  //   disableSort: true,
+  //   label: "Phòng ban",
+  // },
   {
     id: "step",
     numeric: true,
