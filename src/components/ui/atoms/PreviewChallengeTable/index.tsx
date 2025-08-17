@@ -154,7 +154,7 @@ const PreviewChallengeTable: React.FC<PreviewChallengeTableProps> = ({
   };
 
   return (
-    <Grid container spacing={2} direction="column">
+    <Grid container spacing={2} direction="column" size={{ xs: 12 }}>
       {/* Header với Button và Search */}
       <Grid>
         <Grid container spacing={1} alignItems="center">
