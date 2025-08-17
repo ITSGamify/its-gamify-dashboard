@@ -21,21 +21,8 @@ import { Challenge } from "@interfaces/api/challenge";
 import { truncateText } from "@utils/string";
 import { TOURNAMENT_KEY } from "@constants/challenge";
 import { RoleEnum } from "@interfaces/api/user";
-
-const departments = [
-  { id: "it", name: "Công nghệ thông tin" },
-  { id: "marketing", name: "Marketing" },
-  { id: "hr", name: "Nhân sự" },
-  { id: "finance", name: "Tài chính" },
-  { id: "operations", name: "Vận hành" },
-];
-const filterGroups: FilterGroup[] = [
-  {
-    id: "department",
-    title: "Phòng ban",
-    options: departments,
-  },
-];
+import StatusBadge from "@components/ui/atoms/TableBadge";
+import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOutlined";
 
 const TournamentPage: React.FC = () => {
   const {
@@ -60,7 +47,30 @@ const TournamentPage: React.FC = () => {
     page_size,
     total_items_count,
     profile,
+    handleReActiveChallenge,
+    categories,
   } = useChallengePage();
+
+  const filterGroups: FilterGroup[] = [
+    {
+      id: "category",
+      title: "Phòng ban",
+      options: categories.map((category) => ({
+        id: category.id,
+        name: category.name,
+      })),
+    },
+    {
+      id: "isActive",
+      title: "Trạng thái",
+      options: [
+        { id: "true", name: "Hoạt động" },
+        { id: "false", name: "Đã ngừng" },
+      ],
+      type: "radio",
+    },
+  ];
+
   const menuItems = (challenge: Challenge) => {
     if (profile?.user.role !== RoleEnum.TRAINER) return [];
     return [
@@ -73,12 +83,20 @@ const TournamentPage: React.FC = () => {
         },
       },
       {
-        icon: <DeleteOutlineIcon color="error" />,
-        label: "Tạm ngưng",
+        icon: challenge.is_deleted ? (
+          <PowerSettingsNewOutlinedIcon color="success" />
+        ) : (
+          <DeleteOutlineIcon color="error" />
+        ),
+        label: challenge.is_deleted ? "  Kích hoạt" : "Tạm ngưng",
         onClick: () => {
-          handleDelete(challenge.id);
+          if (challenge.is_deleted) {
+            handleReActiveChallenge(challenge.id);
+          } else {
+            handleDelete(challenge.id);
+          }
         },
-        sx: { color: "red" },
+        sx: { color: challenge.is_deleted ? "green" : "red" },
       },
     ];
   };
@@ -111,14 +129,23 @@ const TournamentPage: React.FC = () => {
               }}
             />
           </Box>
-          {row.title}
+          {truncateText(row.title, 40)}
         </Box>
       </TableCell>,
       <TableCell key="description" align="left">
-        {truncateText(row.description, 60)}
+        {truncateText(row.description, 30)}
       </TableCell>,
       <TableCell key="course" align="left">
-        {row.course?.title || ""}
+        {truncateText(row.course?.title || "", 30)}
+      </TableCell>,
+      <TableCell key="course" align="left">
+        {truncateText(row.category?.name || "", 20)}
+      </TableCell>,
+      <TableCell key="status" align="center">
+        <StatusBadge
+          status={row.is_deleted ? "CANCELLED" : "ACTIVE"}
+          label={row.is_deleted ? "Đã ngừng" : "Hoạt động"}
+        />
       </TableCell>,
       <TableCell key="action" align="right">
         <TableActionButton menuItems={menuItems(row)} />

@@ -13,4 +13,5 @@ export interface FilterGroup {
   id: string;
   title: string;
   options: FilterOption[];
+  type?: "checkbox" | "radio"; // Phân biệt loại, default: "checkbox"
 }

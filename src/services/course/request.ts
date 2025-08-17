@@ -1,5 +1,6 @@
 import { request } from "@config/axios";
 import {
+  CourseReActiveParams,
   CourseRequestParams,
   GetCourseParams,
   RequestDeleteParams,
@@ -37,6 +38,17 @@ export const updateCourse = async (
     url: getRoute(END_POINTS.COURSE.DETAIL, { courseId }),
     method: HTTP_METHODS.PUT,
     data: payload,
+  });
+};
+
+export const reActiveCourse = async (
+  payload: CourseReActiveParams
+): Promise<void> => {
+  const { id: courseId, ...data } = payload;
+  return request({
+    url: getRoute(END_POINTS.COURSE.RE_ACTIVE, { courseId }),
+    method: HTTP_METHODS.PUT,
+    data: data,
   });
 };
 

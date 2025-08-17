@@ -19,21 +19,13 @@ import FilterButton from "@components/ui/molecules/FilterButton";
 import { FilterGroup } from "@interfaces/dom/filter";
 import defaultCourseImage from "@assets/images/its_gamify_course_default.png";
 import { RoleEnum } from "@interfaces/api/user";
-
-const departments = [
-  { id: "it", name: "Công nghệ thông tin" },
-  { id: "marketing", name: "Marketing" },
-  { id: "hr", name: "Nhân sự" },
-  { id: "finance", name: "Tài chính" },
-  { id: "operations", name: "Vận hành" },
-];
-const filterGroups: FilterGroup[] = [
-  {
-    id: "department",
-    title: "Phòng ban",
-    options: departments,
-  },
-];
+import {
+  getClassifyInVietnamese,
+  getCourseStatusInVietnamese,
+} from "@utils/course";
+import StatusBadge from "@components/ui/atoms/TableBadge";
+import { truncateText } from "@utils/string";
+import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOutlined";
 
 const CoursePage: React.FC = () => {
   const {
@@ -59,7 +51,47 @@ const CoursePage: React.FC = () => {
     handleUpdateCourse,
     handleViewDetail,
     profile,
+    handleReActiveCourse,
+    // departments,
+    categories,
   } = useCoursePage();
+
+  const filterGroups: FilterGroup[] = [
+    // {
+    //   id: "departments",
+    //   title: "Phòng ban",
+    //   options: departments.map((department) => ({
+    //     id: department.id,
+    //     name: department.name,
+    //   })),
+    // },
+    {
+      id: "category",
+      title: "Phân loại",
+      options: categories.map((category) => ({
+        id: category.id,
+        name: category.name,
+      })),
+    },
+    {
+      id: "courseType",
+      title: "Phân loại",
+      options: [
+        { id: "DEPARTMENTONLY", name: "Phòng ban" },
+        { id: "LEADERONLY", name: "Trưởng phòng" },
+        { id: "ALL", name: "Tất cả" },
+      ],
+    },
+    {
+      id: "isActive",
+      title: "Trạng thái",
+      options: [
+        { id: "true", name: "Hoạt động" },
+        { id: "false", name: "Đã ngừng" },
+      ],
+      type: "radio",
+    },
+  ];
 
   const menuItems = (course: Course) => {
     const items = [
@@ -84,12 +116,20 @@ const CoursePage: React.FC = () => {
           sx: {},
         },
         {
-          icon: <DeleteOutlineIcon color="error" />,
-          label: "Tạm ngưng",
+          icon: course.is_deleted ? (
+            <PowerSettingsNewOutlinedIcon color="success" />
+          ) : (
+            <DeleteOutlineIcon color="error" />
+          ),
+          label: course.is_deleted ? "  Kích hoạt" : "Tạm ngưng",
           onClick: () => {
-            handleDelete(course.id);
+            if (course.is_deleted) {
+              handleReActiveCourse(course.id);
+            } else {
+              handleDelete(course.id);
+            }
           },
-          sx: { color: "red" },
+          sx: { color: course.is_deleted ? "green" : "red" },
         }
       );
     }
@@ -125,24 +165,31 @@ const CoursePage: React.FC = () => {
               }}
             />
           </Box>
-          {row.title}
+          {truncateText(row.title, 40)}
         </Box>
       </TableCell>,
       <TableCell key="classify" align="left">
-        {row.classify === "LEADERONLY"
-          ? "Leader"
-          : row.classify === "DEPARTMENTONLY"
-          ? "Department"
-          : "All"}
+        {getClassifyInVietnamese(row.classify)}
       </TableCell>,
       <TableCell key="department" align="left">
-        {row.deparment?.name || ""}
+        {truncateText(row.deparment?.name || "", 40)}
       </TableCell>,
-      <TableCell key="status" align="left">
-        {row.drafted ? "Đang chỉnh sửa" : row.status}
+      <TableCell key="step" align="left">
+        {row.drafted
+          ? "Đang chỉnh sửa"
+          : getCourseStatusInVietnamese(row.status)}
+      </TableCell>,
+      <TableCell key="course" align="left">
+        {truncateText(row.category?.name || "", 20)}
       </TableCell>,
       <TableCell key="sessions" align="center">
         {row.modules?.length}
+      </TableCell>,
+      <TableCell key="status" align="center">
+        <StatusBadge
+          status={row.is_deleted ? "CANCELLED" : "ACTIVE"}
+          label={row.is_deleted ? "Đã ngừng" : "Hoạt động"}
+        />
       </TableCell>,
       <TableCell key="action" align="right">
         <TableActionButton menuItems={menuItems(row)} />

@@ -21,6 +21,7 @@ import {
   School as SchoolIcon,
   SportsEsports as SportsEsportsIcon,
 } from "@mui/icons-material";
+import CategoryIcon from "@mui/icons-material/Category";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
@@ -102,6 +103,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       icon: <ApartmentIcon />,
       path: PATH.DEPARTMENTS,
       isDisabled: profile?.user.role !== RoleEnum.ADMIN,
+    },
+    {
+      text: "Phân loại",
+      icon: <CategoryIcon />,
+      path: PATH.CATEGORIES,
+      isDisabled: profile?.user.role === RoleEnum.TRAINER,
     },
     {
       text: t("account"),

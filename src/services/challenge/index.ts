@@ -8,7 +8,9 @@ import {
   deleteRangeChallenges,
   createChallenge,
   updateChallenge,
+  reActiveChallenge,
 } from "./request";
+import { QuizQuestion } from "@interfaces/dom/course";
 
 export interface RequestChallengeParams {
   title: string;
@@ -18,6 +20,9 @@ export interface RequestChallengeParams {
   thumbnail_image_id: string;
   course_id: string;
   category_id: string;
+  isActive: string;
+  updated_questions: QuizQuestion[];
+  new_questions: QuizQuestion[];
 }
 
 export interface RequestUpdateChallengeParams extends RequestChallengeParams {
@@ -25,11 +30,16 @@ export interface RequestUpdateChallengeParams extends RequestChallengeParams {
 }
 
 export interface GetChallengeParams extends PaginationParams {
-  title?: string;
+  categories: string | null;
 }
 
 export interface RequestDeleteParams {
   ids: string[];
+}
+
+export interface ChallengeReActiveParams {
+  id: string;
+  is_active: boolean;
 }
 
 export const useGetChallenges = (params?: GetChallengeParams) => {
@@ -71,6 +81,14 @@ export const useCreateChallenge = (onSuccess?: () => void) => {
 export const useUpdateChallenge = (onSuccess?: () => void) => {
   return useMutation({
     mutationFn: (data: RequestUpdateChallengeParams) => updateChallenge(data),
+    onSuccess,
+  });
+};
+
+export const useReActiveChallenge = (onSuccess?: () => void) => {
+  return useMutation({
+    mutationFn: (payload: ChallengeReActiveParams) =>
+      reActiveChallenge(payload),
     onSuccess,
   });
 };

@@ -30,13 +30,6 @@ export type StatusType =
   | "BANNED"
   | "DISABLE";
 
-const statuses = [
-  { id: "ACTIVE", name: "Đang hoạt động" },
-  { id: "DISABLE", name: "Không hoạt động" },
-  { id: "PENDING", name: "Chờ xác nhận" },
-  { id: "BANNED", name: "Đã khóa" },
-];
-
 const AccountPage: React.FC = () => {
   const {
     accounts,
@@ -65,18 +58,27 @@ const AccountPage: React.FC = () => {
     account,
     total_items_count,
     handleEdit,
+    roleFillters,
+    departments,
   } = useAccountPage();
 
   const filterGroups: FilterGroup[] = [
     {
-      id: "role",
-      title: "Vai trò",
-      options: roles.map((role) => ({ id: role.name, name: role.name })),
+      id: "departments",
+      title: "Phòng ban",
+      options: departments.map((department) => ({
+        id: department.id,
+        name: department.name,
+      })),
     },
     {
-      id: "status",
-      title: "Trạng thái",
-      options: statuses,
+      id: "roles",
+      title: "Vai trò",
+      options: roleFillters.map((role) => ({
+        id: role.id,
+        name: getRoleInVietnamese(role.name as RoleEnum),
+      })),
+      type: "radio",
     },
   ];
 

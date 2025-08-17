@@ -3,7 +3,7 @@ import { StorageFile } from "@interfaces/api/file";
 export type LessonType = "video" | "article" | "quiz" | "practice";
 
 export interface QuizQuestion {
-  // index: number;
+  id: string;
   content: string;
   answer_a: string;
   answer_b: string;
@@ -11,6 +11,7 @@ export interface QuizQuestion {
   answer_d: string;
   correct_answer: string;
   description: string;
+  is_hidden: boolean;
   course_id: string;
 }
 

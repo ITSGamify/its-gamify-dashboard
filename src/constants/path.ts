@@ -5,6 +5,7 @@ export const PATH = {
   HOME: "/",
   ACCOUNTS: "/accounts",
   DEPARTMENTS: "/departments",
+  CATEGORIES: "/categories",
   COURSES: COURSE_PATH,
   COURSES_CREATE: COURSE_PATH + "/create",
   COURSES_EDIT: COURSE_PATH + "/edit/:courseId",

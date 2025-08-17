@@ -14,6 +14,8 @@ import { getRoute } from "@utils/route";
 import { PATH } from "@constants/path";
 import { LoginResponse } from "@interfaces/api/auth";
 import { RoleEnum } from "@interfaces/api/user";
+import { toast } from "react-toastify";
+import ToastContent from "@components/ui/atoms/Toast";
 
 export interface AuthenticationFormValues {
   email: string;
@@ -97,7 +99,9 @@ export const useLoginPage = () => {
             user.user.role == RoleEnum.EMPLOYEE ||
             user.user.role == RoleEnum.LEADER
           )
-            return;
+            return toast.error(ToastContent, {
+              data: { message: "Tài khoản không hợp lệ!" },
+            });
           userSession.storeUserProfile(data);
           reset();
           if (user.user.role === RoleEnum.TRAINER) {

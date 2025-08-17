@@ -9,11 +9,14 @@ import { RoleEnum } from "@interfaces/api/user";
 import { FilterGroup, FilterValues } from "@interfaces/dom/filter";
 import { OrderDirection } from "@interfaces/dom/query";
 import { HeadCell, TableColumns } from "@interfaces/dom/table";
+import { useGetCategories } from "@services/category";
 import {
   useDeleteCourse,
   useDeleteRangeCourses,
   useGetCourses,
+  useReActiveCourse,
 } from "@services/course";
+import { useGetDeparments } from "@services/department";
 import { getStepNumberFromName } from "@utils/course";
 import { getRoute } from "@utils/route";
 import {
@@ -41,7 +44,11 @@ export const useCoursePage = () => {
   const activeSearchInput = searchParams.get("q");
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
   const navigate = useNavigate();
+  // const deparmentParams = searchParams.get("departments");
+  const categories = searchParams.get("category") ?? null;
+  const courseTypes = searchParams.get("courseType") ?? null;
 
+  const isActive = searchParams.get("isActive");
   const [sortedColumns, setSortedColumns] = useState<TableColumns>(
     getInitialSorted(searchParams, defaultSort)
   );
@@ -124,17 +131,34 @@ export const useCoursePage = () => {
     onSuccess();
   };
 
-  const getAccountsReq = {
+  const { data: departments, isLoading: isLoadingDepartment } =
+    useGetDeparments({
+      page: 0,
+      limit: 100,
+      q: "",
+    });
+
+  const { data: categoriesData, isLoading: isLoadingCategories } =
+    useGetCategories({
+      page: 0,
+      limit: 100,
+      q: "",
+    });
+
+  const getcCourseReq = {
     page: activePage,
     limit: rowsPerPage,
     q: activeSearchInput || "",
+    categories: categories ? JSON.stringify(categories.split(".")) : null,
+    courseTypes: courseTypes,
+    isActive: !isActive ? "true" : (isActive as string),
     order_by: sortedColumns.map((sort) => ({
       order_column: sort.column ?? undefined,
       order_dir: sort.direction ?? undefined,
     })),
   };
 
-  const { data, isLoading, refetch } = useGetCourses(getAccountsReq);
+  const { data, isLoading, refetch } = useGetCourses(getcCourseReq);
 
   const courses = data?.data || [];
   const pagination = data?.pagination;
@@ -233,8 +257,26 @@ export const useCoursePage = () => {
     navigate(route);
   };
 
+  const { mutateAsync: reActiveCourse } = useReActiveCourse();
+
+  const handleReActiveCourse = async (id: string) => {
+    await reActiveCourse(
+      { id: id, is_active: false },
+      {
+        onSuccess: () => {
+          toast.success(ToastContent, {
+            data: {
+              message: "Cập nhật thành công!",
+            },
+          });
+          refetch();
+        },
+      }
+    );
+  };
+
   return {
-    isLoading,
+    isLoading: isLoading || isLoadingDepartment || isLoadingCategories,
     courses,
     courseColumns,
     handleApplyFilters,
@@ -260,5 +302,8 @@ export const useCoursePage = () => {
     total_items_count,
     handleViewDetail,
     profile,
+    handleReActiveCourse,
+    departments: departments?.data || [],
+    categories: categoriesData?.data || [],
   };
 };

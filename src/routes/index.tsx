@@ -23,6 +23,7 @@ import ChallengeCreatePage from "@pages/Tournament/Create";
 import StatisticPage from "@pages/Statistic";
 import { RoleEnum } from "@interfaces/api/user";
 import CourseDetailPage from "@pages/Course/Detail";
+import CategoryPage from "@pages/Category";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ErrorFallback = () => {
@@ -128,6 +129,10 @@ const router = createBrowserRouter(
         {
           path: PATH.DEPARTMENTS,
           element: <DepartmentPage />,
+        },
+        {
+          path: PATH.CATEGORIES,
+          element: <CategoryPage />,
         },
         {
           path: PATH.COURSES_DETAIL,

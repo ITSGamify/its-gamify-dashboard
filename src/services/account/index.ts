@@ -10,8 +10,8 @@ import {
 } from "./request";
 
 export interface GetAccountParams extends PaginationParams {
-  role?: string;
-  status?: string;
+  roleId: string | null;
+  departments: string | null;
 }
 export interface RequestDeleteParams {
   ids: string[];

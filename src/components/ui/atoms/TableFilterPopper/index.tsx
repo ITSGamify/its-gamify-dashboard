@@ -8,9 +8,11 @@ import {
   Divider,
   Button,
   FormControl,
-  FormGroup,
   FormControlLabel,
   Checkbox,
+  Radio,
+  RadioGroup,
+  FormGroup,
   Chip,
   styled,
 } from "@mui/material";
@@ -37,11 +39,14 @@ interface FilterPopperProps {
 //#region  Styled components
 const FilterContainer = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
-  width: 320,
+  width: "auto",
+  maxWidth: 800, // Tăng để mở rộng ngang, điều chỉnh nếu cần
   maxHeight: "calc(100vh - 100px)",
   overflow: "auto",
   borderRadius: 12,
   boxShadow: theme.shadows[3],
+  display: "flex",
+  flexDirection: "column", // Container chính vẫn column để header/actions ở trên/dưới
 }));
 
 const FilterHeader = styled(Box)(({ theme }) => ({
@@ -51,8 +56,27 @@ const FilterHeader = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-const FilterSection = styled(Box)(({ theme }) => ({
+const FilterSectionsWrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column", // Luôn column để groups xếp dọc
+  gap: theme.spacing(2),
   marginBottom: theme.spacing(2),
+}));
+
+const FilterSection = styled(Box)(() => ({
+  flex: 1,
+  minWidth: 200, // Đảm bảo mỗi group có width tối thiểu để ngang
+  display: "flex",
+  flexDirection: "column",
+}));
+
+const OptionsWrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  flexWrap: "wrap",
+  gap: theme.spacing(1),
+  maxHeight: 80, // Giới hạn height cho khoảng 2 rows (giả sử mỗi row ~40px, điều chỉnh nếu cần)
+  overflow: "auto", // Scroll nếu vượt 2 rows
 }));
 
 const FilterActions = styled(Box)(({ theme }) => ({
@@ -83,20 +107,32 @@ const FilterPopper: React.FC<FilterPopperProps> = ({
   setFilters,
   handleResetFilters,
   handleApplyFilters,
-  title = "Bộ lọc",
 }) => {
-  // Xử lý thay đổi các giá trị filter
-  const handleFilterChange = (groupId: string, optionId: string) => {
+  // Xử lý thay đổi các giá trị filter (hỗ trợ cả checkbox và radio)
+  const handleFilterChange = (
+    groupId: string,
+    optionId: string,
+    groupType: "checkbox" | "radio"
+  ) => {
     setFilters((prev) => {
       const currentValues = prev[groupId] || [];
-      const newValues = currentValues.includes(optionId)
-        ? currentValues.filter((id) => id !== optionId)
-        : [...currentValues, optionId];
 
-      return {
-        ...prev,
-        [groupId]: newValues,
-      };
+      if (groupType === "radio") {
+        // Với radio: Single select, chỉ set giá trị mới (thay thế nếu có)
+        return {
+          ...prev,
+          [groupId]: [optionId], // Luôn là mảng với 1 item
+        };
+      } else {
+        // Với checkbox: Multi-select, add/remove
+        const newValues = currentValues.includes(optionId)
+          ? currentValues.filter((id) => id !== optionId)
+          : [...currentValues, optionId];
+        return {
+          ...prev,
+          [groupId]: newValues,
+        };
+      }
     });
   };
 
@@ -131,7 +167,7 @@ const FilterPopper: React.FC<FilterPopperProps> = ({
           <FilterHeader>
             <Box display="flex" alignItems="center">
               <Typography variant="subtitle1" fontWeight={600}>
-                {title}
+                Áp dụng bộ lọc
               </Typography>
               {getActiveFilterCount() > 0 && (
                 <Chip
@@ -153,42 +189,84 @@ const FilterPopper: React.FC<FilterPopperProps> = ({
 
           <Divider sx={{ mb: 2 }} />
 
-          {/* Render các nhóm filter */}
-          {filterGroups.map((group) => (
-            <FilterSection key={group.id}>
-              <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-                {group.title}
-              </Typography>
-              <FormControl component="fieldset" fullWidth>
-                <FormGroup>
-                  {group.options.map((option) => (
-                    <FormControlLabel
-                      key={option.id}
-                      control={
-                        <Checkbox
-                          checked={(filters[group.id] || []).includes(
-                            option.id
-                          )}
-                          onChange={() =>
-                            handleFilterChange(group.id, option.id)
+          {/* Render các nhóm filter theo chiều dọc */}
+          <FilterSectionsWrapper>
+            {filterGroups.map((group) => {
+              const groupType = group.type || "checkbox"; // Default là checkbox nếu không chỉ định
+              return (
+                <FilterSection key={group.id}>
+                  <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                    {group.title}
+                  </Typography>
+                  <FormControl component="fieldset" fullWidth>
+                    <OptionsWrapper>
+                      {groupType === "checkbox" ? (
+                        <FormGroup row>
+                          {group.options.map((option) => (
+                            <FormControlLabel
+                              key={option.id}
+                              control={
+                                <Checkbox
+                                  checked={(filters[group.id] || []).includes(
+                                    option.id
+                                  )}
+                                  onChange={() =>
+                                    handleFilterChange(
+                                      group.id,
+                                      option.id,
+                                      groupType
+                                    )
+                                  }
+                                  color="primary"
+                                  size="small"
+                                />
+                              }
+                              label={
+                                <Typography variant="body2">
+                                  {option.name}
+                                </Typography>
+                              }
+                              sx={{ margin: 0, flexBasis: "auto" }} // Đảm bảo ngang và wrap
+                            />
+                          ))}
+                        </FormGroup>
+                      ) : (
+                        <RadioGroup
+                          row
+                          value={filters[group.id][0]}
+                          onChange={(e) =>
+                            handleFilterChange(
+                              group.id,
+                              e.target.value,
+                              groupType
+                            )
                           }
-                          color="primary"
-                          size="small"
-                        />
-                      }
-                      label={
-                        <Typography variant="body2">{option.name}</Typography>
-                      }
-                    />
-                  ))}
-                </FormGroup>
-              </FormControl>
-            </FilterSection>
-          ))}
+                        >
+                          {group.options.map((option) => (
+                            <FormControlLabel
+                              key={option.id}
+                              value={option.id}
+                              control={<Radio color="primary" size="small" />}
+                              label={
+                                <Typography variant="body2">
+                                  {option.name}
+                                </Typography>
+                              }
+                              sx={{ margin: 0, flexBasis: "auto" }} // Đảm bảo ngang và wrap
+                            />
+                          ))}
+                        </RadioGroup>
+                      )}
+                    </OptionsWrapper>
+                  </FormControl>
+                </FilterSection>
+              );
+            })}
+          </FilterSectionsWrapper>
 
           {/* Hiển thị các bộ lọc đang áp dụng */}
           {getActiveFilterCount() > 0 && (
-            <FilterSection>
+            <Box>
               <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                 Bộ lọc đang áp dụng
               </Typography>
@@ -210,7 +288,7 @@ const FilterPopper: React.FC<FilterPopperProps> = ({
                   return null;
                 })}
               </Box>
-            </FilterSection>
+            </Box>
           )}
 
           <Divider sx={{ my: 2 }} />

@@ -13,6 +13,7 @@ export interface Challenge {
   category: Category;
   thumbnail_image_id: string;
   course: Course;
+  is_deleted: boolean;
 }
 
 export interface ChallengeStepFormProps {

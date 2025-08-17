@@ -215,3 +215,31 @@ export const validateCourseContent = (
 
   return { isValid: true };
 };
+
+export function getClassifyInVietnamese(classify: string): string {
+  switch (classify) {
+    case "LEADERONLY":
+      return "Trưởng phòng";
+    case "DEPARTMENTONLY":
+      return "Phòng ban";
+    default:
+      return "Tất cả";
+  }
+}
+
+export function getCourseStatusInVietnamese(status: string): string {
+  switch (status) {
+    case "INITIAL":
+      return "Khởi tạo";
+    case "CONTENT":
+      return "Nội dung";
+    case "MATERIAL":
+      return "Tài liệu";
+    case "CONFIRM":
+      return "Xác nhận";
+    case "PUBLISHED":
+      return "Đã xuất bản";
+    default:
+      return status;
+  }
+}

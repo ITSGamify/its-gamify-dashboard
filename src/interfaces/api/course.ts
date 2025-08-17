@@ -31,6 +31,7 @@ export interface Course {
   quarter: Quarter;
   introduction_video?: string;
   learning_materials?: Material[];
+  is_deleted: boolean;
 }
 
 export interface Material {

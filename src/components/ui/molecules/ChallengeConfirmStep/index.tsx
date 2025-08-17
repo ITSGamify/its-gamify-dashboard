@@ -11,6 +11,7 @@ import {
 import { SectionTitle } from "@components/ui/atoms/SectionTitle";
 import { ChallengeStepFormProps } from "@interfaces/api/challenge";
 import { ChallengeInforForm } from "@hooks/data/useChallengeForm";
+import PreviewChallengeTable from "@components/ui/atoms/PreviewChallengeTable";
 
 const ChallengeConfirmStep = ({
   activeStep,
@@ -95,6 +96,24 @@ const ChallengeConfirmStep = ({
               <Typography variant="body1">Chưa tải lên</Typography>
             )}
           </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <Divider sx={{ my: 0 }} />
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <SectionTitle variant="h6" fontWeight={600}>
+              Câu hỏi cho giải đấu
+            </SectionTitle>
+          </Grid>
+
+          {/* Tích hợp modal hiển thị danh sách questions */}
+          <PreviewChallengeTable
+            courseId={formData.course_id}
+            isPreview={true}
+            newQuestions={confirmData?.new_questions || []}
+            updatedQuestions={confirmData?.updated_questions || []}
+          />
         </Grid>
       </Card>
 

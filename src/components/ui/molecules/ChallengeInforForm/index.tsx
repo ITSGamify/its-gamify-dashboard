@@ -1,4 +1,3 @@
-// src/sections/course/create/BasicInfoForm.tsx
 import {
   Grid,
   TextField,
@@ -24,6 +23,9 @@ import { ChallengeStepFormProps } from "@interfaces/api/challenge";
 import { useChallengeForm } from "@hooks/data/useChallengeForm";
 import { useGetCategories } from "@services/category";
 import { categoryOptionField } from "@constants/category";
+import PreviewChallengeTable, {
+  ExtendedQuizQuestion,
+} from "@components/ui/atoms/PreviewChallengeTable";
 
 const ChallengeInforForm = ({
   data,
@@ -34,13 +36,23 @@ const ChallengeInforForm = ({
   isCreateMode,
   formData,
 }: ChallengeStepFormProps) => {
-  const { control, handleSubmit, isLoadingCourse, courseId, setValue, watch } =
-    useChallengeForm({
-      data,
-      handleNextState,
-      isLoading,
-      formData,
-    });
+  const {
+    control,
+    handleSubmit,
+    isLoadingCourse,
+    courseId,
+    setValue,
+    watch,
+    newQuestions,
+    setNewQuestions,
+    updatedQuestions,
+    setUpdatedQuestions,
+  } = useChallengeForm({
+    data,
+    handleNextState,
+    isLoading,
+    formData,
+  });
 
   const {
     options: courseOptions,
@@ -55,6 +67,24 @@ const ChallengeInforForm = ({
   } = useGetOptions(useGetCategories, categoryOptionField);
 
   const theme = useTheme();
+
+  // Handle toggle hidden (update local và gọi API nếu cần)
+  const handleToggleHidden = (question: ExtendedQuizQuestion) => {
+    const newHidden = !question.is_hidden;
+    setUpdatedQuestions((prev) => {
+      const existingIndex = prev.findIndex((q) => q.id === question.id);
+      const updatedQuestion = { ...question, is_hidden: newHidden };
+      if (existingIndex !== -1) {
+        // Update nếu đã tồn tại
+        const newArray = [...prev];
+        newArray[existingIndex] = updatedQuestion;
+        return newArray;
+      } else {
+        // Thêm mới nếu chưa có
+        return [...prev, updatedQuestion];
+      }
+    });
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -199,12 +229,12 @@ const ChallengeInforForm = ({
               Ảnh thumbnail khóa học
             </Typography>
             <Controller
-              name="thumbnail_image_id"
+              name="thumbnail_image"
               control={control}
               render={({ field: { onChange }, fieldState: { error } }) => (
                 <>
                   <UploadBox
-                    id="thumbnail_image_id"
+                    id="thumbnail_image"
                     title="Tải lên ảnh thumbnail"
                     description="Kích thước khuyến nghị: 1280x720 px (tỷ lệ 16:9)"
                     icon={
@@ -234,6 +264,27 @@ const ChallengeInforForm = ({
               )}
             />
           </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <Divider sx={{ my: 0 }} />
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <SectionTitle variant="h6" fontWeight={600}>
+              Câu hỏi cho giải đấu
+            </SectionTitle>
+          </Grid>
+
+          {/* Tích hợp modal hiển thị danh sách questions */}
+          <PreviewChallengeTable
+            courseId={courseId}
+            onToggleHidden={handleToggleHidden}
+            isPreview={false}
+            newQuestions={newQuestions}
+            setNewQuestions={setNewQuestions}
+            updatedQuestions={updatedQuestions}
+            setUpdatedQuestions={setUpdatedQuestions}
+          />
         </Grid>
       </Paper>
 

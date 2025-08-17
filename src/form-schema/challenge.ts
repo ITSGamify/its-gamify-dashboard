@@ -7,7 +7,6 @@ export interface BasicChallengeFormData {
   thumbnail_image: string;
   course_id: string;
   category_id: string;
-  thumbnail_image_id: string;
 }
 
 export const basicChallengeFormSchema: yup.ObjectSchema<BasicChallengeFormData> =
@@ -16,7 +15,6 @@ export const basicChallengeFormSchema: yup.ObjectSchema<BasicChallengeFormData> 
     description: yup.string().required("Mô tả là bắt buộc"),
     category_id: yup.string().required("Thể loại là bắt buộc"),
     thumbnail_image: yup.string().required("Ảnh thu nhỏ là bắt buộc"),
-    thumbnail_image_id: yup.string().required("Ảnh thu nhỏ là bắt buộc"),
     num_of_room: yup
       .number()
       .typeError("Số phòng phải là số")

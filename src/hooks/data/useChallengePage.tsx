@@ -10,10 +10,12 @@ import { RoleEnum } from "@interfaces/api/user";
 import { FilterGroup, FilterValues } from "@interfaces/dom/filter";
 import { OrderDirection } from "@interfaces/dom/query";
 import { HeadCell, TableColumns } from "@interfaces/dom/table";
+import { useGetCategories } from "@services/category";
 import {
   useDeleteChallenge,
   useDeleteRangeChallenges,
   useGetChallenges,
+  useReActiveChallenge,
 } from "@services/challenge";
 import { getRoute } from "@utils/route";
 import {
@@ -41,6 +43,8 @@ export const useChallengePage = () => {
   const activeSearchInput = searchParams.get("q");
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
   const navigate = useNavigate();
+  const isActive = searchParams.get("isActive");
+  const categories = searchParams.get("category") ?? null;
 
   const [sortedColumns, setSortedColumns] = useState<TableColumns>(
     getInitialSorted(searchParams, defaultSort)
@@ -125,10 +129,19 @@ export const useChallengePage = () => {
     setSearchParams(searchParams);
   };
 
+  const { data: categoriesData, isLoading: isLoadingCategories } =
+    useGetCategories({
+      page: 0,
+      limit: 100,
+      q: "",
+    });
+
   const getChallengeReq = {
     page: activePage,
     limit: rowsPerPage,
     q: activeSearchInput || "",
+    categories: categories ? JSON.stringify(categories.split(".")) : null,
+    isActive: !isActive ? "true" : (isActive as string),
     order_by: sortedColumns.map((sort) => ({
       order_column: sort.column ?? undefined,
       order_dir: sort.direction ?? undefined,
@@ -228,9 +241,25 @@ export const useChallengePage = () => {
     });
     navigate(route);
   };
+  const { mutateAsync: reActiveChallenge } = useReActiveChallenge();
 
+  const handleReActiveChallenge = async (id: string) => {
+    await reActiveChallenge(
+      { id: id, is_active: false },
+      {
+        onSuccess: () => {
+          toast.success(ToastContent, {
+            data: {
+              message: "Cập nhật thành công!",
+            },
+          });
+          refetch();
+        },
+      }
+    );
+  };
   return {
-    isLoading,
+    isLoading: isLoading || isLoadingCategories,
     challenges,
     challengeColumns,
     handleApplyFilters,
@@ -256,5 +285,7 @@ export const useChallengePage = () => {
     total_items_count,
     handleViewDetail,
     profile,
+    handleReActiveChallenge,
+    categories: categoriesData?.data || [],
   };
 };

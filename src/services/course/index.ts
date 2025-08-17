@@ -9,11 +9,15 @@ import {
   getCourseModules,
   getCourses,
   updateCourse,
+  reActiveCourse,
 } from "./request";
 import { Module } from "@interfaces/dom/course";
 
 export interface GetCourseParams extends PaginationParams {
   department?: string;
+  isActive: string;
+  categories: string | null;
+  courseTypes: string | null;
 }
 
 export interface RequestDeleteParams {
@@ -46,6 +50,10 @@ export interface RequestUpdateCourseParams extends CourseRequestParams {
   id: string;
   current_step: string;
 }
+export interface CourseReActiveParams {
+  id: string;
+  is_active: boolean;
+}
 
 export const useGetCourses = (params?: GetCourseParams) => {
   return useQuery({
@@ -66,6 +74,12 @@ export const useGetCourseDetail = (courseId: string) => {
 export const useUpdateCourse = (onSuccess?: () => void) => {
   return useMutation({
     mutationFn: (payload: RequestUpdateCourseParams) => updateCourse(payload),
+    onSuccess,
+  });
+};
+export const useReActiveCourse = (onSuccess?: () => void) => {
+  return useMutation({
+    mutationFn: (payload: CourseReActiveParams) => reActiveCourse(payload),
     onSuccess,
   });
 };

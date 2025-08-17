@@ -229,7 +229,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer, isDrawerOpen }) => {
               onClick={onToggleDrawer}
               sx={{ mr: 1 }}
             >
-              <MenuIcon />
+              <MenuIcon sx={{ fontSize: 30 }} />
             </IconButton>
 
             {!isDrawerOpen || (!isMobile && <Logo />)}

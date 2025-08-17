@@ -1,5 +1,6 @@
 import { END_POINTS } from "@constants/endpoint";
 import {
+  ChallengeReActiveParams,
   GetChallengeParams,
   RequestChallengeParams,
   RequestDeleteParams,
@@ -66,5 +67,16 @@ export const updateChallenge = async (
     url: getRoute(END_POINTS.CHALLENGE.DETAIL, { challengeId }),
     method: HTTP_METHODS.PUT,
     data,
+  });
+};
+
+export const reActiveChallenge = async (
+  payload: ChallengeReActiveParams
+): Promise<void> => {
+  const { id: challengeId, ...data } = payload;
+  return request({
+    url: getRoute(END_POINTS.CHALLENGE.RE_ACTIVE, { challengeId }),
+    method: HTTP_METHODS.PUT,
+    data: data,
   });
 };

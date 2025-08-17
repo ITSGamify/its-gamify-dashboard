@@ -1,41 +1,36 @@
 // src/components/common/Logo/index.tsx
 import React from "react";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
-import SchoolIcon from "@mui/icons-material/School";
+import logoImage from "@assets/images/f-study_official_logo.png";
+import userSession from "@utils/user-session";
+import { RoleEnum } from "@interfaces/api/user";
+import { PATH } from "@constants/path";
 
 const Logo: React.FC = () => {
-  const theme = useTheme();
+  const profile = userSession.getUserProfile();
 
   return (
     <Box
       component={Link}
-      to="/"
+      to={profile?.user.role === RoleEnum.TRAINER ? PATH.COURSES : PATH.HOME}
       sx={{
         display: "flex",
         alignItems: "center",
         textDecoration: "none",
         color: "inherit",
+        margin: "5px 0px 5px 5px",
       }}
     >
-      <SchoolIcon
+      <Box
+        component="img"
+        src={logoImage}
+        alt="F-Study Logo"
         sx={{
-          color: theme.palette.primary.main,
-          fontSize: 40,
-          mr: 1,
+          height: 55,
+          width: 120,
         }}
       />
-      <Typography
-        variant="h3"
-        noWrap
-        component="div"
-        sx={{
-          fontWeight: 600,
-          color: theme.palette.primary.main,
-        }}
-      >
-        F-Study
-      </Typography>
     </Box>
   );
 };

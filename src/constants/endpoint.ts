@@ -10,6 +10,7 @@ export const BASE_KEYS = {
   MATERIALS: "learning-materials",
   QUATER: "quarters",
   CHALLENGE: "challenges",
+  QUESTION: "questions",
 };
 
 export const END_POINTS = {
@@ -40,9 +41,13 @@ export const END_POINTS = {
     DETAIL: `${BASE_KEYS.COURSES}/:courseId`,
     DELETE_RANGE: `${BASE_KEYS.COURSES}/delete-range`,
     COURSE_SECTIONS: `${BASE_KEYS.COURSES}/:courseId/course-sections`,
+    RE_ACTIVE: `${BASE_KEYS.COURSES}/:courseId/re-active`,
   },
   CATEGORIES: {
     BASE: BASE_KEYS.CATEGORIES,
+    RE_ACTIVE: `${BASE_KEYS.CATEGORIES}/:categoryId/re-active`,
+    DETAIL: `${BASE_KEYS.CATEGORIES}/:categoryId`,
+    DELETE_RANGE: `${BASE_KEYS.CATEGORIES}/delete-range`,
   },
   QUATER: {
     BASE: BASE_KEYS.QUATER,
@@ -68,6 +73,10 @@ export const END_POINTS = {
   CHALLENGE: {
     BASE: BASE_KEYS.CHALLENGE,
     DETAIL: `${BASE_KEYS.CHALLENGE}/:challengeId`,
+    RE_ACTIVE: `${BASE_KEYS.CHALLENGE}/:challengeId/re-active`,
     DELETE_RANGE: `${BASE_KEYS.CHALLENGE}/delete-range`,
+  },
+  QUESTION: {
+    BASE: BASE_KEYS.QUESTION,
   },
 };
