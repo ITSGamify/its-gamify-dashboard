@@ -201,7 +201,7 @@ const CourseDetailPage = () => {
                 {data.tags && data.tags.length > 0 && (
                   <>
                     <Typography variant="h6" gutterBottom>
-                      Tags
+                      Thẻ (Tags)
                     </Typography>
                     <Box
                       sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}
