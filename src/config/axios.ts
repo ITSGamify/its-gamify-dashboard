@@ -48,7 +48,10 @@ axiosInstance.interceptors.response.use(
         console.log(error.response?.data);
         toast.error(ToastContent, {
           data: {
-            message: error.response?.data.error || "Tài khoản không hợp lệ",
+            message:
+              error.response?.data.error ||
+              error.response?.data ||
+              "Đã xảy ra lỗi!",
           },
         });
         break;
