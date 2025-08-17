@@ -142,7 +142,7 @@ export const COURSE_TABLE_HEAD = [
   {
     id: "status",
     numeric: true,
-    align: "left",
+    align: "center",
     disablePadding: true,
     disableSort: true,
     label: "Trạng thái",
@@ -193,7 +193,7 @@ export const CHALLENGE_TABLE_HEAD = [
   {
     id: "status",
     numeric: true,
-    align: "left",
+    align: "center",
     disablePadding: true,
     disableSort: true,
     label: "Trạng thái",

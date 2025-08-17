@@ -33,6 +33,7 @@ import { Lesson } from "@interfaces/dom/course";
 import { useGetCourseDetail } from "@services/course";
 import { useParams } from "react-router-dom";
 import { convertUTCToFormattedLocalTime } from "@utils/date";
+import { getClassifyInVietnamese } from "@utils/course";
 
 const CourseDetailPage = () => {
   const { courseId } = useParams();
@@ -263,7 +264,8 @@ const CourseDetailPage = () => {
                       Phân loại
                     </Typography>
                     <Typography variant="body1" fontWeight={600}>
-                      {data.classify || "Không xác định"}
+                      {getClassifyInVietnamese(data.classify) ||
+                        "Không xác định"}
                     </Typography>
                   </Grid>
 
