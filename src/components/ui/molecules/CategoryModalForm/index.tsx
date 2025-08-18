@@ -88,7 +88,7 @@ const CategoryModalForm: React.FC<CategoryModalProps> = ({
                 render={({ field, fieldState: { error } }) => (
                   <TextField
                     fullWidth
-                    label="Tên phòng ban"
+                    label="Tên danh mục"
                     name="name"
                     value={field.value}
                     onChange={field.onChange}
@@ -137,7 +137,7 @@ const CategoryModalForm: React.FC<CategoryModalProps> = ({
             disableElevation
             disabled={isSaving}
           >
-            {data ? "Cập nhật" : "Tạo phòng ban"}
+            {data ? "Cập nhật" : "Tạo mới"}
           </Button>
         </StyledDialogActions>
       </form>

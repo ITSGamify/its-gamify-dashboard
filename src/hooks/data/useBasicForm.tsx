@@ -19,14 +19,7 @@ export interface BasicForm {
 }
 
 export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
-  const {
-    control,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<BasicForm>({
+  const { control, handleSubmit, watch, setValue, reset } = useForm<BasicForm>({
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
@@ -46,7 +39,6 @@ export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
     resolver: yupResolver(basicFormSchema) as Resolver<BasicForm>,
   });
 
-  console.log(errors);
   useEffect(() => {
     if (data) {
       reset({

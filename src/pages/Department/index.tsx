@@ -6,7 +6,7 @@ import {
   TableCell,
   TablePagination,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import TableActionButton from "@components/ui/atoms/TableActionButton";
@@ -16,6 +16,7 @@ import DepartmentModalForm from "@components/ui/molecules/DepartmentModalForm";
 import { useDepartmentPage } from "@hooks/data/useDepartmentPage";
 import userSession from "@utils/user-session";
 import { RoleEnum } from "@interfaces/api/user";
+import ConfirmDialog from "@components/ui/atoms/ConfirmDialog";
 
 const DepartmentPage: React.FC = () => {
   const {
@@ -43,7 +44,8 @@ const DepartmentPage: React.FC = () => {
     handelLimitChange,
     total_items_count,
   } = useDepartmentPage();
-
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
   const menuItems = (department: Department) => [
     {
       icon: <EditIcon color="action" />,
@@ -56,7 +58,8 @@ const DepartmentPage: React.FC = () => {
       icon: <DeleteOutlineIcon color="error" />,
       label: "Xóa phòng ban",
       onClick: () => {
-        handleDelete(department.id);
+        setIdToDelete(department.id);
+        setOpenConfirm(true);
       },
       sx: { color: "red" },
     },
@@ -136,6 +139,20 @@ const DepartmentPage: React.FC = () => {
         open={openModal}
         onClose={handleCloseModal}
         onSuccess={onActionSuccess}
+      />
+      <ConfirmDialog
+        open={openConfirm}
+        title="Xác nhận xóa phòng ban"
+        message="Bạn có chắc chắn muốn xóa phòng ban này không?"
+        onClose={() => {
+          setOpenConfirm(false);
+          setIdToDelete(null);
+        }}
+        onConfirm={() => {
+          if (idToDelete) {
+            handleDelete(idToDelete);
+          }
+        }}
       />
     </>
   );

@@ -12,9 +12,10 @@ import { alpha } from "@mui/material/styles";
 import { styled } from "@mui/material/styles";
 import { Search as SearchIcon } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { simulateEnterKeyDown } from "@utils/common";
 import { FilterGroup, FilterValues } from "@interfaces/dom/filter";
+import ConfirmDialog from "../ConfirmDialog";
 
 interface TableToolbarProps {
   filterTitle?: string;
@@ -88,7 +89,18 @@ function TableToolbar(props: TableToolbarProps) {
     onDelete,
     isHiddenCreateButton = false,
   } = props;
+  const [openConfirm, setOpenConfirm] = useState(false);
 
+  const handleDeleteClick = () => {
+    setOpenConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (onDelete) {
+      onDelete();
+    }
+    setOpenConfirm(false);
+  };
   return (
     <>
       <Toolbar
@@ -165,13 +177,20 @@ function TableToolbar(props: TableToolbarProps) {
         {numSelected > 0 && (
           <>
             <Tooltip title="Xóa">
-              <IconButton onClick={onDelete}>
+              <IconButton onClick={handleDeleteClick}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
           </>
         )}
       </Toolbar>
+      <ConfirmDialog
+        open={openConfirm}
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={handleConfirmDelete}
+        title="Bạn có chắc thực hiện bước này?"
+        message=""
+      />
     </>
   );
 }

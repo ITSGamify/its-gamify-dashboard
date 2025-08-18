@@ -12,8 +12,15 @@ export interface AccountFormScheme {
 export const accountFormScheme: yup.ObjectSchema<AccountFormScheme> =
   yup.object({
     avatar_url: yup.string().optional(),
-    full_name: yup.string().required("Nhập tên tài khoản"),
-    email: yup.string().email("Email không hợp lệ").required("Nhập email"),
+    full_name: yup
+      .string()
+      .required("Nhập tên tài khoản")
+      .max(50, "Tên tài khoản không được vượt quá 50 ký tự"),
+    email: yup
+      .string()
+      .email("Email không hợp lệ")
+      .required("Nhập email")
+      .max(50, "Email không được vượt quá 50 ký tự"),
     role_id: yup.string().required("Chọn quyền hạn"),
     department_id: yup.string().required("Chọn phòng ban"),
     password: yup

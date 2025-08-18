@@ -27,7 +27,10 @@ export interface LearningMaterialsFormData {
 export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
   .object()
   .shape({
-    title: yup.string().required("Tiêu đề là bắt buộc"),
+    title: yup
+      .string()
+      .required("Tiêu đề là bắt buộc")
+      .max(50, "Tiêu đề không được vượt quá 50 ký tự"),
     short_description: yup.string().required("Mô tả ngắn là bắt buộc"),
     description: yup.string().required("Mô tả là bắt buộc"),
     thumbnail_image_id: yup.string().required("Ảnh thu nhỏ là bắt buộc"),

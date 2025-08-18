@@ -7,7 +7,7 @@ import {
   TableCell,
   TablePagination,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 // import StatusBadge from "@components/ui/atoms/TableBadge";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -20,6 +20,7 @@ import { useAccountPage } from "@hooks/data/useAccountPage";
 import { RoleEnum, User } from "@interfaces/api/user";
 import userSession from "@utils/user-session";
 import { getRoleInVietnamese } from "@utils/user";
+import ConfirmDialog from "@components/ui/atoms/ConfirmDialog";
 
 export type StatusType =
   | "ACTIVE"
@@ -61,7 +62,8 @@ const AccountPage: React.FC = () => {
     roleFillters,
     departments,
   } = useAccountPage();
-
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
   const filterGroups: FilterGroup[] = [
     {
       id: "departments",
@@ -98,7 +100,8 @@ const AccountPage: React.FC = () => {
       icon: <DeleteOutlineIcon color="error" />,
       label: "Xóa tài khoản",
       onClick: () => {
-        handleDelete(account.id);
+        setIdToDelete(account.id);
+        setOpenConfirm(true);
       },
       disabled:
         account.role === "ADMIN" ||
@@ -190,6 +193,20 @@ const AccountPage: React.FC = () => {
         onSuccess={onActionSuccess}
         isRoleLoading={isRoleLoading}
         roles={roles}
+      />
+      <ConfirmDialog
+        open={openConfirm}
+        title="Xác nhận xóa tài khoản"
+        message="Bạn có chắc chắn muốn xóa tài khoản này không?"
+        onClose={() => {
+          setOpenConfirm(false);
+          setIdToDelete(null);
+        }}
+        onConfirm={() => {
+          if (idToDelete) {
+            handleDelete(idToDelete);
+          }
+        }}
       />
     </>
   );

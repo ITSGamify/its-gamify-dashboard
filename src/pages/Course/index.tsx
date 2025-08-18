@@ -26,6 +26,8 @@ import {
 import StatusBadge from "@components/ui/atoms/TableBadge";
 import { truncateText } from "@utils/string";
 import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOutlined";
+import { useState } from "react";
+import ConfirmDialog from "@components/ui/atoms/ConfirmDialog";
 
 const CoursePage: React.FC = () => {
   const {
@@ -92,7 +94,8 @@ const CoursePage: React.FC = () => {
       type: "radio",
     },
   ];
-
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
   const menuItems = (course: Course) => {
     const items = [
       {
@@ -126,7 +129,8 @@ const CoursePage: React.FC = () => {
             if (course.is_deleted) {
               handleReActiveCourse(course.id);
             } else {
-              handleDelete(course.id);
+              setIdToDelete(course.id);
+              setOpenConfirm(true);
             }
           },
           sx: { color: course.is_deleted ? "green" : "red" },
@@ -241,6 +245,20 @@ const CoursePage: React.FC = () => {
           )}
         </Paper>
       </Box>
+      <ConfirmDialog
+        open={openConfirm}
+        title="Xác nhận tạm ngưng khóa học"
+        message="Bạn có chắc chắn muốn tạm ngưng khóa học này không? Hành động này có thể ảnh hưởng đến các người dùng đang tham gia khóa học."
+        onClose={() => {
+          setOpenConfirm(false);
+          setIdToDelete(null);
+        }}
+        onConfirm={() => {
+          if (idToDelete) {
+            handleDelete(idToDelete);
+          }
+        }}
+      />
     </>
   );
 };

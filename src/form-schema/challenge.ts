@@ -11,7 +11,11 @@ export interface BasicChallengeFormData {
 
 export const basicChallengeFormSchema: yup.ObjectSchema<BasicChallengeFormData> =
   yup.object().shape({
-    title: yup.string().required("Tiêu đề là bắt buộc"),
+    title: yup
+      .string()
+      .required("Tiêu đề là bắt buộc")
+      .min(3, "Tiêu đề phải có ít nhất 3 ký tự")
+      .max(50, "Tiêu đề không được vượt quá 50 ký tự"),
     description: yup.string().required("Mô tả là bắt buộc"),
     category_id: yup.string().required("Thể loại là bắt buộc"),
     thumbnail_image: yup.string().required("Ảnh thu nhỏ là bắt buộc"),

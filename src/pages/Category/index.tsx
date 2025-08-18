@@ -5,8 +5,9 @@ import {
   Paper,
   TableCell,
   TablePagination,
+  Tooltip,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import TableActionButton from "@components/ui/atoms/TableActionButton";
@@ -21,6 +22,7 @@ import { FilterGroup } from "@interfaces/dom/filter";
 import FilterButton from "@components/ui/molecules/FilterButton";
 import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOutlined";
 import StatusBadge from "@components/ui/atoms/TableBadge";
+import ConfirmDialog from "@components/ui/atoms/ConfirmDialog";
 
 const CategoryPage: React.FC = () => {
   const {
@@ -50,7 +52,10 @@ const CategoryPage: React.FC = () => {
     handleApplyFilters,
     handleReActiveCategory,
   } = useCategoryPage();
-
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [categoryIdToDelete, setCategoryIdToDelete] = useState<string | null>(
+    null
+  );
   const filterGroups: FilterGroup[] = [
     {
       id: "isActive",
@@ -82,7 +87,8 @@ const CategoryPage: React.FC = () => {
         if (category.is_deleted) {
           handleReActiveCategory(category.id);
         } else {
-          handleDelete(category.id);
+          setCategoryIdToDelete(category.id);
+          setOpenConfirm(true);
         }
       },
       sx: { color: category.is_deleted ? "green" : "red" },
@@ -103,7 +109,13 @@ const CategoryPage: React.FC = () => {
               />
             </TableCell>,
             <TableCell key="name" component="th" scope="row" padding="none">
-              {truncateText(row.name, 40)}
+              {row.name && row.name.length > 40 ? (
+                <Tooltip title={row.name} placement="top" arrow>
+                  <span>{truncateText(row.name, 40)}</span>
+                </Tooltip>
+              ) : (
+                truncateText(row.name, 40)
+              )}
             </TableCell>,
             <TableCell
               key="description"
@@ -111,7 +123,13 @@ const CategoryPage: React.FC = () => {
               scope="row"
               padding="none"
             >
-              {truncateText(row.description, 40)}
+              {row.description && row.description.length > 40 ? (
+                <Tooltip title={row.description} placement="top" arrow>
+                  <span>{truncateText(row.description, 40)}</span>
+                </Tooltip>
+              ) : (
+                truncateText(row.description, 40)
+              )}
             </TableCell>,
             <TableCell key="courseCount" align="center">
               {row.courses.length || 0}
@@ -183,6 +201,19 @@ const CategoryPage: React.FC = () => {
         open={openModal}
         onClose={handleCloseModal}
         onSuccess={onActionSuccess}
+      />
+
+      <ConfirmDialog
+        open={openConfirm}
+        onClose={() => {
+          setOpenConfirm(false);
+          setCategoryIdToDelete(null);
+        }}
+        onConfirm={() => {
+          if (categoryIdToDelete) {
+            handleDelete(categoryIdToDelete);
+          }
+        }}
       />
     </>
   );

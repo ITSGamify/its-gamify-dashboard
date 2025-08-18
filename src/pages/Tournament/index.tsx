@@ -8,6 +8,7 @@ import {
   Paper,
   TableCell,
   TablePagination,
+  Tooltip,
 } from "@mui/material";
 import TableActionButton from "@components/ui/atoms/TableActionButton";
 import TableToolbar from "@components/ui/atoms/TableToolbar";
@@ -23,6 +24,8 @@ import { TOURNAMENT_KEY } from "@constants/challenge";
 import { RoleEnum } from "@interfaces/api/user";
 import StatusBadge from "@components/ui/atoms/TableBadge";
 import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOutlined";
+import { useState } from "react";
+import ConfirmDialog from "@components/ui/atoms/ConfirmDialog";
 
 const TournamentPage: React.FC = () => {
   const {
@@ -70,7 +73,8 @@ const TournamentPage: React.FC = () => {
       type: "radio",
     },
   ];
-
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
   const menuItems = (challenge: Challenge) => {
     if (profile?.user.role !== RoleEnum.TRAINER) return [];
     return [
@@ -93,7 +97,8 @@ const TournamentPage: React.FC = () => {
           if (challenge.is_deleted) {
             handleReActiveChallenge(challenge.id);
           } else {
-            handleDelete(challenge.id);
+            setIdToDelete(challenge.id);
+            setOpenConfirm(true);
           }
         },
         sx: { color: challenge.is_deleted ? "green" : "red" },
@@ -129,17 +134,41 @@ const TournamentPage: React.FC = () => {
               }}
             />
           </Box>
-          {truncateText(row.title, 40)}
+          {row.title && row.title.length > 40 ? (
+            <Tooltip title={row.title} placement="top" arrow>
+              <span>{truncateText(row.title, 40)}</span>
+            </Tooltip>
+          ) : (
+            truncateText(row.title, 40)
+          )}
         </Box>
       </TableCell>,
       <TableCell key="description" align="left">
-        {truncateText(row.description, 30)}
+        {row.description && row.description.length > 30 ? (
+          <Tooltip title={row.description} placement="top" arrow>
+            <span>{truncateText(row.description, 30)}</span>
+          </Tooltip>
+        ) : (
+          truncateText(row.description, 30)
+        )}
       </TableCell>,
       <TableCell key="course" align="left">
-        {truncateText(row.course?.title || "", 30)}
+        {row.course?.title && row.course?.title.length > 30 ? (
+          <Tooltip title={row.course?.title} placement="top" arrow>
+            <span>{truncateText(row.course?.title, 30)}</span>
+          </Tooltip>
+        ) : (
+          truncateText(row.course?.title || "", 30)
+        )}
       </TableCell>,
       <TableCell key="course" align="left">
-        {truncateText(row.category?.name || "", 20)}
+        {row.category?.name && row.category?.name.length > 20 ? (
+          <Tooltip title={row.category?.name} placement="top" arrow>
+            <span>{truncateText(row.category?.name, 20)}</span>
+          </Tooltip>
+        ) : (
+          truncateText(row.category?.name || "", 20)
+        )}
       </TableCell>,
       <TableCell key="status" align="center">
         <StatusBadge
@@ -197,6 +226,20 @@ const TournamentPage: React.FC = () => {
           )}
         </Paper>
       </Box>
+      <ConfirmDialog
+        open={openConfirm}
+        title="Xác nhận tạm ngưng thử thách"
+        message="Bạn có chắc chắn muốn tạm ngưng thử thách này không? Hành động này có thể ảnh hưởng đến các người dùng đang tham gia thử thách."
+        onClose={() => {
+          setOpenConfirm(false);
+          setIdToDelete(null);
+        }}
+        onConfirm={() => {
+          if (idToDelete) {
+            handleDelete(idToDelete);
+          }
+        }}
+      />
     </>
   );
 };
