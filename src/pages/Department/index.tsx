@@ -17,6 +17,8 @@ import { useDepartmentPage } from "@hooks/data/useDepartmentPage";
 import userSession from "@utils/user-session";
 import { RoleEnum } from "@interfaces/api/user";
 import ConfirmDialog from "@components/ui/atoms/ConfirmDialog";
+import { toast } from "react-toastify";
+import ToastContent from "@components/ui/atoms/Toast";
 
 const DepartmentPage: React.FC = () => {
   const {
@@ -58,6 +60,14 @@ const DepartmentPage: React.FC = () => {
       icon: <DeleteOutlineIcon color="error" />,
       label: "Xóa phòng ban",
       onClick: () => {
+        if (department.employee_count > 0) {
+          toast.warning(ToastContent, {
+            data: {
+              message: "Phòng ban này còn nhân viên, không thể xóa!",
+            },
+          });
+          return;
+        }
         setIdToDelete(department.id);
         setOpenConfirm(true);
       },

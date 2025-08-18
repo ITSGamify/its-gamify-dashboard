@@ -108,7 +108,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       text: "Danh mục",
       icon: <CategoryIcon />,
       path: PATH.CATEGORIES,
-      isDisabled: profile?.user.role === RoleEnum.TRAINER,
     },
     {
       text: t("account"),

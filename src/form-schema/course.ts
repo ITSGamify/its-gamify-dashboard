@@ -30,9 +30,69 @@ export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
     title: yup
       .string()
       .required("Tiêu đề là bắt buộc")
-      .max(50, "Tiêu đề không được vượt quá 50 ký tự"),
-    short_description: yup.string().required("Mô tả ngắn là bắt buộc"),
-    description: yup.string().required("Mô tả là bắt buộc"),
+      .max(50, "Tiêu đề không được vượt quá 50 ký tự")
+      .test(
+        "no-leading-trailing-spaces",
+        "Tiêu đề không được chứa khoảng trắng ở đầu hoặc cuối",
+        (value) => {
+          if (!value) return true; // Skip if empty (required validation will catch this)
+          return value.trim() === value;
+        }
+      )
+      .test(
+        "no-consecutive-spaces",
+        "Tiêu đề không được chứa nhiều khoảng trắng liên tiếp",
+        (value) => {
+          if (!value) return true; // Skip if empty
+          return !value.includes("  "); // Check for consecutive spaces
+        }
+      )
+      .test(
+        "valid-punctuation",
+        "Tiêu đề không được kết thúc bằng dấu câu (., !, ?)",
+        (value) => {
+          if (!value) return true; // Skip if empty
+          return !/[.!?]$/.test(value); // Check for ending punctuation
+        }
+      ),
+    short_description: yup
+      .string()
+      .required("Mô tả ngắn là bắt buộc")
+      .test(
+        "no-leading-trailing-spaces",
+        "Mô tả ngắn không được chứa khoảng trắng ở đầu hoặc cuối",
+        (value) => {
+          if (!value) return true;
+          return value.trim() === value;
+        }
+      )
+      .test(
+        "no-consecutive-spaces",
+        "Mô tả ngắn không được chứa nhiều khoảng trắng liên tiếp",
+        (value) => {
+          if (!value) return true;
+          return !value.includes("  ");
+        }
+      ),
+    description: yup
+      .string()
+      .required("Mô tả là bắt buộc")
+      .test(
+        "no-leading-trailing-spaces",
+        "Mô tả không được chứa khoảng trắng ở đầu hoặc cuối",
+        (value) => {
+          if (!value) return true;
+          return value.trim() === value;
+        }
+      )
+      .test(
+        "no-consecutive-spaces",
+        "Mô tả không được chứa nhiều khoảng trắng liên tiếp",
+        (value) => {
+          if (!value) return true;
+          return !value.includes("  ");
+        }
+      ),
     thumbnail_image_id: yup.string().required("Ảnh thu nhỏ là bắt buộc"),
     introduction_video_id: yup
       .string()

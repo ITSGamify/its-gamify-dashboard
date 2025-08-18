@@ -12,14 +12,14 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  Badge,
+  // Badge,
   useMediaQuery,
   useTheme,
   Tooltip,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
-  Notifications as NotificationsIcon,
+  // Notifications as NotificationsIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
@@ -36,12 +36,12 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
 }));
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  "& .MuiBadge-badge": {
-    backgroundColor: theme.palette.primary.main,
-    color: "#fff",
-  },
-}));
+// const StyledBadge = styled(Badge)(({ theme }) => ({
+//   "& .MuiBadge-badge": {
+//     backgroundColor: theme.palette.primary.main,
+//     color: "#fff",
+//   },
+// }));
 
 interface HeaderProps {
   onToggleDrawer: () => void;
@@ -68,9 +68,9 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer, isDrawerOpen }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleNotificationMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setNotificationAnchorEl(event.currentTarget);
-  };
+  // const handleNotificationMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  //   setNotificationAnchorEl(event.currentTarget);
+  // };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -250,7 +250,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer, isDrawerOpen }) => {
           <Box sx={{ flexGrow: 1 }} />
 
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Tooltip title="Thông báo">
+            {/* <Tooltip title="Thông báo">
               <IconButton
                 size="large"
                 color="inherit"
@@ -263,7 +263,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleDrawer, isDrawerOpen }) => {
                   <NotificationsIcon />
                 </StyledBadge>
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
 
             <Tooltip title="Tài khoản">
               <IconButton

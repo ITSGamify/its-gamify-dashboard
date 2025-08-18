@@ -23,6 +23,8 @@ import FilterButton from "@components/ui/molecules/FilterButton";
 import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOutlined";
 import StatusBadge from "@components/ui/atoms/TableBadge";
 import ConfirmDialog from "@components/ui/atoms/ConfirmDialog";
+import { toast } from "react-toastify";
+import ToastContent from "@components/ui/atoms/Toast";
 
 const CategoryPage: React.FC = () => {
   const {
@@ -56,6 +58,8 @@ const CategoryPage: React.FC = () => {
   const [categoryIdToDelete, setCategoryIdToDelete] = useState<string | null>(
     null
   );
+  const profile = userSession.getUserProfile();
+
   const filterGroups: FilterGroup[] = [
     {
       id: "isActive",
@@ -68,32 +72,45 @@ const CategoryPage: React.FC = () => {
     },
   ];
 
-  const menuItems = (category: Category) => [
-    {
-      icon: <EditIcon color="action" />,
-      label: "Chỉnh sửa",
-      onClick: () => {
-        handleUpdate(category);
+  const menuItems = (category: Category) => {
+    if (profile?.user.role !== RoleEnum.TRAINER) return [];
+    return [
+      {
+        icon: <EditIcon color="action" />,
+        label: "Chỉnh sửa",
+        onClick: () => {
+          handleUpdate(category);
+        },
       },
-    },
-    {
-      icon: category.is_deleted ? (
-        <PowerSettingsNewOutlinedIcon color="success" />
-      ) : (
-        <DeleteOutlineIcon color="error" />
-      ),
-      label: category.is_deleted ? "  Kích hoạt" : "Tạm ngưng",
-      onClick: () => {
-        if (category.is_deleted) {
-          handleReActiveCategory(category.id);
-        } else {
-          setCategoryIdToDelete(category.id);
-          setOpenConfirm(true);
-        }
+      {
+        icon: category.is_deleted ? (
+          <PowerSettingsNewOutlinedIcon color="success" />
+        ) : (
+          <DeleteOutlineIcon color="error" />
+        ),
+        label: category.is_deleted ? "  Kích hoạt" : "Tạm ngưng",
+        onClick: () => {
+          if (category.is_deleted) {
+            handleReActiveCategory(category.id);
+          } else {
+            if (category.courses.length > 0) {
+              toast.warning(ToastContent, {
+                data: {
+                  message:
+                    "Danh mục này đang được áp dụng cho khóa học hoặc giải đấu khác, không thể xóa!",
+                },
+              });
+              return;
+            }
+
+            setCategoryIdToDelete(category.id);
+            setOpenConfirm(true);
+          }
+        },
+        sx: { color: category.is_deleted ? "green" : "red" },
       },
-      sx: { color: category.is_deleted ? "green" : "red" },
-    },
-  ];
+    ];
+  };
 
   const dataTable =
     categories.length > 0
@@ -150,7 +167,6 @@ const CategoryPage: React.FC = () => {
         })
       : [];
   //#endregion
-  const profile = userSession.getUserProfile();
   return (
     <>
       <Box sx={{ width: "100%" }}>
