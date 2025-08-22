@@ -239,7 +239,9 @@ export const useAccountPage = () => {
   return {
     accounts,
     refetchAccounts: refetch,
-    isLoading: isLoading || isRoleLoading || isLoadingDepartment,
+    isRoleLoading,
+    isLoadingDepartment,
+    isLoading: isLoading,
     handleApplyFilters,
     activePage,
     rowsPerPage,
@@ -264,7 +266,6 @@ export const useAccountPage = () => {
     roles: (roles?.data || []).filter(
       (role) => role.name === RoleEnum.EMPLOYEE || role.name === RoleEnum.LEADER
     ),
-    isRoleLoading,
     total_page_count,
     page_index,
     page_size,
