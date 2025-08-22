@@ -182,80 +182,34 @@ const StatisticPage: React.FC = () => {
       sx={{
         minHeight: "100vh",
         background: theme.palette.background.default,
-        py: 3,
+        py: 0,
         px: { xs: 2, md: 3 },
       }}
     >
-      {/* Header với dropdown chọn quý */}
       <Card
         sx={{
-          mb: 4,
-          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-          color: theme.palette.primary.contrastText,
-          position: "relative",
-          overflow: "hidden",
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            top: 0,
-            right: 0,
-            width: "200px",
-            height: "200px",
-            background: `rgba(255,255,255,0.1)`,
-            borderRadius: "50%",
-            transform: "translate(50%, -50%)",
-          },
+          mb: 3,
+          backgroundColor: theme.palette.background.paper,
+          color: theme.palette.text.primary,
+          boxShadow: theme.shadows[4],
         }}
       >
-        <CardContent sx={{ p: 4, position: "relative", zIndex: 1 }}>
+        <CardContent sx={{ p: 3 }}>
           <Typography
-            variant="h3"
-            gutterBottom
+            variant="h4"
             sx={{
-              fontWeight: 700,
-              mb: 1,
-              textAlign: { xs: "center", md: "left" },
-            }}
-          >
-            📊 Dashboard Manager
-          </Typography>
-          <Typography
-            variant="h6"
-            sx={{
-              opacity: 0.9,
-              mb: 4,
+              mb: 3, // Giảm margin bottom
               textAlign: { xs: "center", md: "left" },
             }}
           >
             Thống kê học tập và thử thách theo phòng ban
           </Typography>
-
-          <Grid container spacing={3}>
+          <Grid container spacing={2}>
             <Grid size={{ xs: 12, md: 6 }}>
-              <FormControl
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "rgba(255,255,255,0.95)",
-                    borderRadius: theme.shape.borderRadius,
-                    "& fieldset": {
-                      borderColor: "rgba(255,255,255,0.3)",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "rgba(255,255,255,0.5)",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "rgba(255,255,255,0.8)",
-                    },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: theme.palette.text.primary,
-                    fontWeight: 600,
-                  },
-                }}
-              >
-                <InputLabel>📅 Chọn năm</InputLabel>
+              <FormControl fullWidth>
+                <InputLabel id="year-select-label">📅 Chọn năm</InputLabel>
                 <Select
+                  labelId="year-select-label"
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value as number)}
                   label="📅 Chọn năm"
@@ -268,32 +222,11 @@ const StatisticPage: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid>
-
             <Grid size={{ xs: 12, md: 6 }}>
-              <FormControl
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "rgba(255,255,255,0.95)",
-                    borderRadius: theme.shape.borderRadius,
-                    "& fieldset": {
-                      borderColor: "rgba(255,255,255,0.3)",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "rgba(255,255,255,0.5)",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "rgba(255,255,255,0.8)",
-                    },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: theme.palette.text.primary,
-                    fontWeight: 600,
-                  },
-                }}
-              >
-                <InputLabel>🗓️ Chọn quý</InputLabel>
+              <FormControl fullWidth>
+                <InputLabel id="quarter-select-label">🗓️ Chọn quý</InputLabel>
                 <Select
+                  labelId="quarter-select-label"
                   value={selectedQuarter}
                   onChange={(e) => setSelectedQuarter(e.target.value as string)}
                   label="🗓️ Chọn quý"
