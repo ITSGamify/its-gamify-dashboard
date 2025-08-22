@@ -18,6 +18,7 @@ import {
   CircularProgress,
   Tabs,
   Tab,
+  useTheme,
 } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { useGetQuaters } from "@services/quater";
@@ -28,6 +29,7 @@ import TopPerformersCard from "@components/ui/molecules/TopPerformersCard";
 import LearningStatsCard from "@components/ui/molecules/LearningStatsCard";
 
 const StatisticPage: React.FC = () => {
+  const theme = useTheme();
   const [selectedYear, setSelectedYear] = useState<number>(
     new Date().getFullYear()
   );
@@ -89,7 +91,7 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Tổng Điểm",
-        color: "#1976d2",
+        color: theme.palette.primary.main,
       },
       {
         data: aggregatedData.map((item) => {
@@ -102,7 +104,7 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Khóa Học Tham Gia",
-        color: "#4caf50", // Green
+        color: theme.palette.info.main,
       },
       {
         data: aggregatedData.map((item) => {
@@ -115,7 +117,7 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Khóa Học Hoàn Thành",
-        color: "#ffeb3b", // Yellow
+        color: theme.palette.warning.main,
       },
       {
         data: aggregatedData.map((item) => {
@@ -128,7 +130,7 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Thử Thách Tham Gia",
-        color: "#f44336", // Red
+        color: theme.palette.error.main,
       },
       {
         data: aggregatedData.map((item) => {
@@ -141,17 +143,32 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Giải Thưởng Thử Thách",
-        color: "#9c27b0", // Purple
+        color: theme.palette.secondary.main,
       },
     ];
     return { deptNames, series };
-  }, [aggregatedData]);
+  }, [aggregatedData, theme.palette]);
 
   // Hiển thị loading khi đang tải dữ liệu
   if (isLoadingQuarters || isLoadingDepartments) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <CircularProgress />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <CircularProgress
+          size={60}
+          sx={{ color: theme.palette.primary.main }}
+        />
+        <Typography variant="body1" color="text.secondary">
+          Đang tải dữ liệu thống kê...
+        </Typography>
       </Box>
     );
   }
@@ -164,18 +181,17 @@ const StatisticPage: React.FC = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-        backgroundAttachment: "fixed",
+        background: theme.palette.background.default,
+        py: 3,
+        px: { xs: 2, md: 3 },
       }}
     >
       {/* Header với dropdown chọn quý */}
-      <Box
+      <Card
         sx={{
           mb: 4,
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          borderRadius: 3,
-          p: 4,
-          color: "white",
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          color: theme.palette.primary.contrastText,
           position: "relative",
           overflow: "hidden",
           "&::before": {
@@ -185,138 +201,163 @@ const StatisticPage: React.FC = () => {
             right: 0,
             width: "200px",
             height: "200px",
-            background: "rgba(255,255,255,0.1)",
+            background: `rgba(255,255,255,0.1)`,
             borderRadius: "50%",
             transform: "translate(50%, -50%)",
           },
         }}
       >
-        <Typography
-          variant="h3"
-          gutterBottom
-          sx={{ fontWeight: 700, position: "relative", zIndex: 1 }}
-        >
-          📊 Dashboard Manager
-        </Typography>
-        <Typography
-          variant="h6"
-          sx={{ opacity: 0.9, mb: 3, position: "relative", zIndex: 1 }}
-        >
-          Thống kê học tập và thử thách theo phòng ban
-        </Typography>
+        <CardContent sx={{ p: 4, position: "relative", zIndex: 1 }}>
+          <Typography
+            variant="h3"
+            gutterBottom
+            sx={{
+              fontWeight: 700,
+              mb: 1,
+              textAlign: { xs: "center", md: "left" },
+            }}
+          >
+            📊 Dashboard Manager
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              opacity: 0.9,
+              mb: 4,
+              textAlign: { xs: "center", md: "left" },
+            }}
+          >
+            Thống kê học tập và thử thách theo phòng ban
+          </Typography>
 
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormControl
-              fullWidth
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: "rgba(255,255,255,0.9)",
-                  borderRadius: 2,
-                  "& fieldset": {
-                    borderColor: "rgba(255,255,255,0.3)",
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControl
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "rgba(255,255,255,0.95)",
+                    borderRadius: theme.shape.borderRadius,
+                    "& fieldset": {
+                      borderColor: "rgba(255,255,255,0.3)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "rgba(255,255,255,0.5)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "rgba(255,255,255,0.8)",
+                    },
                   },
-                  "&:hover fieldset": {
-                    borderColor: "rgba(255,255,255,0.5)",
+                  "& .MuiInputLabel-root": {
+                    color: theme.palette.text.primary,
+                    fontWeight: 600,
                   },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "rgba(0,0,0,0.7)",
-                },
-              }}
-            >
-              <InputLabel>📅 Chọn năm</InputLabel>
-              <Select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value as number)}
-                label="📅 Chọn năm"
+                }}
               >
-                {availableYears.map((year) => (
-                  <MenuItem key={year} value={year}>
-                    Năm {year}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+                <InputLabel>📅 Chọn năm</InputLabel>
+                <Select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value as number)}
+                  label="📅 Chọn năm"
+                >
+                  {availableYears.map((year) => (
+                    <MenuItem key={year} value={year}>
+                      Năm {year}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
 
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormControl
-              fullWidth
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: "rgba(255,255,255,0.9)",
-                  borderRadius: 2,
-                  "& fieldset": {
-                    borderColor: "rgba(255,255,255,0.3)",
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControl
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "rgba(255,255,255,0.95)",
+                    borderRadius: theme.shape.borderRadius,
+                    "& fieldset": {
+                      borderColor: "rgba(255,255,255,0.3)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "rgba(255,255,255,0.5)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "rgba(255,255,255,0.8)",
+                    },
                   },
-                  "&:hover fieldset": {
-                    borderColor: "rgba(255,255,255,0.5)",
+                  "& .MuiInputLabel-root": {
+                    color: theme.palette.text.primary,
+                    fontWeight: 600,
                   },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "rgba(0,0,0,0.7)",
-                },
-              }}
-            >
-              <InputLabel>🗓️ Chọn quý</InputLabel>
-              <Select
-                value={selectedQuarter}
-                onChange={(e) => setSelectedQuarter(e.target.value as string)}
-                label="🗓️ Chọn quý"
-                disabled={quartersByYear.length === 0}
+                }}
               >
-                {quartersByYear.map((quarter) => (
-                  <MenuItem key={quarter.id} value={quarter.id}>
-                    {quarter.name} ({formatUtcToLocal(quarter.start_date)} đến{" "}
-                    {formatUtcToLocal(quarter.end_date)})
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                <InputLabel>🗓️ Chọn quý</InputLabel>
+                <Select
+                  value={selectedQuarter}
+                  onChange={(e) => setSelectedQuarter(e.target.value as string)}
+                  label="🗓️ Chọn quý"
+                  disabled={quartersByYear.length === 0}
+                >
+                  {quartersByYear.map((quarter) => (
+                    <MenuItem key={quarter.id} value={quarter.id}>
+                      {quarter.name} ({formatUtcToLocal(quarter.start_date)} đến{" "}
+                      {formatUtcToLocal(quarter.end_date)})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </CardContent>
+      </Card>
 
       {!selectedQuarter ? (
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 4 }}>
-          Vui lòng chọn năm và quý để xem thống kê.
-        </Typography>
+        <Card sx={{ textAlign: "center", py: 6 }}>
+          <CardContent>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+              📅 Vui lòng chọn năm và quý để xem thống kê
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Chọn thời gian để hiển thị dữ liệu thống kê chi tiết
+            </Typography>
+          </CardContent>
+        </Card>
       ) : aggregatedData.length === 0 ? (
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 4 }}>
-          Không có dữ liệu thống kê cho quý này.
-        </Typography>
+        <Card sx={{ textAlign: "center", py: 6 }}>
+          <CardContent>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+              📊 Không có dữ liệu thống kê cho quý này
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Vui lòng thử chọn quý khác hoặc kiểm tra lại dữ liệu
+            </Typography>
+          </CardContent>
+        </Card>
       ) : (
         <>
           {/* Tabs để chuyển đổi giữa các view */}
-          <Box
-            sx={{
-              borderBottom: 1,
-              borderColor: "divider",
-              mb: 4,
-              background: "rgba(255,255,255,0.8)",
-              backdropFilter: "blur(10px)",
-              borderRadius: "12px 12px 0 0",
-              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-            }}
-          >
+          <Card sx={{ mb: 4 }}>
             <Tabs
               value={activeTab}
               onChange={handleTabChange}
               sx={{
+                px: 3,
+                pt: 2,
                 "& .MuiTab-root": {
                   textTransform: "none",
                   fontWeight: 600,
                   fontSize: "1rem",
-                  color: "#666",
+                  color: theme.palette.text.secondary,
+                  minHeight: 56,
                   "&.Mui-selected": {
-                    color: "#1976d2",
+                    color: theme.palette.primary.main,
                   },
                 },
                 "& .MuiTabs-indicator": {
                   height: 3,
                   borderRadius: "3px 3px 0 0",
-                  background: "linear-gradient(90deg, #1976d2, #42a5f5)",
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
                 },
               }}
             >
@@ -324,7 +365,7 @@ const StatisticPage: React.FC = () => {
               <Tab label="📊 Thống kê chi tiết" />
               <Tab label="📋 Biểu đồ" />
             </Tabs>
-          </Box>
+          </Card>
 
           {/* Tab 1: Tổng quan */}
           {activeTab === 0 && (
@@ -341,19 +382,31 @@ const StatisticPage: React.FC = () => {
 
               {/* Department Stats Cards */}
               <Grid size={{ xs: 12 }}>
-                <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-                  Thống kê theo phòng ban
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{
+                    mt: 3,
+                    mb: 3,
+                    color: theme.palette.text.primary,
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  🏢 Thống kê theo phòng ban
                 </Typography>
                 {aggregatedData.length === 0 ? (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ textAlign: "center", py: 4 }}
-                  >
-                    Chưa có dữ liệu phòng ban
-                  </Typography>
+                  <Card sx={{ textAlign: "center", py: 4 }}>
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary">
+                        Chưa có dữ liệu phòng ban
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 ) : (
-                  <Grid container spacing={2}>
+                  <Grid container spacing={3}>
                     {aggregatedData.map((department) => (
                       <Grid size={{ xs: 12, md: 6, lg: 4 }} key={department.id}>
                         <DepartmentStatsCard department={department} />
@@ -369,20 +422,41 @@ const StatisticPage: React.FC = () => {
           {activeTab === 1 && (
             <Grid container spacing={3}>
               <Grid size={{ xs: 12 }}>
-                <Card sx={{ boxShadow: 3 }}>
+                <Card>
                   <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Bảng thống kê chi tiết
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      sx={{
+                        mb: 3,
+                        color: theme.palette.text.primary,
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      📊 Bảng thống kê chi tiết
                     </Typography>
                     <TableContainer>
                       <Table>
                         <TableHead>
                           <TableRow>
-                            <TableCell>Phòng Ban</TableCell>
-                            <TableCell>Số Khóa Học Tham Gia</TableCell>
-                            <TableCell>Số Khóa Học Hoàn Thành</TableCell>
-                            <TableCell>Số Thử Thách Tham Gia</TableCell>
-                            <TableCell>Tổng Điểm Trong Quý</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>
+                              Phòng Ban
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>
+                              Số Khóa Học Tham Gia
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>
+                              Số Khóa Học Hoàn Thành
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>
+                              Số Thử Thách Tham Gia
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>
+                              Tổng Điểm Trong Quý
+                            </TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -444,12 +518,43 @@ const StatisticPage: React.FC = () => {
                             return (
                               <TableRow key={item.id}>
                                 <TableCell>
-                                  {item.name} ({item.users.length} nhân viên)
+                                  <Typography
+                                    variant="subtitle1"
+                                    fontWeight={600}
+                                  >
+                                    {item.name}
+                                  </Typography>
+                                  <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                  >
+                                    {item.users.length} nhân viên
+                                  </Typography>
                                 </TableCell>
-                                <TableCell>{courseParticipatedNum}</TableCell>
-                                <TableCell>{courseCompletedNum}</TableCell>
-                                <TableCell>{challengeParticipateNum}</TableCell>
-                                <TableCell>{pointInQuarter}</TableCell>
+                                <TableCell>
+                                  <Typography variant="body1" fontWeight={500}>
+                                    {courseParticipatedNum}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>
+                                  <Typography variant="body1" fontWeight={500}>
+                                    {courseCompletedNum}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>
+                                  <Typography variant="body1" fontWeight={500}>
+                                    {challengeParticipateNum}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>
+                                  <Typography
+                                    variant="body1"
+                                    fontWeight={600}
+                                    sx={{ color: theme.palette.primary.main }}
+                                  >
+                                    {pointInQuarter.toLocaleString()}
+                                  </Typography>
+                                </TableCell>
                               </TableRow>
                             );
                           })}
@@ -467,10 +572,21 @@ const StatisticPage: React.FC = () => {
             <Grid container spacing={3}>
               {/* Biểu đồ cột tổng hợp */}
               <Grid size={{ xs: 12 }}>
-                <Card sx={{ boxShadow: 3 }}>
+                <Card>
                   <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Biểu Đồ So Sánh Giữa Các Phòng Ban
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      sx={{
+                        mb: 3,
+                        color: theme.palette.text.primary,
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      📈 Biểu Đồ So Sánh Giữa Các Phòng Ban
                     </Typography>
                     <BarChart
                       xAxis={[{ scaleType: "band", data: chartData.deptNames }]}
@@ -489,10 +605,21 @@ const StatisticPage: React.FC = () => {
 
               {/* Biểu đồ cột thử thách */}
               <Grid size={{ xs: 12 }}>
-                <Card sx={{ boxShadow: 3 }}>
+                <Card>
                   <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Biểu Đồ Tham Gia Thử Thách Theo Phòng Ban
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      sx={{
+                        mb: 3,
+                        color: theme.palette.text.primary,
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      🎯 Biểu Đồ Tham Gia Thử Thách Theo Phòng Ban
                     </Typography>
                     <BarChart
                       xAxis={[
@@ -514,7 +641,7 @@ const StatisticPage: React.FC = () => {
                             )
                           ),
                           label: "Lần tham gia thử thách",
-                          color: "#d32f2f",
+                          color: theme.palette.error.main,
                         },
                       ]}
                       height={400}
