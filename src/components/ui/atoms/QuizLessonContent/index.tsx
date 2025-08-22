@@ -115,7 +115,7 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
                   handleFileUpload(e, field.onChange);
                 }}
               />
-              <Box display="flex" alignItems="center">
+              <Box display="flex" alignItems="center" gap={2}>
                 <label
                   htmlFor={`quiz-file-upload-${moduleIndex}-${lessonIndex}`}
                 >
@@ -129,12 +129,20 @@ const QuizLessonContent: React.FC<QuizLessonContentProps> = ({
                     Tải lên file Excel
                   </Button>
                 </label>
+
                 {quizQuestions.length > 0 && (
-                  <Typography variant="body1" sx={{ ml: 2 }}>
+                  <Typography variant="body1">
                     {`Tổng số câu hỏi: ${quizQuestions.length}`}
                   </Typography>
                 )}
               </Box>
+              <a
+                href="/templates/quiz-template.xlsx" // Giả sử file template được lưu trong thư mục public/templates
+                download="quiz-template.xlsx"
+                style={{ textDecoration: "underline", color: "blueviolet" }}
+              >
+                Tải template mẫu
+              </a>
               {fileError && (
                 <Alert severity="error" sx={{ mt: 1 }}>
                   {fileError}

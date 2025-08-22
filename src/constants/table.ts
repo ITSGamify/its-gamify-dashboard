@@ -239,7 +239,7 @@ export const CATEGORIES_TABLE_HEAD = [
     align: "center",
     disablePadding: true,
     disableSort: true,
-    label: "Giải đấu",
+    label: "Thử thách",
   },
   {
     id: "status",

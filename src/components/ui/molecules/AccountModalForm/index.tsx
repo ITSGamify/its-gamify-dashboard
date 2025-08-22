@@ -201,7 +201,7 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
     >
       <StyledDialogTitle id="create-user-dialog-title">
         <Typography variant="h6" component="div" fontWeight={600}>
-          Tạo tài khoản mới
+          {data ? "Cập nhật tài khoản" : "Tạo tài khoản"}
         </Typography>
         <IconButton aria-label="close" onClick={handleClose} size="small">
           <CloseIcon />
@@ -307,7 +307,6 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                     fullWidth
                     label="Email"
                     name="email"
-                    type="email"
                     value={field.value}
                     onChange={field.onChange}
                     error={!!error}

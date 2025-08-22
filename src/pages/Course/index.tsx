@@ -175,9 +175,7 @@ const CoursePage: React.FC = () => {
       <TableCell key="classify" align="left">
         {getClassifyInVietnamese(row.classify)}
       </TableCell>,
-      // <TableCell key="department" align="left">
-      //   {truncateText(row.deparment?.name || "", 40)}
-      // </TableCell>,
+
       <TableCell key="step" align="left">
         {row.drafted
           ? "Đang chỉnh sửa"
@@ -191,8 +189,16 @@ const CoursePage: React.FC = () => {
       </TableCell>,
       <TableCell key="status" align="center">
         <StatusBadge
-          status={row.is_deleted ? "CANCELLED" : "ACTIVE"}
-          label={row.is_deleted ? "Đã ngừng" : "Hoạt động"}
+          status={
+            row.drafted ? "DISABLE" : row.is_deleted ? "CANCELLED" : "ACTIVE"
+          }
+          label={
+            row.drafted
+              ? "Đang bị khóa"
+              : row.is_deleted
+              ? "Đã ngừng"
+              : "Hoạt động"
+          }
         />
       </TableCell>,
       <TableCell key="action" align="right">

@@ -34,21 +34,46 @@ export const accountFormScheme: yup.ObjectSchema<AccountFormScheme> =
       ),
     email: yup
       .string()
-      .email("Email không hợp lệ")
       .required("Nhập email")
       .max(50, "Email không được vượt quá 50 ký tự")
+      .test(
+        "no-leading-trailing-spaces",
+        "Email không được chứa khoảng trắng ở đầu hoặc cuối",
+        (value) => {
+          if (!value) return true; // Skip if empty
+          return value.trim() === value;
+        }
+      )
       .test("no-spaces", "Email không được chứa khoảng trắng", (value) => {
         if (!value) return true; // Skip if empty
         return !value.includes(" "); // Email shouldn't contain any spaces
-      }),
+      })
+      .email("Email không hợp lệ"),
     role_id: yup.string().required("Chọn quyền hạn"),
     department_id: yup.string().required("Chọn phòng ban"),
     password: yup
       .string()
-      .min(6, "Mật khẩu phải có ít nhất 6 ký tự")
       .required("Nhập mật khẩu")
+      .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+      .max(32, "Mật khẩu không được vượt quá 32 ký tự")
       .test("no-spaces", "Mật khẩu không được chứa khoảng trắng", (value) => {
         if (!value) return true;
         return !value.includes(" ");
-      }),
+      })
+      .test(
+        "has-uppercase",
+        "Mật khẩu phải chứa ít nhất 1 ký tự viết hoa",
+        (value) => {
+          if (!value) return true;
+          return /[A-Z]/.test(value);
+        }
+      )
+      .test(
+        "has-special-char",
+        "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (~!@#$%^&*())",
+        (value) => {
+          if (!value) return true;
+          return /([~!@#$%^&*()])/.test(value);
+        }
+      ),
   });
