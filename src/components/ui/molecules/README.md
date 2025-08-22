@@ -45,7 +45,6 @@ import LearningStatsCard from "@components/ui/molecules/LearningStatsCard";
 ### 4. ChallengeStatsCard
 Hiển thị thống kê thử thách từ API (Tổng hợp toàn bộ phòng ban):
 - Summary stats (Lần tham gia, Điểm TB)
-- Biểu đồ đường xu hướng theo tuần (chỉ hiển thị lần tham gia)
 - **Lưu ý**: Data này match với bảng "Thống kê chi tiết" ở tab 2
 
 ```tsx
@@ -62,7 +61,9 @@ Page Statistics đã được cập nhật với 3 tabs:
 2. **Thống kê chi tiết**: 
    - ChallengeStatsCard: Thống kê tổng hợp toàn bộ phòng ban
    - Bảng chi tiết: Thống kê theo từng phòng ban riêng biệt
-3. **Biểu đồ**: Biểu đồ cột so sánh giữa các phòng ban
+3. **Biểu đồ**: 
+   - Biểu đồ cột tổng hợp so sánh giữa các phòng ban
+   - Biểu đồ cột tham gia thử thách theo phòng ban
 
 **Lưu ý**: ChallengeStatsCard và Bảng thống kê chi tiết hiện đã match với nhau:
 - ChallengeStatsCard: Tổng số lần tham gia/thắng của tất cả phòng ban

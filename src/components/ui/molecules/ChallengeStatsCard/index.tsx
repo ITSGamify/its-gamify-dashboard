@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Card, CardContent, Typography, Box, Grid, Chip } from "@mui/material";
-import { LineChart } from "@mui/x-charts/LineChart";
+import { BarChart } from "@mui/x-charts/BarChart";
 import { DepartmentStat } from "@interfaces/api/department";
 
 interface ChallengeStatsCardProps {
@@ -30,34 +30,20 @@ const ChallengeStatsCard: React.FC<ChallengeStatsCardProps> = ({
         (user) => user.user_metrics && user.user_metrics.length > 0
       ).length || 0;
 
-  // Tạo data cho biểu đồ đường từ dữ liệu thực tế API
-  const weeklyData = useMemo(() => {
-    // Tạo 6 tuần với data thực tế từ API
-    const weeks = [];
-    for (let week = 1; week <= 6; week++) {
-      // Sử dụng data thực tế từ API để tạo xu hướng
-      const baseParticipants = totalParticipants;
-
-      // Tạo xu hướng dựa trên data thực tế (không dùng Math.random)
-      // Tuần 1-3: Tăng dần, Tuần 4-6: Giảm dần
-      let participantVariation;
-
-      if (week <= 3) {
-        // Tuần 1-3: Tăng dần
-        participantVariation = baseParticipants * (0.7 + week * 0.1);
-      } else {
-        // Tuần 4-6: Giảm dần
-        participantVariation = baseParticipants * (1.0 - (week - 3) * 0.1);
-      }
-
-      weeks.push({
-        week,
-        participants: Math.round(participantVariation),
-      });
-    }
-
-    return weeks;
-  }, [totalParticipants]);
+  // Tạo data cho biểu đồ cột từ dữ liệu thực tế API
+  const chartData = useMemo(() => {
+    // Hiển thị data thực từ API - so sánh giữa các phòng ban
+    return {
+      departments: departments.map((dept) => dept.name),
+      participants: departments.map((dept) =>
+        dept.users.reduce(
+          (total, user) =>
+            total + (user.user_metrics?.[0]?.challenge_participate_num || 0),
+          0
+        )
+      ),
+    };
+  }, [departments]);
 
   return (
     <Card sx={{ boxShadow: 2 }}>
@@ -90,29 +76,6 @@ const ChallengeStatsCard: React.FC<ChallengeStatsCardProps> = ({
             </Box>
           </Grid>
         </Grid>
-
-        {/* Line Chart */}
-        <Box sx={{ height: 300 }}>
-          <Typography variant="subtitle1" gutterBottom>
-            Xu hướng theo tuần
-          </Typography>
-          <LineChart
-            xAxis={[
-              {
-                data: weeklyData.map((d) => d.week),
-                label: "Tuần",
-              },
-            ]}
-            series={[
-              {
-                data: weeklyData.map((d) => d.participants),
-                label: "Lần tham gia",
-                color: "#1976d2",
-              },
-            ]}
-            height={250}
-          />
-        </Box>
       </CardContent>
     </Card>
   );

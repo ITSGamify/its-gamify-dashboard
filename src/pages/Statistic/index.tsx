@@ -26,7 +26,6 @@ import { formatUtcToLocal } from "@utils/date";
 import DepartmentStatsCard from "@components/ui/molecules/DepartmentStatsCard";
 import TopPerformersCard from "@components/ui/molecules/TopPerformersCard";
 import LearningStatsCard from "@components/ui/molecules/LearningStatsCard";
-import ChallengeStatsCard from "@components/ui/molecules/ChallengeStatsCard";
 
 const StatisticPage: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<number>(
@@ -103,7 +102,7 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Khóa Học Tham Gia",
-        color: "#388e3c",
+        color: "#4caf50", // Green
       },
       {
         data: aggregatedData.map((item) => {
@@ -116,7 +115,7 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Khóa Học Hoàn Thành",
-        color: "#fbc02d",
+        color: "#ffeb3b", // Yellow
       },
       {
         data: aggregatedData.map((item) => {
@@ -129,7 +128,7 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Thử Thách Tham Gia",
-        color: "#d32f2f",
+        color: "#f44336", // Red
       },
       {
         data: aggregatedData.map((item) => {
@@ -142,7 +141,7 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Giải Thưởng Thử Thách",
-        color: "#7b1fa2",
+        color: "#9c27b0", // Purple
       },
     ];
     return { deptNames, series };
@@ -370,10 +369,6 @@ const StatisticPage: React.FC = () => {
           {activeTab === 1 && (
             <Grid container spacing={3}>
               <Grid size={{ xs: 12 }}>
-                <ChallengeStatsCard departments={aggregatedData} />
-              </Grid>
-
-              <Grid size={{ xs: 12 }}>
                 <Card sx={{ boxShadow: 3 }}>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
@@ -470,6 +465,7 @@ const StatisticPage: React.FC = () => {
           {/* Tab 3: Biểu đồ */}
           {activeTab === 2 && (
             <Grid container spacing={3}>
+              {/* Biểu đồ cột tổng hợp */}
               <Grid size={{ xs: 12 }}>
                 <Card sx={{ boxShadow: 3 }}>
                   <CardContent>
@@ -479,6 +475,48 @@ const StatisticPage: React.FC = () => {
                     <BarChart
                       xAxis={[{ scaleType: "band", data: chartData.deptNames }]}
                       series={chartData.series}
+                      height={400}
+                      slotProps={{
+                        legend: {
+                          direction: "horizontal",
+                          position: { vertical: "top", horizontal: "center" },
+                        },
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/* Biểu đồ cột thử thách */}
+              <Grid size={{ xs: 12 }}>
+                <Card sx={{ boxShadow: 3 }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Biểu Đồ Tham Gia Thử Thách Theo Phòng Ban
+                    </Typography>
+                    <BarChart
+                      xAxis={[
+                        {
+                          scaleType: "band",
+                          data: aggregatedData.map((dept) => dept.name),
+                          label: "Phòng ban",
+                        },
+                      ]}
+                      series={[
+                        {
+                          data: aggregatedData.map((dept) =>
+                            dept.users.reduce(
+                              (total, user) =>
+                                total +
+                                (user.user_metrics?.[0]
+                                  ?.challenge_participate_num || 0),
+                              0
+                            )
+                          ),
+                          label: "Lần tham gia thử thách",
+                          color: "#d32f2f",
+                        },
+                      ]}
                       height={400}
                       slotProps={{
                         legend: {
