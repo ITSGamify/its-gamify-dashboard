@@ -16,14 +16,25 @@ import {
   InputLabel,
   Grid,
   CircularProgress,
+  Tabs,
+  Tab,
+  useTheme,
 } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { useGetQuaters } from "@services/quater";
 import { useGetStatistics } from "@services/department";
 import { formatUtcToLocal } from "@utils/date";
+import DepartmentStatsCard from "@components/ui/molecules/DepartmentStatsCard";
+import TopPerformersCard from "@components/ui/molecules/TopPerformersCard";
+import LearningStatsCard from "@components/ui/molecules/LearningStatsCard";
 
 const StatisticPage: React.FC = () => {
-  const [selectedQuarterId, setSelectedQuarterId] = useState<string>("");
+  const theme = useTheme();
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
+  const [selectedQuarter, setSelectedQuarter] = useState<string>("");
+  const [activeTab, setActiveTab] = useState(0);
 
   const { data: quarterDatas, isLoading: isLoadingQuarters } = useGetQuaters({
     page: 0,
@@ -32,27 +43,38 @@ const StatisticPage: React.FC = () => {
 
   const { data: departmentDatas, isLoading: isLoadingDepartments } =
     useGetStatistics({
-      quarterId: selectedQuarterId,
+      quarterId: selectedQuarter,
       page: 0,
       limit: 100,
       q: "",
     });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const quarters = quarterDatas?.data || [];
-
   const departments = departmentDatas?.data || [];
-  // Sử dụng departments trực tiếp làm aggregatedData
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const aggregatedData = departments || [];
 
-  // Chọn quý mặc định (quý mới nhất) khi quarters tải xong
+  // Lấy danh sách năm từ quarters
+  const availableYears = useMemo(() => {
+    const years = [...new Set(quarters.map((q) => q.year))].sort(
+      (a, b) => b - a
+    );
+    return years;
+  }, [quarters]);
+
+  // Lấy quarters theo năm đã chọn
+  const quartersByYear = useMemo(() => {
+    return quarters.filter((q) => q.year === selectedYear);
+  }, [quarters, selectedYear]);
+
+  // Chọn quý mặc định khi năm thay đổi
   useEffect(() => {
-    if (quarters?.length > 0 && !selectedQuarterId) {
-      const latestQuarter = quarters[quarters.length - 1];
-      setSelectedQuarterId(latestQuarter.id);
+    if (quartersByYear.length > 0) {
+      const latestQuarter = quartersByYear[quartersByYear.length - 1];
+      setSelectedQuarter(latestQuarter.id);
+    } else {
+      setSelectedQuarter("");
     }
-  }, [quarters, selectedQuarterId]);
+  }, [quartersByYear]);
 
   // Prepare data cho BarChart
   const chartData = useMemo(() => {
@@ -60,9 +82,7 @@ const StatisticPage: React.FC = () => {
     const series = [
       {
         data: aggregatedData.map((item) => {
-          // Tính tổng điểm từ tất cả users trong department
           return item.users.reduce((total, user) => {
-            // Lấy point_in_quarter từ phần tử đầu tiên trong user_metrics (nếu có)
             const pointInQuarter =
               user.user_metrics && user.user_metrics.length > 0
                 ? user.user_metrics[0].point_in_quarter
@@ -71,13 +91,11 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Tổng Điểm",
-        color: "#1976d2",
+        color: theme.palette.primary.main,
       },
       {
         data: aggregatedData.map((item) => {
-          // Tính tổng điểm từ tất cả users trong department
           return item.users.reduce((total, user) => {
-            // Lấy point_in_quarter từ phần tử đầu tiên trong user_metrics (nếu có)
             const pointInQuarter =
               user.user_metrics && user.user_metrics.length > 0
                 ? user.user_metrics[0].course_participated_num
@@ -86,13 +104,11 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Khóa Học Tham Gia",
-        color: "#388e3c",
+        color: theme.palette.info.main,
       },
       {
         data: aggregatedData.map((item) => {
-          // Tính tổng điểm từ tất cả users trong department
           return item.users.reduce((total, user) => {
-            // Lấy point_in_quarter từ phần tử đầu tiên trong user_metrics (nếu có)
             const pointInQuarter =
               user.user_metrics && user.user_metrics.length > 0
                 ? user.user_metrics[0].course_completed_num
@@ -101,13 +117,11 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Khóa Học Hoàn Thành",
-        color: "#fbc02d",
+        color: theme.palette.warning.main,
       },
       {
         data: aggregatedData.map((item) => {
-          // Tính tổng điểm từ tất cả users trong department
           return item.users.reduce((total, user) => {
-            // Lấy point_in_quarter từ phần tử đầu tiên trong user_metrics (nếu có)
             const pointInQuarter =
               user.user_metrics && user.user_metrics.length > 0
                 ? user.user_metrics[0].challenge_participate_num
@@ -116,13 +130,11 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Thử Thách Tham Gia",
-        color: "#d32f2f",
+        color: theme.palette.error.main,
       },
       {
         data: aggregatedData.map((item) => {
-          // Tính tổng điểm từ tất cả users trong department
           return item.users.reduce((total, user) => {
-            // Lấy point_in_quarter từ phần tử đầu tiên trong user_metrics (nếu có)
             const pointInQuarter =
               user.user_metrics && user.user_metrics.length > 0
                 ? user.user_metrics[0].challenge_award_num
@@ -131,166 +143,453 @@ const StatisticPage: React.FC = () => {
           }, 0);
         }),
         label: "Giải Thưởng Thử Thách",
-        color: "#7b1fa2",
+        color: theme.palette.secondary.main,
       },
     ];
     return { deptNames, series };
-  }, [aggregatedData]);
+  }, [aggregatedData, theme.palette]);
 
   // Hiển thị loading khi đang tải dữ liệu
   if (isLoadingQuarters || isLoadingDepartments) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <CircularProgress />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <CircularProgress
+          size={60}
+          sx={{ color: theme.palette.primary.main }}
+        />
+        <Typography variant="body1" color="text.secondary">
+          Đang tải dữ liệu thống kê...
+        </Typography>
       </Box>
     );
   }
 
-  return (
-    <Box sx={{ minHeight: "100vh" }}>
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <FormControl fullWidth>
-            <InputLabel>Chọn Quý</InputLabel>
-            <Select
-              value={selectedQuarterId}
-              onChange={(e) => setSelectedQuarterId(e.target.value as string)}
-              label="Chọn Quý"
-            >
-              {quarters.map((quarter) => (
-                <MenuItem key={quarter.id} value={quarter.id}>
-                  {quarter.name} - Năm {quarter.year} (
-                  {formatUtcToLocal(quarter.start_date)} đến{" "}
-                  {formatUtcToLocal(quarter.end_date)})
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-      </Grid>
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
 
-      {aggregatedData.length === 0 ? (
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 4 }}>
-          Không có dữ liệu thống kê cho quý này.
-        </Typography>
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: theme.palette.background.default,
+        py: 0,
+        px: { xs: 2, md: 3 },
+      }}
+    >
+      <Card
+        sx={{
+          mb: 3,
+          backgroundColor: theme.palette.background.paper,
+          color: theme.palette.text.primary,
+          boxShadow: theme.shadows[4],
+        }}
+      >
+        <CardContent sx={{ p: 3 }}>
+          <Typography
+            variant="h4"
+            sx={{
+              mb: 3, // Giảm margin bottom
+              textAlign: { xs: "center", md: "left" },
+            }}
+          >
+            Thống kê học tập và thử thách theo phòng ban
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControl fullWidth>
+                <InputLabel id="year-select-label">📅 Chọn năm</InputLabel>
+                <Select
+                  labelId="year-select-label"
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value as number)}
+                  label="📅 Chọn năm"
+                >
+                  {availableYears.map((year) => (
+                    <MenuItem key={year} value={year}>
+                      Năm {year}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControl fullWidth>
+                <InputLabel id="quarter-select-label">🗓️ Chọn quý</InputLabel>
+                <Select
+                  labelId="quarter-select-label"
+                  value={selectedQuarter}
+                  onChange={(e) => setSelectedQuarter(e.target.value as string)}
+                  label="🗓️ Chọn quý"
+                  disabled={quartersByYear.length === 0}
+                >
+                  {quartersByYear.map((quarter) => (
+                    <MenuItem key={quarter.id} value={quarter.id}>
+                      {quarter.name} ({formatUtcToLocal(quarter.start_date)} đến{" "}
+                      {formatUtcToLocal(quarter.end_date)})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+
+      {!selectedQuarter ? (
+        <Card sx={{ textAlign: "center", py: 6 }}>
+          <CardContent>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+              📅 Vui lòng chọn năm và quý để xem thống kê
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Chọn thời gian để hiển thị dữ liệu thống kê chi tiết
+            </Typography>
+          </CardContent>
+        </Card>
+      ) : aggregatedData.length === 0 ? (
+        <Card sx={{ textAlign: "center", py: 6 }}>
+          <CardContent>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+              📊 Không có dữ liệu thống kê cho quý này
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Vui lòng thử chọn quý khác hoặc kiểm tra lại dữ liệu
+            </Typography>
+          </CardContent>
+        </Card>
       ) : (
         <>
-          {/* Phần Biểu Đồ */}
-          <Card sx={{ mt: 4, boxShadow: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Biểu Đồ So Sánh Giữa Các Phòng Ban
-              </Typography>
-              <BarChart
-                xAxis={[{ scaleType: "band", data: chartData.deptNames }]}
-                series={chartData.series}
-                height={400}
-                slotProps={{
-                  legend: {
-                    direction: "horizontal",
-                    position: { vertical: "top", horizontal: "center" },
+          {/* Tabs để chuyển đổi giữa các view */}
+          <Card sx={{ mb: 4 }}>
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              sx={{
+                px: 3,
+                pt: 2,
+                "& .MuiTab-root": {
+                  textTransform: "none",
+                  fontWeight: 600,
+                  fontSize: "1rem",
+                  color: theme.palette.text.secondary,
+                  minHeight: 56,
+                  "&.Mui-selected": {
+                    color: theme.palette.primary.main,
                   },
-                }}
-              />
-            </CardContent>
+                },
+                "& .MuiTabs-indicator": {
+                  height: 3,
+                  borderRadius: "3px 3px 0 0",
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                },
+              }}
+            >
+              <Tab label="📈 Tổng quan" />
+              <Tab label="📊 Thống kê chi tiết" />
+              <Tab label="📋 Biểu đồ" />
+            </Tabs>
           </Card>
 
-          {/* Phần Table */}
-          <Card sx={{ mt: 4, boxShadow: 3 }}>
-            <CardContent>
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Phòng Ban</TableCell>
-                      <TableCell>Số Khóa Học Tham Gia</TableCell>
-                      <TableCell>Số Khóa Học Hoàn Thành</TableCell>
-                      <TableCell>Số Thử Thách Tham Gia</TableCell>
-                      <TableCell>Số Giải Thưởng Thử Thách</TableCell>
-                      <TableCell>Tổng Điểm Trong Quý</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {aggregatedData.map((item) => {
-                      // Tính toán các metrics từ user_metrics của tất cả users trong department
-                      const pointInQuarter = item.users.reduce(
-                        (total, user) => {
-                          return (
-                            total +
-                            (user.user_metrics && user.user_metrics.length > 0
-                              ? user.user_metrics[0].point_in_quarter
-                              : 0)
-                          );
-                        },
-                        0
-                      );
+          {/* Tab 1: Tổng quan */}
+          {activeTab === 0 && (
+            <Grid container spacing={3}>
+              {/* Top Performers */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TopPerformersCard departments={aggregatedData} />
+              </Grid>
 
-                      const courseParticipatedNum = item.users.reduce(
-                        (total, user) => {
-                          return (
-                            total +
-                            (user.user_metrics && user.user_metrics.length > 0
-                              ? user.user_metrics[0].course_participated_num
-                              : 0)
-                          );
-                        },
-                        0
-                      );
+              {/* Learning Stats */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <LearningStatsCard departments={aggregatedData} />
+              </Grid>
 
-                      const courseCompletedNum = item.users.reduce(
-                        (total, user) => {
-                          return (
-                            total +
-                            (user.user_metrics && user.user_metrics.length > 0
-                              ? user.user_metrics[0].course_completed_num
-                              : 0)
-                          );
-                        },
-                        0
-                      );
+              {/* Department Stats Cards */}
+              <Grid size={{ xs: 12 }}>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{
+                    mt: 3,
+                    mb: 3,
+                    color: theme.palette.text.primary,
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  🏢 Thống kê theo phòng ban
+                </Typography>
+                {aggregatedData.length === 0 ? (
+                  <Card sx={{ textAlign: "center", py: 4 }}>
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary">
+                        Chưa có dữ liệu phòng ban
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Grid container spacing={3}>
+                    {aggregatedData.map((department) => (
+                      <Grid size={{ xs: 12, md: 6, lg: 4 }} key={department.id}>
+                        <DepartmentStatsCard department={department} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                )}
+              </Grid>
+            </Grid>
+          )}
 
-                      const challengeParticipateNum = item.users.reduce(
-                        (total, user) => {
-                          return (
-                            total +
-                            (user.user_metrics && user.user_metrics.length > 0
-                              ? user.user_metrics[0].challenge_participate_num
-                              : 0)
-                          );
-                        },
-                        0
-                      );
+          {/* Tab 2: Thống kê chi tiết */}
+          {activeTab === 1 && (
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12 }}>
+                <Card>
+                  <CardContent>
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      sx={{
+                        mb: 3,
+                        color: theme.palette.text.primary,
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      📊 Bảng thống kê chi tiết
+                    </Typography>
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell sx={{ fontWeight: 600 }}>
+                              Phòng Ban
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>
+                              Số Khóa Học Tham Gia
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>
+                              Số Khóa Học Hoàn Thành
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>
+                              Số Thử Thách Tham Gia
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>
+                              Tổng Điểm Trong Quý
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {aggregatedData.map((item) => {
+                            const pointInQuarter = item.users.reduce(
+                              (total, user) => {
+                                return (
+                                  total +
+                                  (user.user_metrics &&
+                                  user.user_metrics.length > 0
+                                    ? user.user_metrics[0].point_in_quarter
+                                    : 0)
+                                );
+                              },
+                              0
+                            );
 
-                      const challengeAwardNum = item.users.reduce(
-                        (total, user) => {
-                          return (
-                            total +
-                            (user.user_metrics && user.user_metrics.length > 0
-                              ? user.user_metrics[0].challenge_award_num
-                              : 0)
-                          );
-                        },
-                        0
-                      );
+                            const courseParticipatedNum = item.users.reduce(
+                              (total, user) => {
+                                return (
+                                  total +
+                                  (user.user_metrics &&
+                                  user.user_metrics.length > 0
+                                    ? user.user_metrics[0]
+                                        .course_participated_num
+                                    : 0)
+                                );
+                              },
+                              0
+                            );
 
-                      return (
-                        <TableRow key={item.id}>
-                          <TableCell>
-                            {item.name} ({item.users.length} nhân viên)
-                          </TableCell>
-                          <TableCell>{courseParticipatedNum}</TableCell>
-                          <TableCell>{courseCompletedNum}</TableCell>
-                          <TableCell>{challengeParticipateNum}</TableCell>
-                          <TableCell>{challengeAwardNum}</TableCell>
-                          <TableCell>{pointInQuarter}</TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </CardContent>
-          </Card>
+                            const courseCompletedNum = item.users.reduce(
+                              (total, user) => {
+                                return (
+                                  total +
+                                  (user.user_metrics &&
+                                  user.user_metrics.length > 0
+                                    ? user.user_metrics[0].course_completed_num
+                                    : 0)
+                                );
+                              },
+                              0
+                            );
+
+                            const challengeParticipateNum = item.users.reduce(
+                              (total, user) => {
+                                return (
+                                  total +
+                                  (user.user_metrics &&
+                                  user.user_metrics.length > 0
+                                    ? user.user_metrics[0]
+                                        .challenge_participate_num
+                                    : 0)
+                                );
+                              },
+                              0
+                            );
+
+                            return (
+                              <TableRow key={item.id}>
+                                <TableCell>
+                                  <Typography
+                                    variant="subtitle1"
+                                    fontWeight={600}
+                                  >
+                                    {item.name}
+                                  </Typography>
+                                  <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                  >
+                                    {item.users.length} nhân viên
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>
+                                  <Typography variant="body1" fontWeight={500}>
+                                    {courseParticipatedNum}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>
+                                  <Typography variant="body1" fontWeight={500}>
+                                    {courseCompletedNum}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>
+                                  <Typography variant="body1" fontWeight={500}>
+                                    {challengeParticipateNum}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>
+                                  <Typography
+                                    variant="body1"
+                                    fontWeight={600}
+                                    sx={{ color: theme.palette.primary.main }}
+                                  >
+                                    {pointInQuarter.toLocaleString()}
+                                  </Typography>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          )}
+
+          {/* Tab 3: Biểu đồ */}
+          {activeTab === 2 && (
+            <Grid container spacing={3}>
+              {/* Biểu đồ cột tổng hợp */}
+              <Grid size={{ xs: 12 }}>
+                <Card>
+                  <CardContent>
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      sx={{
+                        mb: 3,
+                        color: theme.palette.text.primary,
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      📈 Biểu Đồ So Sánh Giữa Các Phòng Ban
+                    </Typography>
+                    <BarChart
+                      xAxis={[{ scaleType: "band", data: chartData.deptNames }]}
+                      series={chartData.series}
+                      height={400}
+                      slotProps={{
+                        legend: {
+                          direction: "horizontal",
+                          position: { vertical: "top", horizontal: "center" },
+                        },
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/* Biểu đồ cột thử thách */}
+              <Grid size={{ xs: 12 }}>
+                <Card>
+                  <CardContent>
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      sx={{
+                        mb: 3,
+                        color: theme.palette.text.primary,
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      🎯 Biểu Đồ Tham Gia Thử Thách Theo Phòng Ban
+                    </Typography>
+                    <BarChart
+                      xAxis={[
+                        {
+                          scaleType: "band",
+                          data: aggregatedData.map((dept) => dept.name),
+                          label: "Phòng ban",
+                        },
+                      ]}
+                      series={[
+                        {
+                          data: aggregatedData.map((dept) =>
+                            dept.users.reduce(
+                              (total, user) =>
+                                total +
+                                (user.user_metrics?.[0]
+                                  ?.challenge_participate_num || 0),
+                              0
+                            )
+                          ),
+                          label: "Lần tham gia thử thách",
+                          color: theme.palette.error.main,
+                        },
+                      ]}
+                      height={400}
+                      slotProps={{
+                        legend: {
+                          direction: "horizontal",
+                          position: { vertical: "top", horizontal: "center" },
+                        },
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          )}
         </>
       )}
     </Box>
