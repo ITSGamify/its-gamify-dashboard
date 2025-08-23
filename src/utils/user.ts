@@ -7,7 +7,7 @@ export function getRoleInVietnamese(role: RoleEnum): string {
     case RoleEnum.EMPLOYEE:
       return "Nhân viên";
     case RoleEnum.LEADER:
-      return "Trưởng nhóm";
+      return "Trưởng phòng";
     case RoleEnum.TRAINER:
       return "Nhân viên đào tạo";
     case RoleEnum.MANAGER:

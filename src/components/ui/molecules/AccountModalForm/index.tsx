@@ -34,6 +34,8 @@ import { deparmentOptionField } from "@constants/departments";
 import AutocompleteAsync from "@components/ui/atoms/AutocompleteAsync";
 import { Role } from "@interfaces/api/role";
 import { useFileUpload } from "@services/fileUpload";
+import { getRoleInVietnamese } from "@utils/user";
+import { RoleEnum } from "@interfaces/api/user";
 
 //#region Styled components
 const StyledDialog = styled(Dialog)(() => ({
@@ -126,6 +128,7 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
   roles,
   isRoleLoading,
 }) => {
+  console.log("AccountModalForm - roles:", roles);
   const {
     showPassword,
     toggleShowPassword,
@@ -331,13 +334,19 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                       label="Vai trò"
                       {...field}
                       disabled={isRoleLoading}
+                      displayEmpty
                     >
                       {roles && roles.length > 0 ? (
-                        roles.map((role) => (
-                          <MenuItem key={role.id} value={role.id}>
-                            {role.name}
-                          </MenuItem>
-                        ))
+                        roles.map((role) => {
+                          const vietnameseName = getRoleInVietnamese(
+                            role.name as RoleEnum
+                          );
+                          return (
+                            <MenuItem key={role.id} value={role.id}>
+                              {vietnameseName || role.name}
+                            </MenuItem>
+                          );
+                        })
                       ) : (
                         <MenuItem disabled value="">
                           {isRoleLoading
