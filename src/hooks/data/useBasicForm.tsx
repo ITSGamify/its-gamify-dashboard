@@ -15,7 +15,6 @@ export interface BasicForm {
   category_id?: string;
   is_optional: boolean;
   quarter_id: string;
-  tags: string[];
 }
 
 export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
@@ -34,7 +33,6 @@ export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
       category_id: data?.category_id || "",
       is_optional: data?.is_optional || false,
       quarter_id: data?.quarter_id || "",
-      tags: data?.tags || [],
     },
     resolver: yupResolver(basicFormSchema) as Resolver<BasicForm>,
   });
@@ -51,33 +49,13 @@ export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
         department_ids:
           data.course_departments?.map((dept) => dept.department_id) || [],
         category_id: data.category_id || "",
-        tags: data.tags || [],
         quarter_id: data.quarter_id || "",
         is_optional: data.is_optional || false,
       });
     }
   }, [data, reset]);
 
-  const tags = watch("tags");
   const classify = watch("classify");
-
-  const handleAddTag = useCallback(
-    (newTag: string) => {
-      if (newTag && !tags.includes(newTag)) {
-        const updatedTags = [...tags, newTag];
-        setValue("tags", updatedTags);
-      }
-    },
-    [tags, setValue]
-  );
-
-  const handleRemoveTag = useCallback(
-    (tagToRemove: string) => {
-      const updatedTags = tags.filter((tag) => tag !== tagToRemove);
-      setValue("tags", updatedTags);
-    },
-    [tags, setValue]
-  );
 
   const departmentIds = watch("department_ids");
   const handleDepartmentIdsChange = useCallback(
@@ -89,19 +67,18 @@ export const useBasicForm = ({ data, handleNextState }: StepFormProps) => {
 
   const handleRemoveDepartmentId = useCallback(
     (departmentIdToRemove: string) => {
-      const updatedIds = tags.filter((id) => id !== departmentIdToRemove);
+      const updatedIds = (departmentIds || []).filter(
+        (id) => id !== departmentIdToRemove
+      );
       setValue("department_ids", updatedIds);
     },
-    [tags, setValue]
+    [departmentIds, setValue]
   );
 
   return {
     control,
     handleSubmit: handleSubmit(handleNextState),
-    tags,
     classify,
-    handleAddTag,
-    handleRemoveTag,
     departmentIds,
     handleRemoveDepartmentId,
     handleDepartmentIdsChange,

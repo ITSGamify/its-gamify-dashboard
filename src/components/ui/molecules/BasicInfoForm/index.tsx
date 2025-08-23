@@ -23,7 +23,7 @@ import {
 } from "@mui/icons-material";
 import { SectionTitle } from "@components/ui/atoms/SectionTitle";
 import UploadBox from "@components/ui/atoms/UploadBox";
-import TagInput from "@components/ui/atoms/TagInput";
+
 import { useBasicForm } from "@hooks/data/useBasicForm";
 import { Controller } from "react-hook-form";
 import { StepFormProps } from "@interfaces/api/course";
@@ -48,10 +48,7 @@ const BasicInfoForm = ({
 }: StepFormProps) => {
   const {
     control,
-    tags,
-    handleAddTag,
     handleSubmit,
-    handleRemoveTag,
     classify,
     departmentIds,
     handleDepartmentIdsChange,
@@ -78,8 +75,6 @@ const BasicInfoForm = ({
     handleSearchOptions: handleSearchQuaterOptions,
     isLoading: isLoadingQuaters,
   } = useGetOptions(useGetQuaters, quaterOptionField);
-
-  const [currentTag, setCurrentTag] = useState("");
 
   const theme = useTheme();
 
@@ -387,24 +382,6 @@ const BasicInfoForm = ({
                   )}
                 </>
               )}
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12 }}>
-            <Divider sx={{ my: 2 }} />
-          </Grid>
-
-          <Grid size={{ xs: 12 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Thẻ (tags)
-            </Typography>
-            <TagInput
-              tags={tags}
-              currentTag={currentTag}
-              setCurrentTag={setCurrentTag}
-              handleAddTag={handleAddTag}
-              handleDeleteTag={handleRemoveTag}
-              maxTags={5}
             />
           </Grid>
         </Grid>

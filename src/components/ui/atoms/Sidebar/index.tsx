@@ -102,28 +102,31 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       text: t("department"),
       icon: <ApartmentIcon />,
       path: PATH.DEPARTMENTS,
-      isDisabled: profile?.user.role !== RoleEnum.ADMIN,
+      isDisabled: profile?.user.role === RoleEnum.TRAINER,
     },
     {
       text: "Danh mục",
       icon: <CategoryIcon />,
       path: PATH.CATEGORIES,
+      isDisabled: profile?.user.role !== RoleEnum.TRAINER,
     },
     {
       text: t("account"),
       icon: <PeopleIcon />,
       path: PATH.ACCOUNTS,
-      isDisabled: profile?.user.role !== RoleEnum.ADMIN,
+      isDisabled: profile?.user.role === RoleEnum.TRAINER,
     },
     {
       text: t("course"),
       icon: <SchoolIcon />,
       path: PATH.COURSES,
+      isDisabled: profile?.user.role === RoleEnum.ADMIN,
     },
     {
       text: "Giải đấu",
       icon: <SportsEsportsIcon />,
       path: PATH.TOURNAMENT,
+      isDisabled: profile?.user.role === RoleEnum.ADMIN,
     },
   ];
 

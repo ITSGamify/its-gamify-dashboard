@@ -59,6 +59,12 @@ const CategoryPage: React.FC = () => {
     null
   );
   const profile = userSession.getUserProfile();
+  console.log("Current user role:", profile?.user.role);
+  console.log("Is TRAINER:", profile?.user.role === RoleEnum.TRAINER);
+  console.log(
+    "Should show create button:",
+    profile?.user.role === RoleEnum.TRAINER
+  );
 
   const filterGroups: FilterGroup[] = [
     {
@@ -180,7 +186,7 @@ const CategoryPage: React.FC = () => {
             onInputChange={handleSearch}
             onEnter={handleSearchResults}
             onDelete={handleDeleteAll}
-            isHiddenCreateButton={profile?.user.role !== RoleEnum.ADMIN}
+            isHiddenCreateButton={profile?.user.role !== RoleEnum.TRAINER}
             filterButton={
               <FilterButton
                 filterGroups={filterGroups}

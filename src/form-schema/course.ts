@@ -10,7 +10,6 @@ export interface BasicsFormData {
   classify: string;
   department_ids?: string[] | null;
   category_id: string;
-  tags: string[];
   is_optional: boolean;
   quarter_id: string;
 }
@@ -111,7 +110,6 @@ export const basicFormSchema: yup.ObjectSchema<BasicsFormData> = yup
         otherwise: (schema) => schema.nullable().optional(),
       }),
     category_id: yup.string().required("Danh mục là bắt buộc"),
-    tags: yup.array().of(yup.string().defined()).required("Thẻ là bắt buộc"),
     quarter_id: yup.string().required("Thời gian áp dụng khóa học là bắt buộc"),
     is_optional: yup
       .boolean()
