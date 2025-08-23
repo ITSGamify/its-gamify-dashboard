@@ -283,7 +283,7 @@ const BasicInfoForm = ({
                     <FormControlLabel
                       value="LEADERONLY"
                       control={<Radio />}
-                      label="Chỉ dành cho Trưởng nhóm"
+                      label="Chỉ dành cho Trưởng phòng"
                     />
                     <FormControlLabel
                       value="DEPARTMENTONLY"
