@@ -40,6 +40,7 @@ export interface CourseRequestParams {
   requirement?: string;
   targets?: string[];
   is_update_module: boolean;
+  is_update_department: boolean;
   drafted: boolean;
   is_optional?: boolean;
   quarter_id?: string;

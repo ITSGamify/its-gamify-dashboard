@@ -33,7 +33,11 @@ import { Lesson } from "@interfaces/dom/course";
 import { useGetCourseDetail } from "@services/course";
 import { useParams } from "react-router-dom";
 import { convertUTCToFormattedLocalTime } from "@utils/date";
-import { getClassifyInVietnamese } from "@utils/course";
+import {
+  getClassifyInVietnamese,
+  getCourseStatusInVietnamese,
+} from "@utils/course";
+import { formatToMB } from "@utils/file";
 
 const CourseDetailPage = () => {
   const { courseId } = useParams();
@@ -125,7 +129,12 @@ const CourseDetailPage = () => {
             <Card sx={{ mb: 3 }}>
               <CardMedia
                 component="img"
-                height="240"
+                sx={{
+                  height: "auto",
+                  maxHeight: "500px",
+                  objectFit: "contain",
+                  bgcolor: "background.default",
+                }}
                 image={
                   data.thumbnail_image ||
                   "https://etalentcanada.ca/sites/default/files/styles/hero_offset_image/public/2022-12/WIL_eLearning%5B1%5D.jpeg?itok=_hFx7LDi"
@@ -152,7 +161,9 @@ const CourseDetailPage = () => {
                   ) : (
                     data.status && (
                       <Chip
-                        label={`Trạng thái: ${data.status}`}
+                        label={`Trạng thái: ${getCourseStatusInVietnamese(
+                          data.status
+                        )}`}
                         color="secondary"
                       />
                     )
@@ -360,7 +371,9 @@ const CourseDetailPage = () => {
                             </ListItemIcon>
                             <ListItemText
                               primary={material.name}
-                              secondary={`${material.type} - ${material.size} bytes`}
+                              secondary={`${material.type} - ${formatToMB(
+                                material.size
+                              )} bytes`}
                             />
                           </ListItemButton>
                         ))}

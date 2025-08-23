@@ -271,7 +271,7 @@ const ChallengeInforForm = ({
 
           <Grid size={{ xs: 12 }}>
             <SectionTitle variant="h6" fontWeight={600}>
-              Câu hỏi cho giải đấu
+              Câu hỏi cho thử thách
             </SectionTitle>
           </Grid>
 

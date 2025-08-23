@@ -29,6 +29,7 @@ export const transformBasicCourseFormToCourse = (
     department_ids: form.department_ids || [],
 
     is_update_module: false,
+    is_update_department: true,
     drafted: data?.drafted || false,
     is_optional: form.is_optional || false,
     quarter_id: form.quarter_id || "",
@@ -43,6 +44,7 @@ export const transformCourseContentFormToCourse = (
   return {
     ...(data && { id: data.id }),
     is_update_module: true,
+    is_update_department: false,
     drafted: data?.drafted || false,
   };
 };
@@ -54,6 +56,7 @@ export const transformLearningMaterialsFormToCourse = (
     ...(data && { id: data.id }),
     targets: form.targets,
     is_update_module: false,
+    is_update_department: false,
     drafted: data?.drafted || false,
     requirement: form.requirement,
   };
@@ -67,6 +70,7 @@ export const transformConfirmFormToCourse = (
     ...data,
     drafted: data?.drafted || false,
     is_update_module: false,
+    is_update_department: false,
   };
 };
 

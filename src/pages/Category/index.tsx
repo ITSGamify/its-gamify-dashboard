@@ -103,7 +103,7 @@ const CategoryPage: React.FC = () => {
               toast.warning(ToastContent, {
                 data: {
                   message:
-                    "Danh mục này đang được áp dụng cho khóa học hoặc giải đấu khác, không thể xóa!",
+                    "Danh mục này đang được áp dụng cho khóa học hoặc thử thách khác, không thể xóa!",
                 },
               });
               return;

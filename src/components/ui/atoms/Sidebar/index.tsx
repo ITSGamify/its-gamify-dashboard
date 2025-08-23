@@ -123,7 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       isDisabled: profile?.user.role === RoleEnum.ADMIN,
     },
     {
-      text: "Giải đấu",
+      text: "Thử thách",
       icon: <SportsEsportsIcon />,
       path: PATH.TOURNAMENT,
       isDisabled: profile?.user.role === RoleEnum.ADMIN,

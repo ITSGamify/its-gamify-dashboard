@@ -225,13 +225,15 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                               : "U"}
                           </Typography>
                         )}
-                        <AvatarOverlay>
-                          {isUploading ? (
-                            <CircularProgress size={24} color="inherit" />
-                          ) : (
-                            <AddAPhotoIcon sx={{ color: "white" }} />
-                          )}
-                        </AvatarOverlay>
+                        {!data && (
+                          <AvatarOverlay>
+                            {isUploading ? (
+                              <CircularProgress size={24} color="inherit" />
+                            ) : (
+                              <AddAPhotoIcon sx={{ color: "white" }} />
+                            )}
+                          </AvatarOverlay>
+                        )}
                       </LargeAvatar>
                       {avatarPreview && (
                         <IconButton
@@ -263,14 +265,16 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                       onChange={(e) => handleFileChange(e, onChange)}
                       disabled={isUploading}
                     />
-                    <UploadButton htmlFor="avatar-upload">
-                      <AddAPhotoIcon fontSize="small" sx={{ mr: 0.5 }} />
-                      {isUploading
-                        ? "Đang tải lên..."
-                        : avatarPreview
-                        ? "Thay đổi ảnh"
-                        : "Tải lên ảnh đại diện"}
-                    </UploadButton>
+                    {!data && (
+                      <UploadButton htmlFor="avatar-upload">
+                        <AddAPhotoIcon fontSize="small" sx={{ mr: 0.5 }} />
+                        {isUploading
+                          ? "Đang tải lên..."
+                          : avatarPreview
+                          ? "Thay đổi ảnh"
+                          : "Tải lên ảnh đại diện"}
+                      </UploadButton>
+                    )}
                   </>
                 );
               }}
@@ -388,6 +392,7 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                 rules={{ required: true }}
                 render={({ field, fieldState: { error } }) => (
                   <TextField
+                    disabled={data !== null}
                     fullWidth
                     label="Mật khẩu"
                     name="password"
