@@ -35,7 +35,7 @@ export const useCourseContentForm = ({
         course_id: data?.id,
         title: `Chương ${localModules.length + 1}`,
         description: `Chương ${localModules.length + 1}`,
-        ordered_number: localModules.length,
+        ordered_number: localModules.length + 1,
       },
       {
         onSuccess: (new_module: Module) => {
