@@ -114,7 +114,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       text: t("account"),
       icon: <PeopleIcon />,
       path: PATH.ACCOUNTS,
-      isDisabled: profile?.user.role === RoleEnum.TRAINER,
+      isDisabled:
+        profile?.user.role === RoleEnum.TRAINER ||
+        profile?.user.role === RoleEnum.MANAGER,
     },
     {
       text: t("course"),
