@@ -3,8 +3,6 @@ import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
 // Import translation files
-import enLogin from "./locales/en/login.json";
-
 import viLogin from "./locales/vi/login.json";
 import viSidebar from "./locales/vi/sideBar.json";
 
@@ -20,9 +18,6 @@ export const TRANSLATION_NAME_SPACES: Record<
 
 // Define resources
 const resources = {
-  en: {
-    login: enLogin,
-  },
   vi: {
     login: viLogin,
     sideBar: viSidebar,
@@ -30,12 +25,11 @@ const resources = {
 };
 
 // Define supported languages
-export const supportedLanguages = ["en", "vi"] as const;
+export const supportedLanguages = ["vi"] as const;
 export type SupportedLanguage = (typeof supportedLanguages)[number];
 
 // Language names for display
 export const languageNames: Record<SupportedLanguage, string> = {
-  en: "English",
   vi: "Tiếng Việt",
 };
 
