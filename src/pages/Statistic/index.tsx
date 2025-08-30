@@ -385,7 +385,7 @@ const StatisticPage: React.FC = () => {
                               Số Khóa Học Hoàn Thành
                             </TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>
-                              Số Thử Thách Tham Gia
+                              Số Trận Tham Gia
                             </TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>
                               Tổng Điểm Trong Quý
