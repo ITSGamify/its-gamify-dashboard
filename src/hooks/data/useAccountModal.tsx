@@ -64,20 +64,54 @@ export const useAccountModal = ({ user: data, onActionSuccess }: Props) => {
         avatar_url: formData.avatar_url,
       };
 
-      const onSuccess = () => {
-        toast.success(ToastContent, {
-          data: {
-            message: "Cập nhật thành công",
-          },
-        });
+      try {
+        if (data) {
+          // Khi cập nhật, không gửi password vì không cho sửa
+          const { password, ...updateBody } = body;
+          await updateAccount({ id: data.id, ...updateBody });
+          toast.success(ToastContent, {
+            data: {
+              message: "Cập nhật thành công",
+            },
+          });
+        } else {
+          await createAccount({ ...body });
+          toast.success(ToastContent, {
+            data: {
+              message: "Tạo tài khoản thành công",
+            },
+          });
+        }
         onActionSuccess();
         reset();
-      };
+      } catch (error: any) {
+        // Xử lý lỗi email trùng lặp
+        const errorMessage =
+          error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          error?.message;
 
-      if (data) {
-        await updateAccount({ id: data.id, ...body }, { onSuccess });
-      } else {
-        await createAccount({ ...body }, { onSuccess });
+        if (
+          errorMessage &&
+          errorMessage.toLowerCase().includes("email") &&
+          (errorMessage.toLowerCase().includes("đã tồn tại") ||
+            errorMessage.toLowerCase().includes("already exists") ||
+            errorMessage.toLowerCase().includes("duplicate") ||
+            errorMessage.toLowerCase().includes("exists"))
+        ) {
+          toast.error(ToastContent, {
+            data: {
+              message: "Email đã tồn tại!",
+            },
+          });
+        } else {
+          // Hiển thị lỗi mặc định nếu không phải lỗi email trùng lặp
+          toast.error(ToastContent, {
+            data: {
+              message: errorMessage || "Đã xảy ra lỗi!",
+            },
+          });
+        }
       }
     },
     [data, onActionSuccess, reset, createAccount, updateAccount]

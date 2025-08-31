@@ -2,6 +2,7 @@ import { request } from "@config/axios";
 import {
   GetAccountParams,
   RequestAccountsParams,
+  RequestUpdateAccountParams,
   RequestDeleteParams,
 } from ".";
 import { PaginatedResponse } from "@interfaces/dom/query";
@@ -27,17 +28,19 @@ export const createAccount = async (
     url: getRoute(END_POINTS.ACCOUNT.BASE),
     method: HTTP_METHODS.POST,
     data: payload,
+    shouldNotShowError: true, // Không hiển thị toast mặc định, sẽ xử lý riêng
   });
 };
 
 export const updateAccount = async (
-  payload: RequestAccountsParams & { id: string }
+  payload: RequestUpdateAccountParams
 ): Promise<void> => {
   const { id: accountId, ...data } = payload;
   return request({
     url: getRoute(END_POINTS.ACCOUNT.DETAIL, { accountId }),
     method: HTTP_METHODS.PUT,
     data,
+    shouldNotShowError: true, // Không hiển thị toast mặc định, sẽ xử lý riêng
   });
 };
 

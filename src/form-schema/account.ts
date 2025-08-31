@@ -9,6 +9,15 @@ export interface AccountFormScheme {
   avatar_url?: string;
 }
 
+export interface AccountUpdateFormScheme {
+  full_name: string;
+  email: string;
+  role_id: string;
+  department_id: string;
+  password?: string; // Optional khi cập nhật
+  avatar_url?: string;
+}
+
 export const accountFormScheme: yup.ObjectSchema<AccountFormScheme> =
   yup.object({
     avatar_url: yup.string().optional(),
@@ -76,4 +85,50 @@ export const accountFormScheme: yup.ObjectSchema<AccountFormScheme> =
           return /([~!@#$%^&*()])/.test(value);
         }
       ),
+  });
+
+// Schema cho việc cập nhật account (password không bắt buộc)
+export const accountUpdateFormScheme: yup.ObjectSchema<AccountUpdateFormScheme> =
+  yup.object({
+    avatar_url: yup.string().optional(),
+    full_name: yup
+      .string()
+      .required("Nhập tên tài khoản")
+      .max(50, "Tên tài khoản không được vượt quá 50 ký tự")
+      .test(
+        "no-leading-trailing-spaces",
+        "Tên tài khoản không được chứa khoảng trắng ở đầu hoặc cuối",
+        (value) => {
+          if (!value) return true;
+          return value.trim() === value;
+        }
+      )
+      .test(
+        "no-consecutive-spaces",
+        "Tên tài khoản không được chứa nhiều khoảng trắng liên tiếp",
+        (value) => {
+          if (!value) return true;
+          return !value.includes("  ");
+        }
+      ),
+    email: yup
+      .string()
+      .required("Nhập email")
+      .max(50, "Email không được vượt quá 50 ký tự")
+      .test(
+        "no-leading-trailing-spaces",
+        "Email không được chứa khoảng trắng ở đầu hoặc cuối",
+        (value) => {
+          if (!value) return true;
+          return value.trim() === value;
+        }
+      )
+      .test("no-spaces", "Email không được chứa khoảng trắng", (value) => {
+        if (!value) return true;
+        return !value.includes(" ");
+      })
+      .email("Email không hợp lệ"),
+    role_id: yup.string().required("Chọn quyền hạn"),
+    department_id: yup.string().required("Chọn phòng ban"),
+    password: yup.string().optional(), // Không bắt buộc khi cập nhật
   });

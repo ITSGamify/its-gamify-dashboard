@@ -297,9 +297,13 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                     value={field.value}
                     onChange={field.onChange}
                     error={!!error}
-                    helperText={error?.message}
+                    helperText={
+                      data
+                        ? "Không thể thay đổi họ tên khi cập nhật"
+                        : error?.message
+                    }
                     required
-                    disabled={data !== null}
+                    disabled={data !== null} // Disable khi cập nhật
                   />
                 )}
               />
@@ -318,9 +322,13 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                     value={field.value}
                     onChange={field.onChange}
                     error={!!error}
-                    helperText={error?.message}
+                    helperText={
+                      data
+                        ? "Không thể thay đổi email khi cập nhật"
+                        : error?.message
+                    }
                     required
-                    disabled={data !== null}
+                    disabled={data !== null} // Disable khi cập nhật
                   />
                 )}
               />
@@ -411,7 +419,11 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                     value={field.value}
                     onChange={field.onChange}
                     error={!!error}
-                    helperText={error?.message}
+                    helperText={
+                      data
+                        ? "Không thể thay đổi mật khẩu khi cập nhật"
+                        : error?.message
+                    }
                     required
                     InputProps={{
                       endAdornment: (
