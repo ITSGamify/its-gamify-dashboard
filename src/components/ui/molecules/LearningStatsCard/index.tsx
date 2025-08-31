@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent, Typography, Box, Grid } from "@mui/material";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { DepartmentStat } from "@interfaces/api/department";
+import { useGetCourses } from "@services/course";
 
 interface LearningStatsCardProps {
   departments: DepartmentStat[];
@@ -10,6 +11,28 @@ interface LearningStatsCardProps {
 const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
   departments,
 }) => {
+  // Lấy danh sách tất cả khóa học
+  const { data: coursesData } = useGetCourses({
+    page: 0,
+    limit: 1000, // Lấy tất cả khóa học
+    isActive: "true",
+    categories: null,
+    courseTypes: null,
+  });
+
+  const allCourses = coursesData?.data || [];
+
+  // Debug: Log để kiểm tra dữ liệu
+  console.log("All courses:", allCourses);
+  console.log(
+    "Course statuses:",
+    allCourses.map((c) => ({
+      id: c.id,
+      status: c.status,
+      classify: c.classify,
+    }))
+  );
+
   // Tính toán thống kê học tập theo từng phòng ban
   const departmentStats = departments.map((dept) => {
     const totalEmployees = dept.users.length;
@@ -28,12 +51,45 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
       return total + (participated - completed);
     }, 0);
 
-    // Giả sử mỗi phòng ban có 10 khóa học (có thể thay đổi theo logic thực tế)
-    const totalAvailableCourses = 10;
+    // Tính tổng số khóa học có sẵn cho phòng ban này
+    // = Public courses + Department courses của phòng ban này (chỉ tính khóa học hoạt động)
+
+    // Helper function để kiểm tra khóa học hoạt động
+    const isActiveCourse = (course: any) => {
+      // Logic: Khóa học hoạt động = không phải draft và không bị xóa
+      return !course.drafted && !course.is_deleted;
+    };
+
+    const publicCourses = allCourses.filter(
+      (course) =>
+        (course.classify === "ALL" || course.classify === "LEADERONLY") &&
+        isActiveCourse(course)
+    );
+
+    const departmentCourses = allCourses.filter(
+      (course) =>
+        course.course_departments?.some((cd) => cd.department_id === dept.id) &&
+        isActiveCourse(course)
+    );
+
+    const totalAvailableCourses =
+      publicCourses.length + departmentCourses.length;
+
+    // Tổng số khóa học chưa học (tổng khóa học - đã hoàn thành - đang học)
     const totalCoursesNotStarted = Math.max(
       0,
       totalAvailableCourses - totalCoursesCompleted - totalCoursesInProgress
     );
+
+    // Debug: Log cho từng phòng ban
+    console.log(`Department ${dept.name}:`, {
+      publicCourses: publicCourses.length,
+      departmentCourses: departmentCourses.length,
+      totalAvailable: totalAvailableCourses,
+      completed: totalCoursesCompleted,
+      inProgress: totalCoursesInProgress,
+      notStarted: totalCoursesNotStarted,
+    });
 
     return {
       department: dept,
@@ -42,6 +98,8 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
       totalCoursesInProgress,
       totalCoursesNotStarted,
       totalAvailableCourses,
+      publicCoursesCount: publicCourses.length,
+      departmentCoursesCount: departmentCourses.length,
     };
   });
 
@@ -72,6 +130,20 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
           }}
         >
           📚 Thống kê học tập theo phòng ban
+        </Typography>
+
+        {/* Debug info */}
+        <Typography
+          variant="caption"
+          sx={{
+            display: "block",
+            mb: 2,
+            color: "rgba(0,0,0,0.6)",
+            fontStyle: "italic",
+          }}
+        >
+          🔍 Debug: Tổng khóa học từ API: {allCourses.length} | Status values:{" "}
+          {[...new Set(allCourses.map((c) => c.status))].join(", ")}
         </Typography>
 
         {departmentStats.length === 0 ? (
@@ -202,6 +274,29 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                           <Typography variant="body2" sx={{ mb: 1 }}>
                             • Tổng khóa học có sẵn:{" "}
                             <strong>{stat.totalAvailableCourses}</strong>
+                          </Typography>
+
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              mb: 1,
+                              fontSize: "0.8rem",
+                              color: "rgba(0,0,0,0.6)",
+                            }}
+                          >
+                            &nbsp;&nbsp;├ Public: {stat.publicCoursesCount}
+                          </Typography>
+
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              mb: 1,
+                              fontSize: "0.8rem",
+                              color: "rgba(0,0,0,0.6)",
+                            }}
+                          >
+                            &nbsp;&nbsp;└ Department:{" "}
+                            {stat.departmentCoursesCount}
                           </Typography>
 
                           <Typography variant="body2" sx={{ mb: 1 }}>
