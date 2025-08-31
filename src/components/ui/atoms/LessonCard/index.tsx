@@ -249,7 +249,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
                           InputProps={{
                             inputProps: { min: 0 },
                           }}
-                          disabled={!isEditing}
+                          disabled={!isEditing || currentType === "video"}
                           error={!!error}
                           helperText={error?.message}
                           sx={textFieldStyles}

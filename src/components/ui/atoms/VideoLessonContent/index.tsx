@@ -68,9 +68,7 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
 
       video.onloadedmetadata = () => {
         window.URL.revokeObjectURL(video.src);
-        // Chuyển đổi từ giây sang phút và làm tròn lên
-        const durationInMinutes = Math.ceil(video.duration / 60);
-        resolve(durationInMinutes);
+        resolve(video.duration);
       };
 
       video.onerror = () => {
@@ -100,10 +98,11 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
         let duration: number;
         try {
           duration = await getVideoDuration(file);
-
-          if (duration < 1 || duration > 5) {
+          if (duration < 60 || duration > 5 * 60) {
             setUploadError(
-              `Thời lượng video phải từ 1-5 phút. Video của bạn dài ${duration} phút.`
+              `Thời lượng video phải từ 1-5 phút. Video của bạn dài ${(
+                duration / 60
+              ).toFixed(1)} phút.`
             );
             return;
           }
@@ -230,7 +229,7 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
               onChange={field.onChange}
               error={!!error}
               helperText={error?.message}
-              disabled={!isEditing || isUploading}
+              disabled={true}
               sx={textFieldStyles}
               InputProps={{
                 endAdornment: (

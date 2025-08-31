@@ -299,6 +299,7 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                     error={!!error}
                     helperText={error?.message}
                     required
+                    disabled={data !== null}
                   />
                 )}
               />
@@ -319,6 +320,7 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                     error={!!error}
                     helperText={error?.message}
                     required
+                    disabled={data !== null}
                   />
                 )}
               />

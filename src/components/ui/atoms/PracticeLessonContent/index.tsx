@@ -115,7 +115,7 @@ const PracticeLessonContent: React.FC<PracticeLessonContentProps> = ({
                 )}
               </Box>
               <a
-                href="/templates/pratice-template..xlsx" // Giả sử file template được lưu trong thư mục public/templates
+                href="/templates/pratice-template.xlsx" // Giả sử file template được lưu trong thư mục public/templates
                 download="pratice-template.xlsx"
                 style={{ textDecoration: "underline", color: "blueviolet" }}
               >
