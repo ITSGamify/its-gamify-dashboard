@@ -240,81 +240,178 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                       Chưa có dữ liệu học tập
                     </Typography>
                   ) : (
-                    <Grid container spacing={2}>
-                      <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid container spacing={3}>
+                      <Grid size={{ xs: 12, md: 5 }}>
                         <Box
                           sx={{
-                            height: 250,
+                            height: 320,
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
+                            backgroundColor: "rgba(255,255,255,0.4)",
+                            borderRadius: 3,
+                            p: 3,
+                            border: "1px solid rgba(255,255,255,0.6)",
+                            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
                           }}
                         >
-                          <PieChart
-                            series={[
-                              {
-                                data: pieData,
-                              },
-                            ]}
-                            height={250}
-                            width={250}
-                          />
+                          {pieData.length > 0 ? (
+                            <Box sx={{ textAlign: "center" }}>
+                              <PieChart
+                                series={[
+                                  {
+                                    data: pieData,
+                                    innerRadius: 60,
+                                    outerRadius: 100,
+                                    paddingAngle: 2,
+                                  },
+                                ]}
+                                height={200}
+                                width={200}
+                              />
+                            </Box>
+                          ) : (
+                            <Box
+                              sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                height: "100%",
+                                color: "rgba(0,0,0,0.5)",
+                              }}
+                            >
+                              <Typography variant="h4" sx={{ mb: 2 }}>
+                                📊
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{ textAlign: "center" }}
+                              >
+                                Chưa có dữ liệu biểu đồ
+                              </Typography>
+                            </Box>
+                          )}
                         </Box>
                       </Grid>
 
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <Box sx={{ mt: 2 }}>
+                      <Grid size={{ xs: 12, md: 7 }}>
+                        <Box sx={{ pl: 2 }}>
                           <Typography
-                            variant="body2"
-                            sx={{ mb: 2, fontWeight: "bold" }}
-                          >
-                            📊 Tổng quan:
-                          </Typography>
-
-                          <Typography variant="body2" sx={{ mb: 1 }}>
-                            • Tổng khóa học có sẵn:{" "}
-                            <strong>{stat.totalAvailableCourses}</strong>
-                          </Typography>
-
-                          <Typography
-                            variant="body2"
+                            variant="h6"
                             sx={{
-                              mb: 1,
-                              fontSize: "0.8rem",
-                              color: "rgba(0,0,0,0.6)",
+                              mb: 3,
+                              fontWeight: 600,
+                              color: "#1565c0",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
                             }}
                           >
-                            &nbsp;&nbsp;├ Public: {stat.publicCoursesCount}
+                            📊 Tổng quan
                           </Typography>
 
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              mb: 1,
-                              fontSize: "0.8rem",
-                              color: "rgba(0,0,0,0.6)",
-                            }}
-                          >
-                            &nbsp;&nbsp;└ Department:{" "}
-                            {stat.departmentCoursesCount}
-                          </Typography>
-
-                          <Typography variant="body2" sx={{ mb: 1 }}>
-                            • Khóa học đã hoàn thành:{" "}
-                            <strong>{stat.totalCoursesCompleted}</strong>
-                          </Typography>
-
-                          <Typography variant="body2" sx={{ mb: 1 }}>
-                            • Khóa học chưa học:{" "}
-                            <strong>{stat.totalCoursesNotStarted}</strong>
-                          </Typography>
-
-                          <Box sx={{ mt: 3 }}>
+                          <Box sx={{ mb: 3 }}>
                             <Typography
-                              variant="body2"
-                              sx={{ mb: 2, fontWeight: "bold" }}
+                              variant="body1"
+                              sx={{
+                                mb: 2,
+                                fontWeight: 500,
+                                color: "#2e7d32",
+                              }}
                             >
-                              📈 Chi tiết:
+                              Tổng khóa học có sẵn:{" "}
+                              <strong style={{ fontSize: "1.1rem" }}>
+                                {stat.totalAvailableCourses}
+                              </strong>
+                            </Typography>
+
+                            <Box sx={{ ml: 2, mb: 2 }}>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  mb: 1,
+                                  color: "rgba(0,0,0,0.7)",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 1,
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    width: 8,
+                                    height: 8,
+                                    backgroundColor: "#2196f3",
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                                Public: {stat.publicCoursesCount}
+                              </Typography>
+
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  mb: 1,
+                                  color: "rgba(0,0,0,0.7)",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 1,
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    width: 8,
+                                    height: 8,
+                                    backgroundColor: "#ff9800",
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                                Department: {stat.departmentCoursesCount}
+                              </Typography>
+                            </Box>
+
+                            <Typography
+                              variant="body1"
+                              sx={{
+                                mb: 2,
+                                fontWeight: 500,
+                                color: "#2e7d32",
+                              }}
+                            >
+                              Khóa học đã hoàn thành:{" "}
+                              <strong style={{ fontSize: "1.1rem" }}>
+                                {stat.totalCoursesCompleted}
+                              </strong>
+                            </Typography>
+
+                            <Typography
+                              variant="body1"
+                              sx={{
+                                mb: 2,
+                                fontWeight: 500,
+                                color: "#d32f2f",
+                              }}
+                            >
+                              Khóa học chưa học:{" "}
+                              <strong style={{ fontSize: "1.1rem" }}>
+                                {stat.totalCoursesNotStarted}
+                              </strong>
+                            </Typography>
+                          </Box>
+
+                          <Box>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                mb: 2,
+                                fontWeight: 600,
+                                color: "#1565c0",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                            >
+                              📈 Chi tiết
                             </Typography>
 
                             {stat.totalCoursesCompleted > 0 && (
@@ -323,6 +420,10 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                   display: "flex",
                                   alignItems: "center",
                                   mb: 2,
+                                  p: 1.5,
+                                  backgroundColor: "rgba(76, 175, 80, 0.1)",
+                                  borderRadius: 1,
+                                  border: "1px solid rgba(76, 175, 80, 0.2)",
                                 }}
                               >
                                 <Box
@@ -331,12 +432,18 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                     height: 16,
                                     backgroundColor: "#4caf50",
                                     borderRadius: "50%",
-                                    mr: 1,
+                                    mr: 2,
+                                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                                   }}
                                 />
-                                <Typography variant="body2">
+                                <Typography
+                                  variant="body1"
+                                  sx={{ fontWeight: 500 }}
+                                >
                                   Đã hoàn thành:{" "}
-                                  <strong>{stat.totalCoursesCompleted}</strong>
+                                  <strong style={{ color: "#2e7d32" }}>
+                                    {stat.totalCoursesCompleted}
+                                  </strong>
                                 </Typography>
                               </Box>
                             )}
@@ -347,6 +454,10 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                   display: "flex",
                                   alignItems: "center",
                                   mb: 2,
+                                  p: 1.5,
+                                  backgroundColor: "rgba(255, 152, 0, 0.1)",
+                                  borderRadius: 1,
+                                  border: "1px solid rgba(255, 152, 0, 0.2)",
                                 }}
                               >
                                 <Box
@@ -355,12 +466,18 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                     height: 16,
                                     backgroundColor: "#ff9800",
                                     borderRadius: "50%",
-                                    mr: 1,
+                                    mr: 2,
+                                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                                   }}
                                 />
-                                <Typography variant="body2">
+                                <Typography
+                                  variant="body1"
+                                  sx={{ fontWeight: 500 }}
+                                >
                                   Đang học:{" "}
-                                  <strong>{stat.totalCoursesInProgress}</strong>
+                                  <strong style={{ color: "#f57c00" }}>
+                                    {stat.totalCoursesInProgress}
+                                  </strong>
                                 </Typography>
                               </Box>
                             )}
@@ -371,6 +488,10 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                   display: "flex",
                                   alignItems: "center",
                                   mb: 2,
+                                  p: 1.5,
+                                  backgroundColor: "rgba(244, 67, 54, 0.1)",
+                                  borderRadius: 1,
+                                  border: "1px solid rgba(244, 67, 54, 0.2)",
                                 }}
                               >
                                 <Box
@@ -379,12 +500,18 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                     height: 16,
                                     backgroundColor: "#f44336",
                                     borderRadius: "50%",
-                                    mr: 1,
+                                    mr: 2,
+                                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                                   }}
                                 />
-                                <Typography variant="body2">
+                                <Typography
+                                  variant="body1"
+                                  sx={{ fontWeight: 500 }}
+                                >
                                   Chưa bắt đầu:{" "}
-                                  <strong>{stat.totalCoursesNotStarted}</strong>
+                                  <strong style={{ color: "#d32f2f" }}>
+                                    {stat.totalCoursesNotStarted}
+                                  </strong>
                                 </Typography>
                               </Box>
                             )}
