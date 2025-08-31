@@ -76,18 +76,14 @@ const StatisticPage: React.FC = () => {
     }
   }, [quartersByYear]);
 
-  // Prepare data cho BarChart
+  // ✅ Prepare data cho BarChart với logic nhất quán
   const chartData = useMemo(() => {
     const deptNames = aggregatedData.map((item) => item.name);
     const series = [
       {
         data: aggregatedData.map((item) => {
           return item.users.reduce((total, user) => {
-            const pointInQuarter =
-              user.user_metrics && user.user_metrics.length > 0
-                ? user.user_metrics[0].point_in_quarter
-                : 0;
-            return total + pointInQuarter;
+            return total + (user.user_metrics?.[0]?.point_in_quarter || 0);
           }, 0);
         }),
         label: "Tổng Điểm",
@@ -96,54 +92,22 @@ const StatisticPage: React.FC = () => {
       {
         data: aggregatedData.map((item) => {
           return item.users.reduce((total, user) => {
-            const pointInQuarter =
-              user.user_metrics && user.user_metrics.length > 0
-                ? user.user_metrics[0].course_participated_num
-                : 0;
-            return total + pointInQuarter;
+            return total + (user.user_metrics?.[0]?.course_completed_num || 0);
           }, 0);
         }),
-        label: "Khóa Học Tham Gia",
-        color: theme.palette.info.main,
+        label: "Tổng Khóa Học Hoàn Thành",
+        color: theme.palette.success.main,
       },
       {
         data: aggregatedData.map((item) => {
           return item.users.reduce((total, user) => {
-            const pointInQuarter =
-              user.user_metrics && user.user_metrics.length > 0
-                ? user.user_metrics[0].course_completed_num
-                : 0;
-            return total + pointInQuarter;
+            return (
+              total + (user.user_metrics?.[0]?.challenge_participate_num || 0)
+            );
           }, 0);
         }),
-        label: "Khóa Học Hoàn Thành",
+        label: "Tổng Trận Thử Thách",
         color: theme.palette.warning.main,
-      },
-      {
-        data: aggregatedData.map((item) => {
-          return item.users.reduce((total, user) => {
-            const pointInQuarter =
-              user.user_metrics && user.user_metrics.length > 0
-                ? user.user_metrics[0].challenge_participate_num
-                : 0;
-            return total + pointInQuarter;
-          }, 0);
-        }),
-        label: "Thử Thách Tham Gia",
-        color: theme.palette.error.main,
-      },
-      {
-        data: aggregatedData.map((item) => {
-          return item.users.reduce((total, user) => {
-            const pointInQuarter =
-              user.user_metrics && user.user_metrics.length > 0
-                ? user.user_metrics[0].challenge_award_num
-                : 0;
-            return total + pointInQuarter;
-          }, 0);
-        }),
-        label: "Giải Thưởng Thử Thách",
-        color: theme.palette.secondary.main,
       },
     ];
     return { deptNames, series };
