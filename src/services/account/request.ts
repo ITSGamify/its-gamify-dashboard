@@ -27,6 +27,7 @@ export const createAccount = async (
     url: getRoute(END_POINTS.ACCOUNT.BASE),
     method: HTTP_METHODS.POST,
     data: payload,
+    shouldNotShowError: true, // Không hiển thị toast mặc định, sẽ xử lý riêng
   });
 };
 
@@ -38,6 +39,7 @@ export const updateAccount = async (
     url: getRoute(END_POINTS.ACCOUNT.DETAIL, { accountId }),
     method: HTTP_METHODS.PUT,
     data,
+    shouldNotShowError: true, // Không hiển thị toast mặc định, sẽ xử lý riêng
   });
 };
 

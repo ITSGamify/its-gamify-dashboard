@@ -46,14 +46,18 @@ axiosInstance.interceptors.response.use(
     switch (status) {
       case 400:
         console.log(error.response?.data);
-        toast.error(ToastContent, {
-          data: {
-            message:
-              error.response?.data.error ||
-              error.response?.data ||
-              "Đã xảy ra lỗi!",
-          },
-        });
+        // Không hiển thị toast mặc định cho lỗi 400 vì có thể đã được xử lý riêng
+        // Chỉ hiển thị nếu không có xử lý riêng
+        if (!shouldNotShowError) {
+          toast.error(ToastContent, {
+            data: {
+              message:
+                error.response?.data.error ||
+                error.response?.data ||
+                "Đã xảy ra lỗi!",
+            },
+          });
+        }
         break;
       case 401:
         userSession.clearUserProfile();

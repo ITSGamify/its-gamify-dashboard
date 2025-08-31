@@ -38,16 +38,19 @@ export const useGetAccounts = (params?: GetAccountParams) => {
   });
 };
 
-export const useCreateAccount = (onSuccess?: () => void) => {
+export const useCreateAccount = (callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }) => {
   return useMutation({
     mutationFn: (data: RequestAccountsParams) => createAccount(data),
-    onSuccess,
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
   });
 };
-export const useUpdateAccount = (onSuccess?: () => void) => {
+
+export const useUpdateAccount = (callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }) => {
   return useMutation({
     mutationFn: (data: RequestUpdateAccountParams) => updateAccount(data),
-    onSuccess,
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
   });
 };
 
