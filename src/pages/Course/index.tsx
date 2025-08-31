@@ -173,7 +173,9 @@ const CoursePage: React.FC = () => {
         </Box>
       </TableCell>,
       <TableCell key="classify" align="left">
-        {getClassifyInVietnamese(row.classify)}
+        {`${getClassifyInVietnamese(row.classify)} ${
+          row.is_optional ? "(Không bắt buộc)" : ""
+        }`}
       </TableCell>,
 
       <TableCell key="step" align="left">
