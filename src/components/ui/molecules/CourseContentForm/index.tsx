@@ -163,14 +163,14 @@ const CourseContentForm = ({
                       color="text.secondary"
                       gutterBottom
                     >
-                      Chưa có module nào
+                      Chưa có chương nào
                     </Typography>
                     <Button
                       variant="contained"
                       startIcon={<AddIcon />}
                       onClick={handleAddModule}
                     >
-                      Thêm module đầu tiên
+                      Thêm chương đầu tiên
                     </Button>
                   </Box>
                 )}
