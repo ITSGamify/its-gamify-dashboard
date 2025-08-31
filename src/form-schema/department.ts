@@ -35,6 +35,21 @@ export const departmentFormScheme: yup.ObjectSchema<DepartmentsFormData> =
           if (!value) return true;
           return !value.includes("  ");
         }
+      )
+      .test(
+        "no-special-chars-at-start",
+        "Tên phòng ban không được bắt đầu bằng ký tự đặc biệt",
+        (value) => {
+          if (!value) return true;
+          const trimmedValue = value.trim();
+          if (trimmedValue.length === 0) return true;
+          
+          // Kiểm tra ký tự đầu tiên có phải là ký tự đặc biệt không
+          const firstChar = trimmedValue.charAt(0);
+          const specialCharsRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/;
+          
+          return !specialCharsRegex.test(firstChar);
+        }
       ),
     location: yup.string().optional(),
     description: yup.string().optional(),
