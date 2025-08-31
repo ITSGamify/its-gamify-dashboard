@@ -2,6 +2,7 @@ import { request } from "@config/axios";
 import {
   GetAccountParams,
   RequestAccountsParams,
+  RequestUpdateAccountParams,
   RequestDeleteParams,
 } from ".";
 import { PaginatedResponse } from "@interfaces/dom/query";
@@ -32,7 +33,7 @@ export const createAccount = async (
 };
 
 export const updateAccount = async (
-  payload: RequestAccountsParams & { id: string }
+  payload: RequestUpdateAccountParams
 ): Promise<void> => {
   const { id: accountId, ...data } = payload;
   return request({

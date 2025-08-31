@@ -66,7 +66,9 @@ export const useAccountModal = ({ user: data, onActionSuccess }: Props) => {
 
       try {
         if (data) {
-          await updateAccount({ id: data.id, ...body });
+          // Khi cập nhật, không gửi password vì không cho sửa
+          const { password, ...updateBody } = body;
+          await updateAccount({ id: data.id, ...updateBody });
           toast.success(ToastContent, {
             data: {
               message: "Cập nhật thành công",

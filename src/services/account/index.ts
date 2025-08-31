@@ -26,8 +26,9 @@ export interface RequestAccountsParams {
   avatar_url: string;
 }
 
-export interface RequestUpdateAccountParams extends RequestAccountsParams {
+export interface RequestUpdateAccountParams extends Omit<RequestAccountsParams, 'password'> {
   id: string;
+  password?: string; // Không bắt buộc khi cập nhật
 }
 
 export const useGetAccounts = (params?: GetAccountParams) => {
