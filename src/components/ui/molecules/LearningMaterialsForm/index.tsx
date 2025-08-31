@@ -43,16 +43,6 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/svg+xml",
 ];
 
-const ACCEPTED_IMAGE_EXTENSIONS = [
-  ".jpg",
-  ".jpeg",
-  ".png",
-  ".gif",
-  ".bmp",
-  ".webp",
-  ".svg",
-];
-
 const LearningMaterialsForm = ({
   data,
   handleNextState,
@@ -110,6 +100,50 @@ const LearningMaterialsForm = ({
                     textAlign: "center",
                     mb: 3,
                   }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.currentTarget.style.borderColor =
+                      theme.palette.primary.main;
+                  }}
+                  onDragLeave={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.currentTarget.style.borderColor = theme.palette.divider;
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.currentTarget.style.borderColor = theme.palette.divider;
+
+                    if (
+                      e.dataTransfer.files &&
+                      e.dataTransfer.files.length > 0
+                    ) {
+                      const fileList = Array.from(e.dataTransfer.files);
+                      const validFiles = fileList.filter((file) =>
+                        ACCEPTED_IMAGE_TYPES.includes(file.type)
+                      );
+
+                      if (validFiles.length > 0) {
+                        const dataTransfer = new DataTransfer();
+                        validFiles.forEach((file) =>
+                          dataTransfer.items.add(file)
+                        );
+
+                        const event = {
+                          target: {
+                            files: dataTransfer.files,
+                          },
+                        } as React.ChangeEvent<HTMLInputElement>;
+
+                        handleFileUpload(event);
+                      }
+                    }
+                  }}
+                  onClick={() => {
+                    document.getElementById("file-upload")?.click();
+                  }}
                 >
                   <input
                     id="file-upload"
@@ -128,19 +162,12 @@ const LearningMaterialsForm = ({
                   <Typography variant="body2" color="text.secondary" paragraph>
                     Kéo và thả tệp vào đây hoặc nhấp để chọn tệp
                   </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    paragraph
-                  >
-                    Chỉ chấp nhận các định dạng:{" "}
-                    {ACCEPTED_IMAGE_EXTENSIONS.join(", ")}
-                  </Typography>
                   <Button
                     variant="contained"
                     component="label"
                     htmlFor="file-upload"
                     startIcon={<CloudUploadIcon />}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     Chọn tệp
                   </Button>

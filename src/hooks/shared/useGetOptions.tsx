@@ -28,6 +28,7 @@ export const useGetOptions = <T extends Record<string, any>, P>(
   const params = {
     limit: DEFAULT_LIMIT_OPTIONS_PARAMS,
     q: query,
+    isOption: true,
     ...optionField.params,
   } as Params<P>;
 

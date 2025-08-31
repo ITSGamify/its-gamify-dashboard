@@ -13,7 +13,13 @@ const Logo: React.FC = () => {
   return (
     <Box
       component={Link}
-      to={profile?.user.role === RoleEnum.TRAINER ? PATH.COURSES : PATH.HOME}
+      to={
+        profile?.user.role === RoleEnum.TRAINER
+          ? PATH.COURSES
+          : profile?.user.role === RoleEnum.MANAGER
+          ? PATH.HOME
+          : PATH.DEPARTMENTS
+      }
       sx={{
         display: "flex",
         alignItems: "center",

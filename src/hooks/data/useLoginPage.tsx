@@ -107,6 +107,9 @@ export const useLoginPage = () => {
           if (user.user.role === RoleEnum.TRAINER) {
             const route = getRoute(PATH.COURSES);
             navigate(route);
+          } else if (user.user.role === RoleEnum.ADMIN) {
+            const route = getRoute(PATH.DEPARTMENTS);
+            navigate(route);
           } else {
             const route = getRoute(PATH.HOME);
             navigate(route);

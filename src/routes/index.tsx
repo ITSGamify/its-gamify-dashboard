@@ -142,9 +142,7 @@ const router = createBrowserRouter(
     },
     {
       element: (
-        <ProtectedRoute
-          allowedRoles={[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]}
-        >
+        <ProtectedRoute allowedRoles={[RoleEnum.MANAGER]}>
           <MainLayout />
         </ProtectedRoute>
       ),

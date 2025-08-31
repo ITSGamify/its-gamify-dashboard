@@ -5,6 +5,7 @@ export type OrderDirection = "asc" | "desc";
 export type PaginationParams = {
   page?: number;
   limit?: number;
+  isOption?: boolean;
   q?: string; // Search query parameter used for filtering results
   order_by?: {
     order_dir?: OrderDirection;

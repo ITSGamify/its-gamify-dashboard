@@ -1,5 +1,6 @@
 import { Module } from "@interfaces/dom/course";
 import { Category } from "./category";
+import { Challenge } from "./challenge";
 // import { Department } from "./department";
 
 export interface Course {
@@ -33,6 +34,7 @@ export interface Course {
   introduction_video?: string;
   learning_materials?: Material[];
   is_deleted: boolean;
+  challenges: Challenge[];
 }
 
 export interface CourseDepartment {
