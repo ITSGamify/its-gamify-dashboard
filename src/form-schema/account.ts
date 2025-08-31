@@ -20,7 +20,23 @@ export interface AccountUpdateFormScheme {
 
 export const accountFormScheme: yup.ObjectSchema<AccountFormScheme> =
   yup.object({
-    avatar_url: yup.string().optional(),
+    avatar_url: yup
+      .string()
+      .optional()
+      .test(
+        "valid-avatar-url",
+        "URL ảnh đại diện không hợp lệ",
+        (value) => {
+          if (!value) return true; // Optional field
+          // Kiểm tra xem có phải là URL hợp lệ không
+          try {
+            new URL(value);
+            return true;
+          } catch {
+            return false;
+          }
+        }
+      ),
     full_name: yup
       .string()
       .required("Nhập tên tài khoản")
@@ -78,6 +94,22 @@ export const accountFormScheme: yup.ObjectSchema<AccountFormScheme> =
         }
       )
       .test(
+        "has-lowercase",
+        "Mật khẩu phải chứa ít nhất 1 ký tự viết thường",
+        (value) => {
+          if (!value) return true;
+          return /[a-z]/.test(value);
+        }
+      )
+      .test(
+        "has-number",
+        "Mật khẩu phải chứa ít nhất 1 chữ số",
+        (value) => {
+          if (!value) return true;
+          return /[0-9]/.test(value);
+        }
+      )
+      .test(
         "has-special-char",
         "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (~!@#$%^&*())",
         (value) => {
@@ -90,7 +122,23 @@ export const accountFormScheme: yup.ObjectSchema<AccountFormScheme> =
 // Schema cho việc cập nhật account (password không bắt buộc)
 export const accountUpdateFormScheme: yup.ObjectSchema<AccountUpdateFormScheme> =
   yup.object({
-    avatar_url: yup.string().optional(),
+    avatar_url: yup
+      .string()
+      .optional()
+      .test(
+        "valid-avatar-url",
+        "URL ảnh đại diện không hợp lệ",
+        (value) => {
+          if (!value) return true; // Optional field
+          // Kiểm tra xem có phải là URL hợp lệ không
+          try {
+            new URL(value);
+            return true;
+          } catch {
+            return false;
+          }
+        }
+      ),
     full_name: yup
       .string()
       .required("Nhập tên tài khoản")

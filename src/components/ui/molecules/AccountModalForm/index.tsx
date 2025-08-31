@@ -152,12 +152,14 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
     reset();
     onClose();
     setAvatarPreview(null);
+    setUploadError(null);
   };
   const upload = useFileUpload();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(
     data?.avatar_url || null
   );
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     setAvatarPreview(data?.avatar_url || null);
@@ -168,6 +170,29 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
   ) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Reset error state
+      setUploadError(null);
+
+      // Kiểm tra định dạng file
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        setUploadError("Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WEBP)");
+        return;
+      }
+
+      // Kiểm tra kích thước file (giới hạn 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        setUploadError("Kích thước file không được vượt quá 5MB");
+        return;
+      }
+
       try {
         setIsUploading(true);
         // Tạo preview URL cho file
@@ -183,15 +208,20 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
         console.error("Error uploading file:", error);
         // Xóa preview nếu upload thất bại
         setAvatarPreview(null);
+        setUploadError("Đã xảy ra lỗi khi tải lên file. Vui lòng thử lại.");
       } finally {
         setIsUploading(false);
       }
     }
+
+    // Reset input để có thể chọn lại file đó nếu muốn
+    e.target.value = "";
   };
 
   const handleRemoveAvatar = (onChange: (id?: string | null) => void) => {
     onChange(null);
     setAvatarPreview(null);
+    setUploadError(null);
   };
 
   return (
@@ -269,14 +299,29 @@ const AccountModalForm: React.FC<CreateUserModalProps> = ({
                       disabled={isUploading}
                     />
                     {!data && (
-                      <UploadButton htmlFor="avatar-upload">
-                        <AddAPhotoIcon fontSize="small" sx={{ mr: 0.5 }} />
-                        {isUploading
-                          ? "Đang tải lên..."
-                          : avatarPreview
-                          ? "Thay đổi ảnh"
-                          : "Tải lên ảnh đại diện"}
-                      </UploadButton>
+                      <>
+                        <UploadButton htmlFor="avatar-upload">
+                          <AddAPhotoIcon fontSize="small" sx={{ mr: 0.5 }} />
+                          {isUploading
+                            ? "Đang tải lên..."
+                            : avatarPreview
+                            ? "Thay đổi ảnh"
+                            : "Tải lên ảnh đại diện"}
+                        </UploadButton>
+                        {uploadError && (
+                          <Typography
+                            variant="caption"
+                            color="error"
+                            sx={{
+                              mt: 1,
+                              textAlign: "center",
+                              display: "block",
+                            }}
+                          >
+                            {uploadError}
+                          </Typography>
+                        )}
+                      </>
                     )}
                   </>
                 );

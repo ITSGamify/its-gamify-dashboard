@@ -37,18 +37,17 @@ export const departmentFormScheme: yup.ObjectSchema<DepartmentsFormData> =
         }
       )
       .test(
-        "no-special-chars-at-start",
-        "Tên phòng ban không được bắt đầu bằng ký tự đặc biệt",
+        "no-special-chars",
+        "Tên phòng ban không được chứa ký tự đặc biệt",
         (value) => {
           if (!value) return true;
           const trimmedValue = value.trim();
           if (trimmedValue.length === 0) return true;
           
-          // Kiểm tra ký tự đầu tiên có phải là ký tự đặc biệt không
-          const firstChar = trimmedValue.charAt(0);
+          // Kiểm tra toàn bộ tên phòng ban có chứa ký tự đặc biệt không
           const specialCharsRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/;
           
-          return !specialCharsRegex.test(firstChar);
+          return !specialCharsRegex.test(trimmedValue);
         }
       ),
     location: yup.string().optional(),
