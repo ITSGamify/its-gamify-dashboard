@@ -22,17 +22,6 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
 
   const allCourses = coursesData?.data || [];
 
-  // Debug: Log để kiểm tra dữ liệu
-  console.log("All courses:", allCourses);
-  console.log(
-    "Course statuses:",
-    allCourses.map((c) => ({
-      id: c.id,
-      status: c.status,
-      classify: c.classify,
-    }))
-  );
-
   // Tính toán thống kê học tập theo từng phòng ban
   const departmentStats = departments.map((dept) => {
     const totalEmployees = dept.users.length;
@@ -81,16 +70,6 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
       totalAvailableCourses - totalCoursesCompleted - totalCoursesInProgress
     );
 
-    // Debug: Log cho từng phòng ban
-    console.log(`Department ${dept.name}:`, {
-      publicCourses: publicCourses.length,
-      departmentCourses: departmentCourses.length,
-      totalAvailable: totalAvailableCourses,
-      completed: totalCoursesCompleted,
-      inProgress: totalCoursesInProgress,
-      notStarted: totalCoursesNotStarted,
-    });
-
     return {
       department: dept,
       totalEmployees,
@@ -130,20 +109,6 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
           }}
         >
           📚 Thống kê học tập theo phòng ban
-        </Typography>
-
-        {/* Debug info */}
-        <Typography
-          variant="caption"
-          sx={{
-            display: "block",
-            mb: 2,
-            color: "rgba(0,0,0,0.6)",
-            fontStyle: "italic",
-          }}
-        >
-          🔍 Debug: Tổng khóa học từ API: {allCourses.length} | Status values:{" "}
-          {[...new Set(allCourses.map((c) => c.status))].join(", ")}
         </Typography>
 
         {departmentStats.length === 0 ? (
@@ -378,7 +343,7 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                 color: "#2e7d32",
                               }}
                             >
-                              Khóa học đã hoàn thành:{" "}
+                              Tổng số khóa học đã hoàn thành:{" "}
                               <strong style={{ fontSize: "1.1rem" }}>
                                 {stat.totalCoursesCompleted}
                               </strong>
@@ -392,7 +357,7 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                 color: "#d32f2f",
                               }}
                             >
-                              Khóa học chưa học:{" "}
+                              Tổng số Khóa học chưa học:{" "}
                               <strong style={{ fontSize: "1.1rem" }}>
                                 {stat.totalCoursesNotStarted}
                               </strong>
