@@ -168,7 +168,7 @@ const VideoLessonContent: React.FC<VideoLessonContentProps> = ({
         // Cập nhật URL video
         onChange(finalUrl);
 
-        setDuration(Math.round(duration / 60)); // Convert seconds to minutes
+        setDuration(parseFloat((duration / 60).toFixed(2))); // Convert seconds to minutes with 2 decimal places
       } catch (error) {
         console.error("Lỗi khi tải lên video multipart:", error);
         setUploadError("Đã xảy ra lỗi khi tải lên video. Vui lòng thử lại.");
