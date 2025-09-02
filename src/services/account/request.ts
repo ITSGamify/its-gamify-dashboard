@@ -57,7 +57,7 @@ export const deleteRangeAccount = async (
   const { ids: params } = payload;
   return request({
     url: getRoute(END_POINTS.ACCOUNT.DELETE_RANGE),
-    method: HTTP_METHODS.PUT,
+    method: HTTP_METHODS.DELETE,
     data: params,
   });
 };
