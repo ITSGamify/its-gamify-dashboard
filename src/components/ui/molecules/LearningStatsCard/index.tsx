@@ -214,9 +214,11 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                             alignItems: "center",
                             backgroundColor: "rgba(255,255,255,0.4)",
                             borderRadius: 3,
-                            p: 3,
+                            p: 2,
                             border: "1px solid rgba(255,255,255,0.6)",
                             boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                            maxWidth: "100%",
+                            overflow: "hidden",
                           }}
                         >
                           {pieData.length > 0 ? (
@@ -234,13 +236,13 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                   series={[
                                     {
                                       data: pieData,
-                                      innerRadius: 60,
-                                      outerRadius: 100,
+                                      innerRadius: 50,
+                                      outerRadius: 80,
                                       paddingAngle: 2,
                                     },
                                   ]}
-                                  height={200}
-                                  width={200}
+                                  height={160}
+                                  width={160}
                                 />
                               </Box>
 
@@ -249,8 +251,8 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                 sx={{
                                   display: "flex",
                                   flexDirection: "column",
-                                  gap: 1,
-                                  mt: 2,
+                                  gap: 0.5,
+                                  mt: 1,
                                 }}
                               >
                                 {pieData.map((item) => (
@@ -264,18 +266,19 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                   >
                                     <Box
                                       sx={{
-                                        width: 12,
-                                        height: 12,
+                                        width: 10,
+                                        height: 10,
                                         backgroundColor: item.color,
                                         borderRadius: "50%",
-                                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                                        boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
                                       }}
                                     />
                                     <Typography
-                                      variant="body2"
+                                      variant="caption"
                                       sx={{
                                         fontWeight: 500,
                                         color: "rgba(0,0,0,0.8)",
+                                        fontSize: "0.75rem",
                                       }}
                                     >
                                       {item.label}
