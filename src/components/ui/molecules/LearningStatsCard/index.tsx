@@ -209,9 +209,8 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                       <Grid size={{ xs: 12, md: 5 }}>
                         <Box
                           sx={{
-                            height: 320,
                             display: "flex",
-                            justifyContent: "center",
+                            flexDirection: "column",
                             alignItems: "center",
                             backgroundColor: "rgba(255,255,255,0.4)",
                             borderRadius: 3,
@@ -221,20 +220,70 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                           }}
                         >
                           {pieData.length > 0 ? (
-                            <Box sx={{ textAlign: "center" }}>
-                              <PieChart
-                                series={[
-                                  {
-                                    data: pieData,
-                                    innerRadius: 60,
-                                    outerRadius: 100,
-                                    paddingAngle: 2,
+                            <>
+                              <Box
+                                sx={{
+                                  textAlign: "center",
+                                  mb: 2,
+                                  "& .MuiChartsLegend-root": {
+                                    display: "none !important",
                                   },
-                                ]}
-                                height={200}
-                                width={200}
-                              />
-                            </Box>
+                                }}
+                              >
+                                <PieChart
+                                  series={[
+                                    {
+                                      data: pieData,
+                                      innerRadius: 60,
+                                      outerRadius: 100,
+                                      paddingAngle: 2,
+                                    },
+                                  ]}
+                                  height={200}
+                                  width={200}
+                                />
+                              </Box>
+
+                              {/* Legend positioned below the chart */}
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: 1,
+                                  mt: 2,
+                                }}
+                              >
+                                {pieData.map((item) => (
+                                  <Box
+                                    key={item.id}
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: 1,
+                                    }}
+                                  >
+                                    <Box
+                                      sx={{
+                                        width: 12,
+                                        height: 12,
+                                        backgroundColor: item.color,
+                                        borderRadius: "50%",
+                                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                                      }}
+                                    />
+                                    <Typography
+                                      variant="body2"
+                                      sx={{
+                                        fontWeight: 500,
+                                        color: "rgba(0,0,0,0.8)",
+                                      }}
+                                    >
+                                      {item.label}
+                                    </Typography>
+                                  </Box>
+                                ))}
+                              </Box>
+                            </>
                           ) : (
                             <Box
                               sx={{
