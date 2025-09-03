@@ -146,19 +146,19 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                   id: 0,
                   value: stat.totalCoursesCompleted,
                   label: "Đã hoàn thành",
-                  color: "#4caf50",
+                  color: "#2e7d32",
                 },
                 {
                   id: 1,
                   value: stat.totalCoursesInProgress,
                   label: "Đang học",
-                  color: "#ff9800",
+                  color: "#f57c00",
                 },
                 {
                   id: 2,
                   value: stat.totalCoursesNotStarted,
                   label: "Chưa bắt đầu",
-                  color: "#f44336",
+                  color: "#d32f2f",
                 },
               ].filter((item) => item.value > 0);
 
@@ -212,12 +212,14 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            backgroundColor: "rgba(255,255,255,0.4)",
+                            justifyContent: "center",
+                            backgroundColor: "rgba(255,255,255,0.8)",
                             borderRadius: 3,
                             p: 2,
-                            border: "1px solid rgba(255,255,255,0.6)",
-                            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                            border: "1px solid rgba(255,255,255,0.9)",
+                            boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
                             maxWidth: "100%",
+                            minHeight: 200,
                             overflow: "hidden",
                           }}
                         >
@@ -225,8 +227,11 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                             <>
                               <Box
                                 sx={{
-                                  textAlign: "center",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
                                   mb: 2,
+                                  width: "100%",
                                   "& .MuiChartsLegend-root": {
                                     display: "none !important",
                                   },
@@ -236,13 +241,14 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                   series={[
                                     {
                                       data: pieData,
-                                      innerRadius: 50,
-                                      outerRadius: 80,
-                                      paddingAngle: 2,
+                                      innerRadius: 40,
+                                      outerRadius: 70,
+                                      paddingAngle: 3,
+                                      cornerRadius: 2,
                                     },
                                   ]}
-                                  height={160}
-                                  width={160}
+                                  height={150}
+                                  width={150}
                                 />
                               </Box>
 
@@ -253,6 +259,7 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                   flexDirection: "column",
                                   gap: 0.5,
                                   mt: 1,
+                                  alignItems: "center",
                                 }}
                               >
                                 {pieData.map((item) => (
