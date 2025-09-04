@@ -164,7 +164,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
                 render={({ field, fieldState: { error } }) => (
                   <TextField
                     fullWidth
-                    label="Mô tả module"
+                    label="Mô tả chương"
                     value={field.value}
                     onChange={field.onChange}
                     error={!!error}

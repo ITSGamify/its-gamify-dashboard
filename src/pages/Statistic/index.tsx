@@ -19,7 +19,11 @@ import {
   Tabs,
   Tab,
   useTheme,
+  Collapse,
+  Avatar,
+  Chip,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { useGetQuaters } from "@services/quater";
 import { useGetStatistics } from "@services/department";
@@ -35,6 +39,7 @@ const StatisticPage: React.FC = () => {
   );
   const [selectedQuarter, setSelectedQuarter] = useState<string>("");
   const [activeTab, setActiveTab] = useState(0);
+  const [expandedDeptId, setExpandedDeptId] = useState<string | null>(null);
 
   const { data: quarterDatas, isLoading: isLoadingQuarters } = useGetQuaters({
     page: 0,
@@ -139,6 +144,10 @@ const StatisticPage: React.FC = () => {
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
+  };
+
+  const toggleDepartmentDetail = (deptId: string) => {
+    setExpandedDeptId((prev) => (prev === deptId ? null : deptId));
   };
 
   return (
@@ -416,46 +425,264 @@ const StatisticPage: React.FC = () => {
                             );
 
                             return (
-                              <TableRow key={item.id}>
-                                <TableCell>
-                                  <Typography
-                                    variant="subtitle1"
-                                    fontWeight={600}
+                              <>
+                                <TableRow
+                                  key={item.id}
+                                  hover
+                                  onClick={() =>
+                                    toggleDepartmentDetail(item.id)
+                                  }
+                                  sx={{ cursor: "pointer" }}
+                                >
+                                  <TableCell>
+                                    <Typography
+                                      variant="subtitle1"
+                                      fontWeight={600}
+                                    >
+                                      {item.name}
+                                    </Typography>
+                                    <Typography
+                                      variant="caption"
+                                      color="text.secondary"
+                                    >
+                                      {item.users.length} nhân viên
+                                    </Typography>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Typography
+                                      variant="body1"
+                                      fontWeight={500}
+                                    >
+                                      {courseParticipatedNum}
+                                    </Typography>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Typography
+                                      variant="body1"
+                                      fontWeight={500}
+                                    >
+                                      {courseCompletedNum}
+                                    </Typography>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Typography
+                                      variant="body1"
+                                      fontWeight={500}
+                                    >
+                                      {challengeParticipateNum}
+                                    </Typography>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Typography
+                                      variant="body1"
+                                      fontWeight={600}
+                                      sx={{ color: theme.palette.primary.main }}
+                                    >
+                                      {pointInQuarter.toLocaleString()}
+                                    </Typography>
+                                  </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell
+                                    colSpan={5}
+                                    sx={{ p: 0, border: 0 }}
                                   >
-                                    {item.name}
-                                  </Typography>
-                                  <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                  >
-                                    {item.users.length} nhân viên
-                                  </Typography>
-                                </TableCell>
-                                <TableCell>
-                                  <Typography variant="body1" fontWeight={500}>
-                                    {courseParticipatedNum}
-                                  </Typography>
-                                </TableCell>
-                                <TableCell>
-                                  <Typography variant="body1" fontWeight={500}>
-                                    {courseCompletedNum}
-                                  </Typography>
-                                </TableCell>
-                                <TableCell>
-                                  <Typography variant="body1" fontWeight={500}>
-                                    {challengeParticipateNum}
-                                  </Typography>
-                                </TableCell>
-                                <TableCell>
-                                  <Typography
-                                    variant="body1"
-                                    fontWeight={600}
-                                    sx={{ color: theme.palette.primary.main }}
-                                  >
-                                    {pointInQuarter.toLocaleString()}
-                                  </Typography>
-                                </TableCell>
-                              </TableRow>
+                                    <Collapse
+                                      in={expandedDeptId === item.id}
+                                      timeout="auto"
+                                      unmountOnExit
+                                    >
+                                      <Box
+                                        sx={{
+                                          p: 2,
+                                          mt: 1,
+                                          backgroundColor: alpha(
+                                            theme.palette.primary.main,
+                                            0.03
+                                          ),
+                                          border: `1px solid ${alpha(
+                                            theme.palette.primary.main,
+                                            0.15
+                                          )}`,
+                                          borderLeft: `4px solid ${theme.palette.primary.main}`,
+                                          borderRadius: 2,
+                                          boxShadow: theme.shadows[1],
+                                        }}
+                                      >
+                                        <Typography
+                                          variant="subtitle1"
+                                          sx={{ fontWeight: 700, mb: 1.5 }}
+                                        >
+                                          Chi tiết phòng ban {item.name}
+                                        </Typography>
+                                        <Table
+                                          size="small"
+                                          sx={{
+                                            "& thead th": {
+                                              backgroundColor: alpha(
+                                                theme.palette.primary.main,
+                                                0.06
+                                              ),
+                                              fontWeight: 700,
+                                            },
+                                            "& tbody tr:hover": {
+                                              backgroundColor: alpha(
+                                                theme.palette.primary.main,
+                                                0.04
+                                              ),
+                                            },
+                                          }}
+                                        >
+                                          <TableHead>
+                                            <TableRow>
+                                              <TableCell
+                                                sx={{ fontWeight: 700 }}
+                                              >
+                                                Người dùng
+                                              </TableCell>
+                                              <TableCell
+                                                sx={{ fontWeight: 700 }}
+                                              >
+                                                Khóa học tham gia
+                                              </TableCell>
+                                              <TableCell
+                                                sx={{ fontWeight: 700 }}
+                                              >
+                                                Khóa học hoàn thành
+                                              </TableCell>
+                                              <TableCell
+                                                sx={{ fontWeight: 700 }}
+                                              >
+                                                Thử thách tham gia
+                                              </TableCell>
+                                              <TableCell
+                                                sx={{ fontWeight: 700 }}
+                                                align="right"
+                                              >
+                                                Điểm trong quý
+                                              </TableCell>
+                                            </TableRow>
+                                          </TableHead>
+                                          <TableBody>
+                                            {item.users.map((u) => {
+                                              const m =
+                                                u.user_metrics &&
+                                                u.user_metrics[0]
+                                                  ? u.user_metrics[0]
+                                                  : ({} as any);
+                                              const roleLabel =
+                                                typeof (u as any).role ===
+                                                "string"
+                                                  ? ((u as any).role as string)
+                                                  : (u as any).role?.name || "";
+                                              return (
+                                                <TableRow key={u.id}>
+                                                  <TableCell>
+                                                    <Box
+                                                      sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        gap: 1.5,
+                                                      }}
+                                                    >
+                                                      <Avatar
+                                                        sx={{
+                                                          width: 30,
+                                                          height: 30,
+                                                        }}
+                                                      >
+                                                        {u.full_name?.[0] ||
+                                                          "U"}
+                                                      </Avatar>
+                                                      <Box>
+                                                        <Typography
+                                                          variant="body2"
+                                                          fontWeight={600}
+                                                        >
+                                                          {u.full_name}
+                                                        </Typography>
+                                                        <Box
+                                                          sx={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                              "center",
+                                                            gap: 1,
+                                                          }}
+                                                        >
+                                                          <Typography
+                                                            variant="caption"
+                                                            color="text.secondary"
+                                                          >
+                                                            {u.email}
+                                                          </Typography>
+                                                          {roleLabel && (
+                                                            <Chip
+                                                              size="small"
+                                                              label={roleLabel}
+                                                              color={
+                                                                roleLabel
+                                                                  .toUpperCase()
+                                                                  .includes(
+                                                                    "LEADER"
+                                                                  )
+                                                                  ? "primary"
+                                                                  : undefined
+                                                              }
+                                                              variant={
+                                                                roleLabel
+                                                                  .toUpperCase()
+                                                                  .includes(
+                                                                    "LEADER"
+                                                                  )
+                                                                  ? "filled"
+                                                                  : "outlined"
+                                                              }
+                                                            />
+                                                          )}
+                                                        </Box>
+                                                      </Box>
+                                                    </Box>
+                                                  </TableCell>
+                                                  <TableCell align="center">
+                                                    {m.course_participated_num ||
+                                                      0}
+                                                  </TableCell>
+                                                  <TableCell align="center">
+                                                    {m.course_completed_num ||
+                                                      0}
+                                                  </TableCell>
+                                                  <TableCell align="center">
+                                                    {m.challenge_participate_num ||
+                                                      0}
+                                                  </TableCell>
+                                                  <TableCell align="right">
+                                                    <Typography
+                                                      sx={{
+                                                        fontWeight: 700,
+                                                        color:
+                                                          (m.point_in_quarter ||
+                                                            0) > 0
+                                                            ? theme.palette
+                                                                .success.main
+                                                            : theme.palette.text
+                                                                .secondary,
+                                                      }}
+                                                    >
+                                                      {(
+                                                        m.point_in_quarter || 0
+                                                      ).toLocaleString()}
+                                                    </Typography>
+                                                  </TableCell>
+                                                </TableRow>
+                                              );
+                                            })}
+                                          </TableBody>
+                                        </Table>
+                                      </Box>
+                                    </Collapse>
+                                  </TableCell>
+                                </TableRow>
+                              </>
                             );
                           })}
                         </TableBody>
