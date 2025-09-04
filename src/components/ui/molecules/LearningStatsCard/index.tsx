@@ -569,6 +569,7 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 1,
+                                fontSize: { xs: "1rem", md: "1.1rem" },
                               }}
                             >
                               📈 Chi tiết: Top 3 theo điểm
@@ -592,6 +593,7 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                   mb: 1.5,
                                   color: "#0d47a1",
                                   letterSpacing: 0.2,
+                                  fontSize: { xs: "0.95rem", md: "1rem" },
                                 }}
                               >
                                 Top 3 điểm cao nhất (phòng ban)
@@ -611,8 +613,8 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                       display: "grid",
                                       gridTemplateColumns: "auto 1fr auto",
                                       alignItems: "center",
-                                      gap: 1.5,
-                                      p: 1,
+                                      gap: { xs: 1, md: 1.5 },
+                                      p: { xs: 0.75, md: 1 },
                                       borderRadius: 1,
                                       transition: "background .2s ease",
                                       "&:not(:last-of-type)": { mb: 1 },
@@ -648,6 +650,10 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                         variant="body2"
                                         sx={{
                                           fontWeight: 600,
+                                          fontSize: {
+                                            xs: "0.95rem",
+                                            md: "1rem",
+                                          },
                                         }}
                                       >
                                         {item.user.full_name}
@@ -660,13 +666,20 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                       </Typography>
                                     </Box>
                                     <Box
-                                      sx={{ textAlign: "right", minWidth: 90 }}
+                                      sx={{
+                                        textAlign: "right",
+                                        minWidth: { xs: 88, md: 100 },
+                                      }}
                                     >
                                       <Typography
                                         variant="body2"
                                         sx={{
                                           fontWeight: 700,
                                           color: "#1565c0",
+                                          fontSize: {
+                                            xs: "0.95rem",
+                                            md: "1rem",
+                                          },
                                         }}
                                       >
                                         {item.points.toLocaleString()} điểm
