@@ -176,6 +176,9 @@ const CoursePage: React.FC = () => {
         {`${getClassifyInVietnamese(row.classify)} ${
           row.is_optional ? "(Không bắt buộc)" : ""
         }`}
+        {row.classify === "DEPARTMENTONLY"
+          ? ` : ${row.course_departments[0].department.name}`
+          : ""}
       </TableCell>,
 
       <TableCell key="step" align="left">
