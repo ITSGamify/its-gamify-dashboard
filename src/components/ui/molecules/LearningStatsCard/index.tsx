@@ -369,7 +369,7 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                     borderRadius: "50%",
                                   }}
                                 />
-                                Public: {stat.publicCoursesCount}
+                                Tất Cả: {stat.publicCoursesCount}
                               </Typography>
 
                               <Typography
@@ -390,7 +390,7 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                     borderRadius: "50%",
                                   }}
                                 />
-                                Department: {stat.departmentCoursesCount}
+                                Phòng Ban: {stat.departmentCoursesCount}
                               </Typography>
                             </Box>
 
