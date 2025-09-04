@@ -177,7 +177,7 @@ const CoursePage: React.FC = () => {
           row.is_optional ? "(Không bắt buộc)" : ""
         }`}
         {row.classify === "DEPARTMENTONLY"
-          ? ` : ${row.course_departments[0].department.name}`
+          ? `(${row.course_departments.length || ""})`
           : ""}
       </TableCell>,
 

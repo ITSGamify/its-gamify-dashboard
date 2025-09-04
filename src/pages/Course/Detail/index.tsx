@@ -289,9 +289,29 @@ const CourseDetailPage = () => {
                     </Typography>
                   </Grid>
                 </Grid>
-
                 <Divider sx={{ my: 2 }} />
-
+                {data.course_departments.length > 0 && (
+                  <>
+                    <Typography variant="h6" gutterBottom>
+                      Phòng ban
+                    </Typography>
+                    <Box
+                      sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}
+                    >
+                      {data.course_departments.map((dept, index) => (
+                        <Chip
+                          key={index}
+                          label={
+                            dept.department?.name || `Phòng ban ${index + 1}`
+                          }
+                          variant="outlined"
+                          color="primary"
+                        />
+                      ))}
+                    </Box>
+                    <Divider sx={{ my: 2 }} />
+                  </>
+                )}
                 {/* Video giới thiệu */}
                 {data.introduction_video && (
                   <>
