@@ -29,7 +29,7 @@ const TopPerformersCard: React.FC<TopPerformersCardProps> = ({
           ?.name || "Unknown",
     }))
     .sort((a, b) => b.points - a.points)
-    .slice(0, 3);
+    .slice(0, 5);
 
   const getRankColor = (rank: number) => {
     switch (rank) {
@@ -39,6 +39,8 @@ const TopPerformersCard: React.FC<TopPerformersCardProps> = ({
         return "#C0C0C0"; // Silver
       case 3:
         return "#CD7F32"; // Bronze
+      case 4:
+        return "#2E8B57"; // Sea Green
       default:
         return "#1976d2";
     }
@@ -70,7 +72,7 @@ const TopPerformersCard: React.FC<TopPerformersCardProps> = ({
             gap: 1,
           }}
         >
-          🏆 Top 3 Xuất sắc
+          🏆 Top 5 Xuất sắc
         </Typography>
 
         {topPerformers.length === 0 ? (

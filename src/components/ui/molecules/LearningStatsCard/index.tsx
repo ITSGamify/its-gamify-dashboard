@@ -205,7 +205,7 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
         ) : (
           <Box
             sx={{
-              maxHeight: 600,
+              maxHeight: 585,
               overflowY: "auto",
               "&::-webkit-scrollbar": {
                 width: "8px",
