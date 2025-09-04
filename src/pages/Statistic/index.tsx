@@ -274,7 +274,10 @@ const StatisticPage: React.FC = () => {
 
               {/* Learning Stats */}
               <Grid size={{ xs: 12, md: 6 }}>
-                <LearningStatsCard departments={aggregatedData} />
+                <LearningStatsCard
+                  departments={aggregatedData}
+                  selectedQuarterId={selectedQuarter}
+                />
               </Grid>
 
               {/* Department Stats Cards */}

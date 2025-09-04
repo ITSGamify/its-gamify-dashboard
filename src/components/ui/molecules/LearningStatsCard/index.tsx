@@ -6,10 +6,12 @@ import { useGetCourses } from "@services/course";
 
 interface LearningStatsCardProps {
   departments: DepartmentStat[];
+  selectedQuarterId?: string;
 }
 
 const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
   departments,
+  selectedQuarterId,
 }) => {
   // Lấy danh sách tất cả khóa học
   const { data: coursesData } = useGetCourses({
@@ -21,6 +23,11 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
   });
 
   const allCourses = coursesData?.data || [];
+
+  // Filter courses by selected quarter if provided
+  const coursesInSelectedQuarter = selectedQuarterId
+    ? allCourses.filter((c) => c.quarter_id === selectedQuarterId)
+    : allCourses;
 
   // Tính toán thống kê học tập theo từng phòng ban
   const departmentStats = departments.map((dept) => {
@@ -37,7 +44,8 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
     const totalCoursesInProgress = dept.users.reduce((total, user) => {
       const participated = user.user_metrics?.[0]?.course_participated_num || 0;
       const completed = user.user_metrics?.[0]?.course_completed_num || 0;
-      return total + (participated - completed);
+      const inProgress = Math.max(0, participated - completed);
+      return total + inProgress;
     }, 0);
 
     // Tính tổng số khóa học có sẵn cho phòng ban này
@@ -49,26 +57,100 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
       return !course.drafted && !course.is_deleted;
     };
 
-    const publicCourses = allCourses.filter(
-      (course) =>
-        (course.classify === "ALL" || course.classify === "LEADERONLY") &&
-        isActiveCourse(course)
+    const publicCourses = coursesInSelectedQuarter.filter(
+      (course) => course.classify === "ALL" && isActiveCourse(course)
     );
 
-    const departmentCourses = allCourses.filter(
-      (course) =>
-        course.course_departments?.some((cd) => cd.department_id === dept.id) &&
-        isActiveCourse(course)
+    const departmentCourses = coursesInSelectedQuarter.filter((course) => {
+      const isAssignedToDept = course.course_departments?.some(
+        (cd) => cd.department_id === dept.id
+      );
+      return (
+        isAssignedToDept &&
+        isActiveCourse(course) &&
+        course.classify !== "LEADERONLY" &&
+        course.classify !== "ALL"
+      );
+    });
+
+    // Leader-only courses: available to leaders across departments.
+    // Count them regardless of explicit department assignment
+    const leaderOnlyCourses = coursesInSelectedQuarter.filter(
+      (course) => course.classify === "LEADERONLY" && isActiveCourse(course)
     );
 
     const totalAvailableCourses =
-      publicCourses.length + departmentCourses.length;
+      publicCourses.length +
+      departmentCourses.length +
+      leaderOnlyCourses.length;
 
-    // Tổng số khóa học chưa học (tổng khóa học - đã hoàn thành - đang học)
-    const totalCoursesNotStarted = Math.max(
-      0,
-      totalAvailableCourses - totalCoursesCompleted - totalCoursesInProgress
-    );
+    // Tổng số khóa học chưa bắt đầu: tính theo từng nhân viên dựa trên
+    // số khóa có sẵn cho vai trò của họ và số khóa đã HOÀN THÀNH
+    const totalCoursesNotStarted = dept.users.reduce((sum, user) => {
+      const completedCount = user.user_metrics?.[0]?.course_completed_num || 0;
+      const roleName =
+        typeof (user as any).role === "string"
+          ? ((user as any).role as string)
+          : (user as any).role?.name || "";
+      const isLeader = roleName.toUpperCase().includes("LEADER");
+      const availableForUser =
+        publicCourses.length +
+        departmentCourses.length +
+        (isLeader ? leaderOnlyCourses.length : 0);
+      const notStarted = Math.max(0, availableForUser - completedCount);
+      return sum + notStarted;
+    }, 0);
+
+    // Dev-only debug logs to verify calculations
+    if (import.meta.env.DEV) {
+      try {
+        const perUser = dept.users.map((user) => {
+          const completedCount =
+            user.user_metrics?.[0]?.course_completed_num || 0;
+          const participatedCount =
+            user.user_metrics?.[0]?.course_participated_num || 0;
+          const roleName =
+            typeof (user as any).role === "string"
+              ? ((user as any).role as string)
+              : (user as any).role?.name || "";
+          const isLeader = roleName.toUpperCase().includes("LEADER");
+          const availableForUser =
+            publicCourses.length +
+            departmentCourses.length +
+            (isLeader ? leaderOnlyCourses.length : 0);
+          const notStarted = Math.max(0, availableForUser - completedCount);
+          const inProgress = Math.max(0, participatedCount - completedCount);
+          return {
+            name: user.full_name,
+            role: roleName || (user as any).role,
+            available: availableForUser,
+            completed: completedCount,
+            inProgress,
+            notStarted,
+          };
+        });
+        console.groupCollapsed(`LearningStats · ${dept.name}`);
+        console.log("Quarter:", selectedQuarterId);
+        console.log(
+          "Public/Dept/Leader:",
+          publicCourses.length,
+          departmentCourses.length,
+          leaderOnlyCourses.length
+        );
+        console.table(perUser);
+        console.log(
+          "Totals => available:",
+          totalAvailableCourses,
+          "completed:",
+          totalCoursesCompleted,
+          "inProgress:",
+          totalCoursesInProgress,
+          "notStarted:",
+          totalCoursesNotStarted
+        );
+        console.groupEnd();
+      } catch {}
+    }
 
     return {
       department: dept,
@@ -79,6 +161,7 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
       totalAvailableCourses,
       publicCoursesCount: publicCourses.length,
       departmentCoursesCount: departmentCourses.length,
+      leaderOnlyCoursesCount: leaderOnlyCourses.length,
     };
   });
 
@@ -391,6 +474,27 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                   }}
                                 />
                                 Phòng Ban: {stat.departmentCoursesCount}
+                              </Typography>
+
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  mb: 1,
+                                  color: "rgba(0,0,0,0.7)",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 1,
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    width: 8,
+                                    height: 8,
+                                    backgroundColor: "#9c27b0",
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                                Leader: {stat.leaderOnlyCoursesCount}
                               </Typography>
                             </Box>
 
