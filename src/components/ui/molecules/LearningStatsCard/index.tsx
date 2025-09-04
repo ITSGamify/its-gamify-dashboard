@@ -608,7 +608,8 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                   <Box
                                     key={item.user.id}
                                     sx={{
-                                      display: "flex",
+                                      display: "grid",
+                                      gridTemplateColumns: "auto 1fr auto",
                                       alignItems: "center",
                                       gap: 1.5,
                                       p: 1,
@@ -642,14 +643,11 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                     >
                                       {idx + 1}
                                     </Box>
-                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                    <Box sx={{ minWidth: 0 }}>
                                       <Typography
                                         variant="body2"
                                         sx={{
                                           fontWeight: 600,
-                                          whiteSpace: "nowrap",
-                                          overflow: "hidden",
-                                          textOverflow: "ellipsis",
                                         }}
                                       >
                                         {item.user.full_name}
@@ -661,7 +659,9 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                         {parseRoleName(item.user)}
                                       </Typography>
                                     </Box>
-                                    <Box sx={{ textAlign: "right" }}>
+                                    <Box
+                                      sx={{ textAlign: "right", minWidth: 90 }}
+                                    >
                                       <Typography
                                         variant="body2"
                                         sx={{
