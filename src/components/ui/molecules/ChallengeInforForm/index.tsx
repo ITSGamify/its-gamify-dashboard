@@ -85,7 +85,9 @@ const ChallengeInforForm = ({
       }
     });
   };
-
+  const options = !data
+    ? courseOptions
+    : [...courseOptions, { id: data.course_id, label: data.course.title }];
   return (
     <form onSubmit={handleSubmit}>
       <Paper
@@ -111,12 +113,11 @@ const ChallengeInforForm = ({
               render={({ field, fieldState: { error } }) => (
                 <FormControl fullWidth error={!!error} required>
                   <AutocompleteAsync
-                    options={courseOptions}
+                    options={options}
                     label="Chọn khóa học"
                     value={
                       field.value
-                        ? courseOptions.find((x) => x.id === field.value) ||
-                          null
+                        ? options.find((x) => x.id === field.value) || null
                         : null
                     }
                     onChange={field.onChange}
