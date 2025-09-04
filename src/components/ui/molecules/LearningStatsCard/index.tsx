@@ -528,7 +528,7 @@ const LearningStatsCard: React.FC<LearningStatsCardProps> = ({
                                       borderRadius: "50%",
                                     }}
                                   />
-                                  Leader: {stat.leaderOnlyCoursesCount}
+                                  Trưởng phòng: {stat.leaderOnlyCoursesCount}
                                 </Typography>
                               </Box>
 
